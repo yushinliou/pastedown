@@ -59,7 +59,7 @@ class RichTextProcessor: ObservableObject {
                     imageIndex += 1
                 } else {
                     // Fallback for attachments without images
-                    markdown += "![attachment]"
+                    markdown += "<!-- ![attachment] -->"
                 }
             } else {
                 // Handle regular text with formatting

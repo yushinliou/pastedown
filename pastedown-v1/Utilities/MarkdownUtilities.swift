@@ -15,24 +15,107 @@ struct MarkdownUtilities {
     static func convertTextWithAttributes(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         var result = text
         
-        // Handle font styles
-        if let font = attributes[.font] as? UIFont {
-            if font.fontDescriptor.symbolicTraits.contains(.traitBold) {
-                result = "**\(result)**"
-            }
-            if font.fontDescriptor.symbolicTraits.contains(.traitItalic) {
-                result = "*\(result)*"
-            }
+        // Handle list items first (before other formatting)
+        result = convertListItems(result)
+        
+        // Handle headings based on font size (return early to avoid other formatting)
+        let headingResult = convertHeadings(result, attributes: attributes)
+        if headingResult != result {
+            return headingResult // Return early for headings to avoid double formatting
         }
         
-        // Handle strikethrough
-        if attributes[.strikethroughStyle] != nil {
-            result = "~~\(result)~~"
-        }
-        
-        // Handle links
+        // Handle links (do this before other formatting to preserve the link text)
         if let url = attributes[.link] as? URL {
             result = "[\(text)](\(url.absoluteString))"
+            return result // Return early for links to avoid double formatting
+        }
+        
+        // Handle combined text formatting
+        result = applyTextFormatting(result, attributes: attributes)
+        
+        return result
+    }
+    
+    // MARK: - Helper Functions for Text Conversion
+    
+    private static func convertListItems(_ text: String) -> String {
+        var result = text
+       
+        // Handle todo list items (◦)
+        if result.hasPrefix("\t◦") || result.hasPrefix("◦ ") {
+            result = result.replacingOccurrences(of: "^◦[\t ]", with: "- [ ] ", options: .regularExpression)
+        }
+        
+        // Handle dash list items (⁃)
+        if result.hasPrefix("\t⁃") || result.hasPrefix("⁃ ") || result.hasPrefix("⁃") {
+            result = result.replacingOccurrences(of: "^⁃[\t ]", with: "- ", options: .regularExpression)
+        }
+        
+        // Handle bullet point list items (•)
+        if result.hasPrefix("\t•") || result.hasPrefix("• ") {
+            result = result.replacingOccurrences(of: "^•[\t ]", with: "- ", options: .regularExpression)
+        }
+        
+        return result
+    }
+    
+    private static func convertHeadings(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        guard let font = attributes[.font] as? UIFont else { return text }
+        
+        let fontSize = font.pointSize
+        
+        // Only treat as heading if it's a substantial font size increase
+        if fontSize >= 25 {
+            return "# \(text)"
+        } else if fontSize >= 20 {
+            return "## \(text)"
+        }
+        
+        return text
+    }
+
+    private static func applyTextFormatting(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        var formattingStack: [String] = []
+        var closingStack: [String] = []
+        
+        // Check for font-based formatting
+        if let font = attributes[.font] as? UIFont {
+            let traits = font.fontDescriptor.symbolicTraits
+            
+            // Bold
+            if traits.contains(.traitBold) {
+                formattingStack.append("**")
+                closingStack.insert("**", at: 0)
+            }
+            
+            // Italic
+            if traits.contains(.traitItalic) {
+                formattingStack.append("*")
+                closingStack.insert("*", at: 0)
+            }
+        }
+        
+        // Underline
+        if let underlineStyle = attributes[.underlineStyle] as? NSNumber,
+           underlineStyle.intValue != 0 {
+            formattingStack.append("<u>")
+            closingStack.insert("</u>", at: 0)
+        }
+        
+        // Strikethrough
+        if let strikethroughStyle = attributes[.strikethroughStyle] as? NSNumber,
+           strikethroughStyle.intValue != 0 {
+            formattingStack.append("~~")
+            closingStack.insert("~~", at: 0)
+        }
+        
+        // Apply all formatting
+        let openingTags = formattingStack.joined()
+        let closingTags = closingStack.joined()
+        
+        if !openingTags.isEmpty {
+            result = "\(openingTags)\(result)\(closingTags)"
         }
         
         return result
