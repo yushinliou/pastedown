@@ -62,10 +62,27 @@ class RichTextProcessor: ObservableObject {
                     markdown += "<!-- ![attachment] -->"
                 }
             } else {
-                // Handle regular text with formatting
+                // Handle regular text with formatting, splitting by newlines
+                print("Processing text in range: \(range)")
+                print("Attributes: \(attrs)")
+                print("Attributed string: \(attributedString)")
                 let substring = attributedString.attributedSubstring(from: range).string
-                let formattedText = MarkdownUtilities.convertTextWithAttributes(substring, attributes: attrs)
-                markdown += formattedText
+                print("Substring: \(substring)")
+                let lines = substring.components(separatedBy: .newlines)
+                print("Lines: \(lines)")
+                
+                for (index, line) in lines.enumerated() {
+                    if !line.isEmpty {
+                        print("Line: \(line)")
+                        let formattedText = MarkdownUtilities.convertTextWithAttributes(line, attributes: attrs)
+                        markdown += formattedText
+                    }
+                    
+                    // Add newline after each line except the last one
+                    if index < lines.count - 1 {
+                        markdown += "\n"
+                    }
+                }
             }
         }
         

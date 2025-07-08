@@ -11,12 +11,28 @@ import Foundation
 // MARK: - Markdown Utilities
 struct MarkdownUtilities {
     
+    // MARK: - Debug Utilities
+    static func debugPrintText(_ text: String, context: String = "") {
+        let visibleText = text
+            .replacingOccurrences(of: "\n", with: "\\n")
+            .replacingOccurrences(of: "\t", with: "\\t")
+            .replacingOccurrences(of: " ", with: "·")
+        
+        print("🔍 [\(context)] Processing text: \"\(visibleText)\"")
+        print("🔍 [\(context)] Original length: \(text.count)")
+        print("🔍 [\(context)] Starts with: \(text.prefix(3).debugDescription)")
+        print("🔍 [\(context)] Ends with: \(text.suffix(3).debugDescription)")
+        print("🔍 [\(context)] ---")
+    }
+    
     // MARK: - Text Conversion
     static func convertTextWithAttributes(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        // Debug: Print the text being processed
+        debugPrintText(text, context: "convertTextWithAttributes")
+        
         var result = text
         
-        // Handle list items first (before other formatting)
-        result = convertListItems(result)
+        result = handleListItems(result, attributes: attributes)
         
         // Handle headings based on font size (return early to avoid other formatting)
         let headingResult = convertHeadings(result, attributes: attributes)
@@ -37,28 +53,21 @@ struct MarkdownUtilities {
     }
     
     // MARK: - Helper Functions for Text Conversion
-    
-    private static func convertListItems(_ text: String) -> String {
+    private static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         var result = text
-       
-        // Handle todo list items (◦)
-        if result.hasPrefix("\t◦") || result.hasPrefix("◦ ") {
-            result = result.replacingOccurrences(of: "^◦[\t ]", with: "- [ ] ", options: .regularExpression)
-        }
         
-        // Handle dash list items (⁃)
-        if result.hasPrefix("\t⁃") || result.hasPrefix("⁃ ") || result.hasPrefix("⁃") {
-            result = result.replacingOccurrences(of: "^⁃[\t ]", with: "- ", options: .regularExpression)
+        // Handle list items first (before other formatting) using paragraph style
+        if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
+            if !paragraphStyle.textLists.isEmpty {
+                // if the text is not a list, add a list prefix
+                if !result.trimmingCharacters(in: .whitespaces).hasPrefix("*") {
+                    result = "* \(result)"
+                }
+            }
         }
-        
-        // Handle bullet point list items (•)
-        if result.hasPrefix("\t•") || result.hasPrefix("• ") {
-            result = result.replacingOccurrences(of: "^•[\t ]", with: "- ", options: .regularExpression)
-        }
-        
         return result
     }
-    
+
     private static func convertHeadings(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         guard let font = attributes[.font] as? UIFont else { return text }
         
@@ -75,7 +84,10 @@ struct MarkdownUtilities {
     }
 
     private static func applyTextFormatting(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
-        var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Debug: Print the text before formatting
+        // debugPrintText(text, context: "applyTextFormatting-input")
+
+        var result = text //.trimmingCharacters(in: .whitespacesAndNewlines)
         var formattingStack: [String] = []
         var closingStack: [String] = []
         
@@ -117,6 +129,9 @@ struct MarkdownUtilities {
         if !openingTags.isEmpty {
             result = "\(openingTags)\(result)\(closingTags)"
         }
+        
+        // Debug: Print the text after formatting
+        // debugPrintText(result, context: "applyTextFormatting-output")
         
         return result
     }
