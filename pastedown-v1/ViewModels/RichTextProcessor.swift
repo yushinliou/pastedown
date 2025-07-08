@@ -63,11 +63,8 @@ class RichTextProcessor: ObservableObject {
                 }
             } else {
                 // Handle regular text with formatting, splitting by newlines
-                print("Processing text in range: \(range)")
-                print("Attributes: \(attrs)")
-                print("Attributed string: \(attributedString)")
                 let substring = attributedString.attributedSubstring(from: range).string
-                print("Substring: \(substring)")
+
                 let lines = substring.components(separatedBy: .newlines)
                 print("Lines: \(lines)")
                 

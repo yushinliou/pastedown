@@ -28,7 +28,7 @@ struct MarkdownUtilities {
     // MARK: - Text Conversion
     static func convertTextWithAttributes(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         // Debug: Print the text being processed
-        debugPrintText(text, context: "convertTextWithAttributes")
+        // debugPrintText(text, context: "convertTextWithAttributes")
         
         var result = text
         
@@ -51,23 +51,93 @@ struct MarkdownUtilities {
         
         return result
     }
-    
-    // MARK: - Helper Functions for Text Conversion
-    private static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
-        var result = text
+            
+private static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+    // special case happend one single number list and dashed list
+    if text == "\t•\t" {
+        return ""
+    }
+    if text == "\t⁃\t" {
+        return "  - "
+    }
+    // normal case
+    var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    var prefix: String? = nil
+    var indentLevel = 0
+    var foundSpecialUnorderedFormat = false
+    var foundSpecialNumberFormat = false
+
+    let symbolMap = [
+        "•": "*",
+        "⁃": "-",
+        "◦": "- [ ]",
+        "1.": "1.",
+        "a.": "a.",
+        "A.": "A.",
+        "i.": "i.",
+        "I.": "I."
+    ]
+    // check paragraph style
+    if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
         
-        // Handle list items first (before other formatting) using paragraph style
-        if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
-            if !paragraphStyle.textLists.isEmpty {
-                // if the text is not a list, add a list prefix
-                if !result.trimmingCharacters(in: .whitespaces).hasPrefix("*") {
-                    result = "* \(result)"
+        if paragraphStyle.textLists.count > 0 {
+            indentLevel = paragraphStyle.textLists.count
+
+            if let textList = paragraphStyle.textLists.last,
+               let format = textList.value(forKey: "markerFormat") as? String {
+                print("[FORMAT]: \(format)")
+                switch format {
+                case "{disc}": prefix = "*"
+                case "{hyphen}": prefix = "-"
+                case "{circle}": prefix = "- [ ]"
+                case "{decimal}.": prefix = "1."
+                case "{loweralpha}.": prefix = "a."
+                case "{upperalpha}.": prefix = "A."
+                case "{lowerroman}.": prefix = "i."
+                case "{upperroman}.": prefix = "I."
+                default: prefix = "-"
+                }
+            }
+        } else { // special case, happen when there is no extra element after list, we need to handle last line it manually
+            // 📌 unordered list pattern: \t•\t\t•\tTEXT
+            let unorderListPattern = #"^\t([^\t])\t\t([^\t])\t(.*)$"#
+            if let regex = try? NSRegularExpression(pattern: unorderListPattern),
+               let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
+               let symbolRange = Range(match.range(at: 2), in: text),
+               let contentRange = Range(match.range(at: 3), in: text) {
+                let symbol = symbolMap[String(text[symbolRange])] ?? "*"
+                prefix = symbol
+                result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                indentLevel = 1
+                foundSpecialUnorderedFormat = true
+                print("[FOUND SPECIAL UNORDERED FORMAT]: \(symbol)")
+            } else {
+                // 📌 number pattern: \t42.\tTEXT
+                let orderedListPattern = #"^\t(\d+)\.\t(.*)$"#
+                if let regex = try? NSRegularExpression(pattern: orderedListPattern),
+                   let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
+                   let numberRange = Range(match.range(at: 1), in: text),
+                   let contentRange = Range(match.range(at: 2), in: text) {
+                    let number = String(text[numberRange])
+                    prefix = "\(number)."
+                    result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    indentLevel = 1
+                    foundSpecialNumberFormat = true
+                    print("[FOUND SPECIAL NUMBER FORMAT]: \(prefix!)")
                 }
             }
         }
-        return result
+    }
+    if result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !foundSpecialUnorderedFormat{
+        return ""
     }
 
+    if let prefix = prefix {
+        let indent = String(repeating: "  ", count: indentLevel)
+        result = "\(indent)\(prefix) \(result)"
+    }
+    return result
+}
     private static func convertHeadings(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         guard let font = attributes[.font] as? UIFont else { return text }
         
