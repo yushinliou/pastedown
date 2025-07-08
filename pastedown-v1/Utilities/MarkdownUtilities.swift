@@ -32,24 +32,145 @@ struct MarkdownUtilities {
         
         var result = text
         
+        // First, handle list items (this processes the structure)
         result = handleListItems(result, attributes: attributes)
         
-        // Handle headings based on font size (return early to avoid other formatting)
-        let headingResult = convertHeadings(result, attributes: attributes)
-        if headingResult != result {
-            return headingResult // Return early for headings to avoid double formatting
-        }
-        
-        // Handle links (do this before other formatting to preserve the link text)
-        if let url = attributes[.link] as? URL {
-            result = "[\(text)](\(url.absoluteString))"
-            return result // Return early for links to avoid double formatting
-        }
-        
-        // Handle combined text formatting
+        // Apply text formatting (bold, italic, underline, strikethrough) to the content
         result = applyTextFormatting(result, attributes: attributes)
         
+        // Handle links - wrap the formatted text with link syntax
+        if let url = attributes[.link] as? URL {
+            // Extract list prefix if present
+            let listPrefix = extractListPrefix(from: result)
+            
+            // Extract the content from any existing formatting to use as link text
+            let linkText = extractContentFromFormatting(result)
+            
+            // Create the link
+            var link = "[\(linkText)](\(url.absoluteString))"
+            
+            // Re-apply text formatting to the link if there was any (excluding list formatting)
+            let textWithoutListPrefix = String(result.dropFirst(listPrefix.count))
+            if textWithoutListPrefix != linkText {
+                // Apply formatting around the link
+                link = applyTextFormattingToLink(link, attributes: attributes)
+            }
+            
+            // Combine list prefix with the formatted link
+            result = listPrefix + link
+        }
+        
+        // Handle headings - add heading markers while preserving formatting
+        let headingResult = convertHeadings(result, attributes: attributes)
+        if headingResult != result {
+            return headingResult // Headings with their formatting preserved
+        }
+        
         return result
+    }
+    
+    // Helper function to extract content from formatting markers
+    private static func extractContentFromFormatting(_ text: String) -> String {
+        var content = text
+        
+        // Remove markdown formatting to get clean text for link display
+        content = content.replacingOccurrences(of: "**", with: "")
+        content = content.replacingOccurrences(of: "*", with: "")
+        content = content.replacingOccurrences(of: "<u>", with: "")
+        content = content.replacingOccurrences(of: "</u>", with: "")
+        content = content.replacingOccurrences(of: "~~", with: "")
+        
+        // Remove list formatting markers and indentation
+        // Pattern to match: any amount of spaces, followed by list marker, followed by space
+        let listPatterns = [
+            #"^\s*\*\s+"#,      // "  * "
+            #"^\s*-\s+"#,       // "  - "
+            #"^\s*\+\s+"#,      // "  + "
+            #"^\s*\d+\.\s+"#,   // "  1. "
+            #"^\s*[a-zA-Z]\.\s+"#  // "  a. " or "  A. "
+        ]
+        
+        for pattern in listPatterns {
+            if let regex = try? NSRegularExpression(pattern: pattern) {
+                content = regex.stringByReplacingMatches(in: content, options: [], range: NSRange(content.startIndex..<content.endIndex, in: content), withTemplate: "")
+            }
+        }
+        
+        return content.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    // Helper function to apply formatting to text (excluding link formatting)
+    private static func applyFormattingToText(_ text: String, attributes: [NSAttributedString.Key: Any], excludeLink: Bool = false) -> String {
+        // This preserves the original formatting application logic
+        return applyTextFormatting(text, attributes: attributes)
+    }
+    
+    // Helper function to extract list prefix (indentation + marker)
+    private static func extractListPrefix(from text: String) -> String {
+        let listPatterns = [
+            #"^(\s*\*\s+)"#,      // "  * "
+            #"^(\s*-\s+)"#,       // "  - "
+            #"^(\s*\+\s+)"#,      // "  + "
+            #"^(\s*\d+\.\s+)"#,   // "  1. "
+            #"^(\s*[a-zA-Z]\.\s+)"#  // "  a. " or "  A. "
+        ]
+        
+        for pattern in listPatterns {
+            if let regex = try? NSRegularExpression(pattern: pattern),
+               let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
+               let range = Range(match.range(at: 1), in: text) {
+                return String(text[range])
+            }
+        }
+        
+        return ""
+    }
+    
+    // Helper function to apply text formatting around a link
+    private static func applyTextFormattingToLink(_ link: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        var formattingStack: [String] = []
+        var closingStack: [String] = []
+        
+        // Check for font-based formatting
+        if let font = attributes[.font] as? UIFont {
+            let traits = font.fontDescriptor.symbolicTraits
+            
+            // Bold
+            if traits.contains(.traitBold) {
+                formattingStack.append("**")
+                closingStack.insert("**", at: 0)
+            }
+            
+            // Italic
+            if traits.contains(.traitItalic) {
+                formattingStack.append("*")
+                closingStack.insert("*", at: 0)
+            }
+        }
+        
+        // Underline
+        if let underlineStyle = attributes[.underlineStyle] as? NSNumber,
+           underlineStyle.intValue != 0 {
+            formattingStack.append("<u>")
+            closingStack.insert("</u>", at: 0)
+        }
+        
+        // Strikethrough
+        if let strikethroughStyle = attributes[.strikethroughStyle] as? NSNumber,
+           strikethroughStyle.intValue != 0 {
+            formattingStack.append("~~")
+            closingStack.insert("~~", at: 0)
+        }
+        
+        // Apply all formatting around the link
+        let openingTags = formattingStack.joined()
+        let closingTags = closingStack.joined()
+        
+        if !openingTags.isEmpty {
+            return "\(openingTags)\(link)\(closingTags)"
+        }
+        
+        return link
     }
             
 private static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
@@ -140,12 +261,14 @@ private static func handleListItems(_ text: String, attributes: [NSAttributedStr
     }
     return result
 }
+    
     private static func convertHeadings(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         guard let font = attributes[.font] as? UIFont else { return text }
         
         let fontSize = font.pointSize
         
         // Only treat as heading if it's a substantial font size increase
+        // Preserve any existing formatting in the heading text
         if fontSize >= 25 {
             return "# \(text)"
         } else if fontSize >= 20 {
