@@ -10,63 +10,113 @@ import Foundation
 
 // MARK: - Markdown Utilities
 struct MarkdownUtilities {
-    
-    // MARK: - Debug Utilities
-    static func debugPrintText(_ text: String, context: String = "") {
-        let visibleText = text
-            .replacingOccurrences(of: "\n", with: "\\n")
-            .replacingOccurrences(of: "\t", with: "\\t")
-            .replacingOccurrences(of: " ", with: "·")
-        
-        print("🔍 [\(context)] Processing text: \"\(visibleText)\"")
-        print("🔍 [\(context)] Original length: \(text.count)")
-        print("🔍 [\(context)] Starts with: \(text.prefix(3).debugDescription)")
-        print("🔍 [\(context)] Ends with: \(text.suffix(3).debugDescription)")
-        print("🔍 [\(context)] ---")
-    }
-    
-    // MARK: - Text Conversion
+
+    // MARK: - Main Logic Text Conversion
     static func convertTextWithAttributes(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         // Debug: Print the text being processed
         // debugPrintText(text, context: "convertTextWithAttributes")
         
         var result = text
-        
-        // First, handle list items (this processes the structure)
+        print("================ Start Processing Text [\(text)] ==================")
+        // 1. Add URL (if any, remember to preserve format)
+        result = handleLinks(result, attributes: attributes)
+        print("[Add URL RESULT]: \(result)")
+
+        // 2. Handle tables (structural element)
+        result = handleTables(result, attributes: attributes)
+        print("[Handle Tables RESULT]: \(result)")
+
+        // 3. Handle list items (this processes the structure)
         result = handleListItems(result, attributes: attributes)
+        print("[Handle List Items RESULT]: \(result)")
         
-        // Apply text formatting (bold, italic, underline, strikethrough) to the content
+        // 4. Handle text formatting (bold, italic, underline, strikethrough)
         result = applyTextFormatting(result, attributes: attributes)
-        
-        // Handle links - wrap the formatted text with link syntax
-        if let url = attributes[.link] as? URL {
-            // Extract list prefix if present
-            let listPrefix = extractListPrefix(from: result)
-            
-            // Extract the content from any existing formatting to use as link text
-            let linkText = extractContentFromFormatting(result)
-            
-            // Create the link
-            var link = "[\(linkText)](\(url.absoluteString))"
-            
-            // Re-apply text formatting to the link if there was any (excluding list formatting)
-            let textWithoutListPrefix = String(result.dropFirst(listPrefix.count))
-            if textWithoutListPrefix != linkText {
-                // Apply formatting around the link
-                link = applyTextFormattingToLink(link, attributes: attributes)
-            }
-            
-            // Combine list prefix with the formatted link
-            result = listPrefix + link
-        }
-        
-        // Handle headings - add heading markers while preserving formatting
+        print("[Apply Text Formatting RESULT]: \(result)")
+
+        // 5. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
         if headingResult != result {
             return headingResult // Headings with their formatting preserved
         }
-        
+        print("[Heading RESULT]: \(result)")
         return result
+    }
+    
+    // MARK: - Link Handling
+    static func handleLinks(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        guard let url = attributes[.link] as? URL else {
+            return text
+        }
+        
+        // Since formatting hasn't been applied yet, we can simply wrap the text in link syntax
+        // The formatting will be applied later and will wrap around the entire link
+        let linkText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return "[\(linkText)](\(url.absoluteString))"
+    }
+    
+    // MARK: - Table Handling
+    static func handleTables(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        // Check if this text is part of a table structure
+        // Tables in rich text are often represented with tab characters as column separators
+        
+        // Check for table-related attributes
+        if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
+            // Check for tab stops which often indicate table columns
+            if !paragraphStyle.tabStops.isEmpty {
+                return handleTabularData(text, paragraphStyle: paragraphStyle)
+            }
+        }
+        
+        // Check for simple tab-separated values
+        if text.contains("\t") && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return handleTabSeparatedText(text)
+        }
+        
+        return text
+    }
+    
+    // Helper function to handle text with tab stops (structured table data)
+    private static func handleTabularData(_ text: String, paragraphStyle: NSParagraphStyle) -> String {
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Split by tabs to create table cells
+        let cells = trimmedText.components(separatedBy: "\t")
+        
+        // Filter out empty cells and clean up
+        let cleanCells = cells.compactMap { cell in
+            let cleaned = cell.trimmingCharacters(in: .whitespacesAndNewlines)
+            return cleaned.isEmpty ? nil : cleaned
+        }
+        
+        // Only convert to table format if we have multiple cells
+        if cleanCells.count > 1 {
+            // Create markdown table row
+            return "| " + cleanCells.joined(separator: " | ") + " |"
+        }
+        
+        return text
+    }
+    
+    // Helper function to handle simple tab-separated text
+    private static func handleTabSeparatedText(_ text: String) -> String {
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Split by tabs
+        let parts = trimmedText.components(separatedBy: "\t")
+        
+        // Filter out empty parts
+        let cleanParts = parts.compactMap { part in
+            let cleaned = part.trimmingCharacters(in: .whitespacesAndNewlines)
+            return cleaned.isEmpty ? nil : cleaned
+        }
+        
+        // Only convert if we have multiple meaningful parts
+        if cleanParts.count > 1 {
+            return "| " + cleanParts.joined(separator: " | ") + " |"
+        }
+        
+        return text
     }
     
     // Helper function to extract content from formatting markers
@@ -99,172 +149,98 @@ struct MarkdownUtilities {
         
         return content.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    
-    // Helper function to apply formatting to text (excluding link formatting)
-    private static func applyFormattingToText(_ text: String, attributes: [NSAttributedString.Key: Any], excludeLink: Bool = false) -> String {
-        // This preserves the original formatting application logic
-        return applyTextFormatting(text, attributes: attributes)
-    }
-    
-    // Helper function to extract list prefix (indentation + marker)
-    private static func extractListPrefix(from text: String) -> String {
-        let listPatterns = [
-            #"^(\s*-\s*\[[x ]\]\s*)"#, // "  - [ ] " or "  - [x] "
-            #"^(\s*\*\s+)"#,      // "  * "
-            #"^(\s*-\s+)"#,       // "  - "
-            #"^(\s*\+\s+)"#,      // "  + "
-            #"^(\s*\d+\.\s+)"#,   // "  1. "
-            #"^(\s*[a-zA-Z]\.\s+)"#  // "  a. " or "  A. "
+
+    // MARK: - List Handling
+    static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        // special case happend one single number list and dashed list
+        if text == "\t•\t" {
+            return ""
+        }
+        if text == "\t⁃\t" {
+            return "  - "
+        }
+        // normal case
+        var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        var prefix: String? = nil
+        var indentLevel = 0
+        var foundSpecialUnorderedFormat = false
+        var foundSpecialNumberFormat = false
+
+        let symbolMap = [
+            "•": "*",
+            "⁃": "-",
+            "◦": "- [ ]",
+            "✓": "- [x]",
+            "1.": "1.",
+            "a.": "a.",
+            "A.": "A.",
+            "i.": "i.",
+            "I.": "I."
         ]
-        
-        for pattern in listPatterns {
-            if let regex = try? NSRegularExpression(pattern: pattern),
-               let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
-               let range = Range(match.range(at: 1), in: text) {
-                return String(text[range])
-            }
-        }
-        
-        return ""
-    }
-    
-    // Helper function to apply text formatting around a link
-    private static func applyTextFormattingToLink(_ link: String, attributes: [NSAttributedString.Key: Any]) -> String {
-        var formattingStack: [String] = []
-        var closingStack: [String] = []
-        
-        // Check for font-based formatting
-        if let font = attributes[.font] as? UIFont {
-            let traits = font.fontDescriptor.symbolicTraits
+        // check paragraph style
+        if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
             
-            // Bold
-            if traits.contains(.traitBold) {
-                formattingStack.append("**")
-                closingStack.insert("**", at: 0)
-            }
-            
-            // Italic
-            if traits.contains(.traitItalic) {
-                formattingStack.append("*")
-                closingStack.insert("*", at: 0)
-            }
-        }
-        
-        // Underline
-        if let underlineStyle = attributes[.underlineStyle] as? NSNumber,
-           underlineStyle.intValue != 0 {
-            formattingStack.append("<u>")
-            closingStack.insert("</u>", at: 0)
-        }
-        
-        // Strikethrough
-        if let strikethroughStyle = attributes[.strikethroughStyle] as? NSNumber,
-           strikethroughStyle.intValue != 0 {
-            formattingStack.append("~~")
-            closingStack.insert("~~", at: 0)
-        }
-        
-        // Apply all formatting around the link
-        let openingTags = formattingStack.joined()
-        let closingTags = closingStack.joined()
-        
-        if !openingTags.isEmpty {
-            return "\(openingTags)\(link)\(closingTags)"
-        }
-        
-        return link
-    }
-            
-private static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
-    // special case happend one single number list and dashed list
-    if text == "\t•\t" {
-        return ""
-    }
-    if text == "\t⁃\t" {
-        return "  - "
-    }
-    // normal case
-    var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
-    var prefix: String? = nil
-    var indentLevel = 0
-    var foundSpecialUnorderedFormat = false
-    var foundSpecialNumberFormat = false
+            if paragraphStyle.textLists.count > 0 {
+                indentLevel = paragraphStyle.textLists.count
 
-    let symbolMap = [
-        "•": "*",
-        "⁃": "-",
-        "◦": "- [ ]",
-        "✓": "- [x]",
-        "1.": "1.",
-        "a.": "a.",
-        "A.": "A.",
-        "i.": "i.",
-        "I.": "I."
-    ]
-    // check paragraph style
-    if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
-        
-        if paragraphStyle.textLists.count > 0 {
-            indentLevel = paragraphStyle.textLists.count
-
-            if let textList = paragraphStyle.textLists.last,
-               let format = textList.value(forKey: "markerFormat") as? String {
-                print("[FORMAT]: \(format)")
-                switch format {
-                case "{disc}": prefix = "*"
-                case "{hyphen}": prefix = "-"
-                case "{circle}": prefix = "- [ ]"
-                case "{check}": prefix = "- [x]"
-                case "{decimal}.": prefix = "1."
-                case "{loweralpha}.": prefix = "a."
-                case "{upperalpha}.": prefix = "A."
-                case "{lowerroman}.": prefix = "i."
-                case "{upperroman}.": prefix = "I."
-                default: prefix = "-"
+                if let textList = paragraphStyle.textLists.last,
+                let format = textList.value(forKey: "markerFormat") as? String {
+                    print("[FORMAT]: \(format)")
+                    switch format {
+                    case "{disc}": prefix = "*"
+                    case "{hyphen}": prefix = "-"
+                    case "{circle}": prefix = "- [ ]"
+                    case "{check}": prefix = "- [x]"
+                    case "{decimal}.": prefix = "1."
+                    case "{loweralpha}.": prefix = "a."
+                    case "{upperalpha}.": prefix = "A."
+                    case "{lowerroman}.": prefix = "i."
+                    case "{upperroman}.": prefix = "I."
+                    default: prefix = "-"
+                    }
                 }
-            }
-        } else { // special case, happen when there is no extra element after list, we need to handle last line it manually
-            // 📌 unordered list pattern: \t•\t\t•\tTEXT
-            let unorderListPattern = #"^\t([^\t])\t\t([^\t])\t(.*)$"#
-            if let regex = try? NSRegularExpression(pattern: unorderListPattern),
-               let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
-               let symbolRange = Range(match.range(at: 2), in: text),
-               let contentRange = Range(match.range(at: 3), in: text) {
-                let symbol = symbolMap[String(text[symbolRange])] ?? "*"
-                prefix = symbol
-                result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
-                indentLevel = 1
-                foundSpecialUnorderedFormat = true
-                print("[FOUND SPECIAL UNORDERED FORMAT]: \(symbol)")
-            } else {
-                // 📌 number pattern: \t42.\tTEXT
-                let orderedListPattern = #"^\t(\d+)\.\t(.*)$"#
-                if let regex = try? NSRegularExpression(pattern: orderedListPattern),
-                   let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
-                   let numberRange = Range(match.range(at: 1), in: text),
-                   let contentRange = Range(match.range(at: 2), in: text) {
-                    let number = String(text[numberRange])
-                    prefix = "\(number)."
+            } else { // special case, happen when there is no extra element after list, we need to handle last line it manually
+                // 📌 unordered list pattern: \t•\t\t•\tTEXT
+                let unorderListPattern = #"^\t([^\t])\t\t([^\t])\t(.*)$"#
+                if let regex = try? NSRegularExpression(pattern: unorderListPattern),
+                let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
+                let symbolRange = Range(match.range(at: 2), in: text),
+                let contentRange = Range(match.range(at: 3), in: text) {
+                    let symbol = symbolMap[String(text[symbolRange])] ?? "*"
+                    prefix = symbol
                     result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
                     indentLevel = 1
-                    foundSpecialNumberFormat = true
-                    print("[FOUND SPECIAL NUMBER FORMAT]: \(prefix!)")
+                    foundSpecialUnorderedFormat = true
+                    print("[FOUND SPECIAL UNORDERED FORMAT]: \(symbol)")
+                } else {
+                    // 📌 number pattern: \t42.\tTEXT
+                    let orderedListPattern = #"^\t(\d+)\.\t(.*)$"#
+                    if let regex = try? NSRegularExpression(pattern: orderedListPattern),
+                    let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
+                    let numberRange = Range(match.range(at: 1), in: text),
+                    let contentRange = Range(match.range(at: 2), in: text) {
+                        let number = String(text[numberRange])
+                        prefix = "\(number)."
+                        result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                        indentLevel = 1
+                        foundSpecialNumberFormat = true
+                        print("[FOUND SPECIAL NUMBER FORMAT]: \(prefix!)")
+                    }
                 }
             }
         }
-    }
-    if result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !foundSpecialUnorderedFormat{
-        return ""
-    }
+        if result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !foundSpecialUnorderedFormat{
+            return ""
+        }
 
-    if let prefix = prefix {
-        let indent = String(repeating: "  ", count: indentLevel)
-        result = "\(indent)\(prefix) \(result)"
+        if let prefix = prefix {
+            let indent = String(repeating: "  ", count: indentLevel)
+            result = "\(indent)\(prefix) \(result)"
+        }
+        return result
     }
-    return result
-}
-    
-    private static func convertHeadings(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        
+    static func convertHeadings(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         guard let font = attributes[.font] as? UIFont else { return text }
         
         let fontSize = font.pointSize
@@ -280,7 +256,7 @@ private static func handleListItems(_ text: String, attributes: [NSAttributedStr
         return text
     }
 
-    private static func applyTextFormatting(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+    static func applyTextFormatting(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         // Debug: Print the text before formatting
         // debugPrintText(text, context: "applyTextFormatting-input")
 
@@ -326,9 +302,6 @@ private static func handleListItems(_ text: String, attributes: [NSAttributedStr
         if !openingTags.isEmpty {
             result = "\(openingTags)\(result)\(closingTags)"
         }
-        
-        // Debug: Print the text after formatting
-        // debugPrintText(result, context: "applyTextFormatting-output")
         
         return result
     }
