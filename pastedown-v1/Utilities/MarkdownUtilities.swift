@@ -71,6 +71,7 @@ private static func handleListItems(_ text: String, attributes: [NSAttributedStr
         "•": "*",
         "⁃": "-",
         "◦": "- [ ]",
+        "✓": "- [x]",
         "1.": "1.",
         "a.": "a.",
         "A.": "A.",
@@ -90,6 +91,7 @@ private static func handleListItems(_ text: String, attributes: [NSAttributedStr
                 case "{disc}": prefix = "*"
                 case "{hyphen}": prefix = "-"
                 case "{circle}": prefix = "- [ ]"
+                case "{check}": prefix = "- [x]"
                 case "{decimal}.": prefix = "1."
                 case "{loweralpha}.": prefix = "a."
                 case "{upperalpha}.": prefix = "A."
