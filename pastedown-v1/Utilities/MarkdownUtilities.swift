@@ -83,6 +83,7 @@ struct MarkdownUtilities {
         // Remove list formatting markers and indentation
         // Pattern to match: any amount of spaces, followed by list marker, followed by space
         let listPatterns = [
+            #"^\s*-\s*\[[x ]\]\s*"#, // "  - [ ] " or "  - [x] "
             #"^\s*\*\s+"#,      // "  * "
             #"^\s*-\s+"#,       // "  - "
             #"^\s*\+\s+"#,      // "  + "
@@ -108,6 +109,7 @@ struct MarkdownUtilities {
     // Helper function to extract list prefix (indentation + marker)
     private static func extractListPrefix(from text: String) -> String {
         let listPatterns = [
+            #"^(\s*-\s*\[[x ]\]\s*)"#, // "  - [ ] " or "  - [x] "
             #"^(\s*\*\s+)"#,      // "  * "
             #"^(\s*-\s+)"#,       // "  - "
             #"^(\s*\+\s+)"#,      // "  + "
