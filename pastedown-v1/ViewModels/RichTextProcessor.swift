@@ -64,12 +64,16 @@ class RichTextProcessor: ObservableObject {
         else {
             print("No tables found")
         }
-        
         // Process the attributed string with placeholders (this will include placeholders in the markdown)
         markdown += await processContentLineByLine(attributedStringWithPlaceholders, imageAltTexts: altTexts)
-        
+        print("================================================")
+        print("[processContentLineByLine markdown]\(markdown)")
+        print("================================================")
         // Replace placeholders with actual table markdown
         markdown = TableUtilities.replacePlaceholdersWithMarkdown(markdown, tables: detectedTables)
+        print("================================================")
+        print("[replacePlaceholdersWithMarkdown markdown]\(markdown)")
+        print("================================================")
         
         return markdown
     }
@@ -106,7 +110,8 @@ class RichTextProcessor: ObservableObject {
                     } else {
                         lineMarkdown += "<!-- ![attachment] -->"
                     }
-                } else {
+                }
+                else {
                     // Handle regular text with formatting
                     let substring = attributedString.attributedSubstring(from: range).string
                     
@@ -116,6 +121,7 @@ class RichTextProcessor: ObservableObject {
                     formattedText = MarkdownUtilities.applyTextFormatting(formattedText, attributes: attrs)
                     
                     lineMarkdown += formattedText
+                    print("[handle regular text lineMarkdown]\(lineMarkdown)")
                 }
             }
             

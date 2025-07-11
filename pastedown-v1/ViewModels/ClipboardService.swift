@@ -97,7 +97,6 @@ class ClipboardService: ObservableObject {
         let rtfString = String(data: rtfData, encoding: .ascii)
             ?? String(data: rtfData, encoding: .utf8)
         if let rtfString = rtfString {
-            // print("✅ Found RTF:\n\(rtfString)")
         }
         return rtfString
     }

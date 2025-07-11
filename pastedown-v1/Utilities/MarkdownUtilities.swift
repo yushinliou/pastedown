@@ -17,6 +17,7 @@ struct MarkdownUtilities {
         // debugPrintText(text, context: "convertTextWithAttributes")
         
         var result = text
+        
         // 1. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
 

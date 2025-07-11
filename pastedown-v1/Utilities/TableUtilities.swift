@@ -51,8 +51,6 @@ struct TableDetectionResult {
 class RTFTableStructureParser {
     
     func extractTableStructures(from rtfString: String) -> [TableStructure] {
-        print("[extractTableStructures] Analyzing RTF for table structures")
-        print("[rtfString sample]: \(String(rtfString.prefix(200)))...")
         
         var structures: [TableStructure] = []
         
@@ -68,14 +66,13 @@ class RTFTableStructureParser {
                 let tableBlock = String(rtfString[range])
                 if let structure = parseAppleRTFTableStructure(from: tableBlock) {
                     structures.append(structure)
-                    print("✅ Found Apple RTF table: \(structure.rows)×\(structure.columns)")
                 }
             }
         }
         
         // Method 2: Fallback - look for simpler table patterns
         if structures.isEmpty {
-            print("🔄 Trying fallback patterns...")
+
             let simpleTablePattern = #"\\trowd[\s\S]*?\\row"#
             if let simpleRegex = try? NSRegularExpression(pattern: simpleTablePattern) {
                 let matches = simpleRegex.matches(in: rtfString, range: NSRange(rtfString.startIndex..., in: rtfString))
@@ -90,7 +87,6 @@ class RTFTableStructureParser {
     
     // MARK: - Apple RTF Table Structure Parser
     private func parseAppleRTFTableStructure(from tableBlock: String) -> TableStructure? {
-        print("🔍 [parseAppleRTFTableStructure] Parsing Apple RTF table structure")
         
         // Extract column information from \cellx definitions
         let columnPattern = #"\\cellx(\d+)"#
@@ -108,7 +104,6 @@ class RTFTableStructureParser {
         }
         
         let columns = cellxValues.count
-        print("📊 Detected \(columns) columns from cellx values: \(cellxValues.sorted())")
         
         // Count rows by looking for \row markers
         let rowPattern = #"\\(lastrow\\)?row"#
@@ -116,11 +111,9 @@ class RTFTableStructureParser {
         
         let rowMatches = rowRegex.matches(in: tableBlock, range: NSRange(tableBlock.startIndex..., in: tableBlock))
         let rows = rowMatches.count
-        print("📊 Detected \(rows) rows from \\row markers")
         
         // Validate we have a meaningful table
         guard rows > 0 && columns > 0 else {
-            print("❌ Invalid table structure: \(rows) rows, \(columns) columns")
             return nil
         }
         
@@ -132,7 +125,6 @@ class RTFTableStructureParser {
             }
         }
         
-        print("✅ Created table structure: \(rows)×\(columns) with \(cellPositions.count) cells")
         
         return TableStructure(
             rows: rows,
@@ -171,7 +163,6 @@ class RTFTableStructureParser {
                 if !currentRows.isEmpty,
                    let structure = createStructureFromRows(currentRows) {
                     structures.append(structure)
-                    print("✅ Found grouped table: \(structure.rows)×\(structure.columns)")
                 }
                 currentRows = [rowBlock]
             }
@@ -220,38 +211,39 @@ class RTFTableStructureParser {
 class AttributedStringTableContentExtractor {
     
     func extractTableContent(from attributedString: NSAttributedString, expectedCellCount: Int) -> [String] {
-        print("📝 [extractTableContent] Extracting content for \(expectedCellCount) cells")
-        
         var content: [String] = []
+        // print paragraph style of the attributed string
+        let tableOnly = extractTableOnly(from: attributedString)
+        print("[tableOnly] \(tableOnly)")
         
         // Method 1: Direct string extraction with smart cleaning
-        content = extractCleanTextContent(from: attributedString, expectedCells: expectedCellCount)
-        print("   Method 1 (clean text): \(content.count) cells")
+        content = extractCleanTextContent(from: tableOnly, expectedCells: expectedCellCount)
+        print("[extractCleanTextContent method 1]")
         
         // Method 2: Look for tab-separated content if Method 1 didn't work well
         if content.count < expectedCellCount || content.allSatisfy({ $0.isEmpty }) {
-            let tabContent = extractTabSeparatedContent(from: attributedString)
+            print("[extractTabSeparatedContent method 2]")
+            let tabContent = extractTabSeparatedContent(from: tableOnly)
             if tabContent.count > content.count {
                 content = tabContent
-                print("   Method 2 (tab-separated): \(content.count) cells")
             }
         }
         
         // Method 3: Look for table-structured content using attachment boundaries
         if content.count < expectedCellCount {
-            let attachmentContent = extractContentAroundAttachments(from: attributedString)
+            print("[extractContentAroundAttachments method 3]")
+            let attachmentContent = extractContentAroundAttachments(from: tableOnly)
             if attachmentContent.count > content.count {
                 content = attachmentContent
-                print("   Method 3 (attachment-based): \(content.count) cells")
             }
         }
         
         // Method 4: Split by lines and try to extract cells
         if content.count < expectedCellCount {
-            let lineBasedContent = extractLineBasedContent(from: attributedString, expectedCells: expectedCellCount)
+            print("[extractLineBasedContent method 4]")
+            let lineBasedContent = extractLineBasedContent(from: tableOnly, expectedCells: expectedCellCount)
             if lineBasedContent.count > content.count {
                 content = lineBasedContent
-                print("   Method 4 (line-based): \(content.count) cells")
             }
         }
         
@@ -260,13 +252,26 @@ class AttributedStringTableContentExtractor {
             content.append("")
         }
         
-        print("✅ Final extracted content (\(content.count) cells): \(content)")
         return content
     }
+
+    func extractTableOnly(from attributedString: NSAttributedString) -> NSAttributedString {
+        print("[extractTableOnly] \(attributedString)")
+        let result = NSMutableAttributedString()
+    attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length)) { attrs, range, _ in
+        guard let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle else { return }
+        if paragraphStyle.description.contains("NSTextTableBlock"){
+            let substring = attributedString.attributedSubstring(from: range)
+            result.append(substring)
+        }
+    }
+        return result
+    }
+
+
     
     // NEW: Method for extracting content for multiple tables with better separation
     func extractMultiTableContent(from attributedString: NSAttributedString, tableStructures: [TableStructure]) -> [[String]] {
-        print("📝 [extractMultiTableContent] Extracting content for \(tableStructures.count) tables")
         
         let string = attributedString.string
         var allTableContent: [[String]] = []
@@ -314,7 +319,6 @@ class AttributedStringTableContentExtractor {
             }
         }
         
-        print("📊 Identified \(tablesContent.count) content groups from text analysis")
         
         // Match content groups to table structures
         for (index, structure) in tableStructures.enumerated() {
@@ -325,11 +329,9 @@ class AttributedStringTableContentExtractor {
                 // Pad or trim to match expected cell count
                 let adjustedContent = adjustContentToStructure(content, expectedCells: expectedCells)
                 allTableContent.append(adjustedContent)
-                print("   Table \(index + 1): matched \(content.count) -> \(adjustedContent.count) cells")
             } else {
                 // Fallback: create empty content
                 allTableContent.append(Array(repeating: "", count: expectedCells))
-                print("   Table \(index + 1): fallback empty content (\(expectedCells) cells)")
             }
         }
         
@@ -385,7 +387,6 @@ class AttributedStringTableContentExtractor {
     
     private func extractCleanTextContent(from attributedString: NSAttributedString, expectedCells: Int) -> [String] {
         let string = attributedString.string
-        print("   Raw attributed string: '\(string)'")
         
         // For simple cases, just split the clean text intelligently
         var content: [String] = []
@@ -402,7 +403,6 @@ class AttributedStringTableContentExtractor {
                 
                 if parts.count >= expectedCells || (parts.count > 1 && parts.count >= content.count) {
                     content = parts
-                    print("   Split by '\(separator)': \(content)")
                     break
                 }
             }
@@ -512,7 +512,6 @@ class AttributedStringTableContentExtractor {
 class RTFTableParser {
     
     func parseTableFromRTF(_ rtfData: Data) -> [TableInfo] {
-        print("[parseTableFromRTF]")
         guard let rtfString = String(data: rtfData, encoding: .utf8) else {
             return []
         }
@@ -544,7 +543,6 @@ class RTFTableParser {
     private func extractTablesFromRTF(_ rtfString: String) -> [TableInfo] {
         // NOTE: This is a legacy fallback method. 
         // The new approach uses RTFTableStructureParser for much better results.
-        print("⚠️ Using legacy RTF table extraction - consider using the new separated approach")
         
         var tables: [TableInfo] = []
         let lines = rtfString.components(separatedBy: .newlines)
@@ -829,17 +827,14 @@ struct TableUtilities {
     
     // MARK: - New Placeholder-Based Table Detection with Separated Structure and Content
     static func detectTablesWithPlaceholders(in attributedString: NSAttributedString, rawRTF: String?) -> TableDetectionResult {
-        print("🔍 [detectTablesWithPlaceholders] Starting improved table detection")
         var detectedTables: [TableInfo] = []
         let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
         
         if let rawRTF = rawRTF {
             // NEW APPROACH: Extract structure from RTF, content from NSAttributedString
-            print("📋 Using separated structure + content approach")
             detectedTables = detectTablesWithSeparatedApproach(rawRTF: rawRTF, attributedString: attributedString)
         } else {
             // Fallback to existing detection methods
-            print("🔄 Fallback to existing detection methods")
             detectedTables = parser.parseTableFromAttributedString(attributedString)
                 .enumerated()
                 .map { index, table in
@@ -851,12 +846,6 @@ struct TableUtilities {
                     )
                 }
         }
-        
-        print("✅ Found \(detectedTables.count) tables total")
-        for (index, table) in detectedTables.enumerated() {
-            print("   Table \(index + 1): \(table.rows)×\(table.columns) with \(table.content.count) content pieces")
-        }
-        
         // Insert placeholders into the attributed string
         insertPlaceholders(for: detectedTables, in: mutableAttributedString)
         
@@ -867,12 +856,10 @@ struct TableUtilities {
     private static func detectTablesWithSeparatedApproach(rawRTF: String, attributedString: NSAttributedString) -> [TableInfo] {
         // Step 1: Extract table structures from raw RTF
         let structures = structureParser.extractTableStructures(from: rawRTF)
-        print("📐 Extracted \(structures.count) table structures from RTF")
         
         // Step 2: Extract ALL content from NSAttributedString once
         let totalExpectedCells = structures.reduce(0) { $0 + $1.cellPositions.count }
         let allContent = contentExtractor.extractTableContent(from: attributedString, expectedCellCount: totalExpectedCells)
-        print("📝 Extracted \(allContent.count) total content pieces for \(structures.count) tables")
         
         // Step 3: Distribute content to tables based on their structure
         var tables: [TableInfo] = []
@@ -898,8 +885,7 @@ struct TableUtilities {
                 estimatedPosition: estimatedPosition
             )
             
-            tables.append(tableInfo)
-            print("🔗 Table \(index + 1): \(structure.rows)×\(structure.columns) with content[\(contentIndex)..<\(endIndex)]: \(tableContent)")
+            tables.append(tableInfo)    
             
             // Move to next table's content
             contentIndex = endIndex
@@ -914,7 +900,6 @@ struct TableUtilities {
             return ""
         }
         
-        print("📝 Converting table to markdown: \(table.rows)×\(table.columns)")
         
         // Create a 2D array to organize the cells using the combined data
         var grid: [[String]] = Array(repeating: Array(repeating: "", count: table.columns), count: table.rows)
@@ -923,7 +908,6 @@ struct TableUtilities {
         for cell in table.cells {
             if cell.row < table.rows && cell.column < table.columns {
                 grid[cell.row][cell.column] = cell.content.isEmpty ? " " : cell.content
-                print("   Cell[\(cell.row),\(cell.column)]: '\(cell.content)'")
             }
         }
         
@@ -941,8 +925,6 @@ struct TableUtilities {
                 markdown += "| " + grid[rowIndex].joined(separator: " | ") + " |\n"
             }
         }
-        
-        print("✅ Generated markdown table:\n\(markdown)")
         return markdown
     }
 
