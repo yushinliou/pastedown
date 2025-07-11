@@ -20,16 +20,13 @@ struct MarkdownUtilities {
         // 1. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
 
-        // 2. Handle tables (structural element)
-        result = TableUtilities.handleTables(result, attributes: attributes)
-
-        // 3. Handle list items (this processes the structure)
+        // 2. Handle list items (this processes the structure)
         result = handleListItems(result, attributes: attributes)
         
-        // 4. Handle text formatting (bold, italic, underline, strikethrough)
+        // 3. Handle text formatting (bold, italic, underline, strikethrough)
         result = applyTextFormatting(result, attributes: attributes)
 
-        // 5. Handle headings - add heading markers while preserving formatting
+        // 4. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
         if headingResult != result {
             return headingResult // Headings with their formatting preserved
@@ -49,36 +46,7 @@ struct MarkdownUtilities {
         return "[\(linkText)](\(url.absoluteString))"
     }
     
-    // Helper function to extract content from formatting markers
-    private static func extractContentFromFormatting(_ text: String) -> String {
-        var content = text
-        
-        // Remove markdown formatting to get clean text for link display
-        content = content.replacingOccurrences(of: "**", with: "")
-        content = content.replacingOccurrences(of: "*", with: "")
-        content = content.replacingOccurrences(of: "<u>", with: "")
-        content = content.replacingOccurrences(of: "</u>", with: "")
-        content = content.replacingOccurrences(of: "~~", with: "")
-        
-        // Remove list formatting markers and indentation
-        // Pattern to match: any amount of spaces, followed by list marker, followed by space
-        let listPatterns = [
-            #"^\s*-\s*\[[x ]\]\s*"#, // "  - [ ] " or "  - [x] "
-            #"^\s*\*\s+"#,      // "  * "
-            #"^\s*-\s+"#,       // "  - "
-            #"^\s*\+\s+"#,      // "  + "
-            #"^\s*\d+\.\s+"#,   // "  1. "
-            #"^\s*[a-zA-Z]\.\s+"#  // "  a. " or "  A. "
-        ]
-        
-        for pattern in listPatterns {
-            if let regex = try? NSRegularExpression(pattern: pattern) {
-                content = regex.stringByReplacingMatches(in: content, options: [], range: NSRange(content.startIndex..<content.endIndex, in: content), withTemplate: "")
-            }
-        }
-        
-        return content.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
+
     
     // MARK: - List Handling
     static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
