@@ -23,22 +23,27 @@ class ClipboardService: ObservableObject {
         
         var markdown = ""
         
-        // Try to get rich text data from pasteboard
+        // Try to get rich text data from pasteboard and extract raw RTF
         var attributedString: NSAttributedString?
+        var rawRTFString: String?
         
         // Try RTFD first (Rich Text Format with attachments)
         if let rtfdData = pasteboard.data(forPasteboardType: "com.apple.flat-rtfd") {
             attributedString = try? NSAttributedString(data: rtfdData, options: [.documentType: NSAttributedString.DocumentType.rtfd], documentAttributes: nil)
+            // Extract RTF string from RTFD
+            rawRTFString = extractRTFFromRTFD(rtfdData)
         }
         // Try RTF next
         else if let rtfData = pasteboard.data(forPasteboardType: "public.rtf") {
             attributedString = try? NSAttributedString(data: rtfData, options: [.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
+            // Extract RTF string directly
+            rawRTFString = String(data: rtfData, encoding: .ascii) ?? String(data: rtfData, encoding: .utf8)
         }
         // Try HTML
         else if let htmlData = pasteboard.data(forPasteboardType: "public.html") {
             attributedString = try? NSAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
         }
-        
+
         if let attributedString = attributedString {
             // Add front matter if configured
             if !settings.frontMatterFields.isEmpty {
@@ -46,8 +51,16 @@ class ClipboardService: ObservableObject {
                 markdown = frontMatter + "\n"
             }
             
-            // Process attributed string with inline images
-            markdown += await richTextProcessor.processAttributedStringWithImages(attributedString)
+            // Process attributed string with inline images using new RTF-based table detection
+            markdown += await richTextProcessor.processAttributedStringWithImages(attributedString, rawRTF: rawRTFString)
+            
+            // Handle standalone images if any
+            if let image = pasteboard.image {
+                print("Handle standalone images if any")
+                let altText = await imageAnalyzer.generateAltText(for: image)
+                let imageMarkdown = MarkdownUtilities.generateImageMarkdown(altText: altText, settings: settings)
+                markdown += "\n\n" + imageMarkdown
+            }
         } else if let plainText = pasteboard.string {
             // Add front matter if configured
             if !settings.frontMatterFields.isEmpty {
@@ -56,19 +69,39 @@ class ClipboardService: ObservableObject {
             } else {
                 markdown = plainText
             }
-            
-            // Handle standalone images if any
-            if let image = pasteboard.image {
-                let altText = await imageAnalyzer.generateAltText(for: image)
-                let imageMarkdown = MarkdownUtilities.generateImageMarkdown(altText: altText, settings: settings)
-                markdown += "\n\n" + imageMarkdown
-            }
         }
         
         return .success(markdown)
     }
+    
+    // MARK: - RTF Extraction Helper
+    private func extractRTFFromRTFD(_ rtfdData: Data) -> String? {
+        // try to extract RTF from RTFD 
+        guard let rtfdFileWrapper = try? FileWrapper(serializedRepresentation: rtfdData),
+            let fileWrappers = rtfdFileWrapper.fileWrappers else {
+            return nil
+        }
+        // try to find TXT.rtf
+        var rtfFileWrapper = fileWrappers["TXT.rtf"]
+        // if not found, try to find any .rtf file
+        if rtfFileWrapper == nil {
+            rtfFileWrapper = fileWrappers.first { key, _ in
+                key.lowercased().hasSuffix(".rtf")
+            }?.value
+        }
+        // if not found, return nil
+        guard let rtfData = rtfFileWrapper?.regularFileContents else {
+            return nil
+        }
+        // try to decode to original RTF string
+        let rtfString = String(data: rtfData, encoding: .ascii)
+            ?? String(data: rtfData, encoding: .utf8)
+        if let rtfString = rtfString {
+            // print("✅ Found RTF:\n\(rtfString)")
+        }
+        return rtfString
+    }
 }
-
 enum ClipboardError: Error, LocalizedError {
     case emptyClipboard
     case processingError(String)
@@ -81,4 +114,4 @@ enum ClipboardError: Error, LocalizedError {
             return "Processing error: \(message)"
         }
     }
-} 
+}

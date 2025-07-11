@@ -17,29 +17,23 @@ struct MarkdownUtilities {
         // debugPrintText(text, context: "convertTextWithAttributes")
         
         var result = text
-        print("================ Start Processing Text [\(text)] ==================")
         // 1. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
-        print("[Add URL RESULT]: \(result)")
 
         // 2. Handle tables (structural element)
-        result = handleTables(result, attributes: attributes)
-        print("[Handle Tables RESULT]: \(result)")
+        result = TableUtilities.handleTables(result, attributes: attributes)
 
         // 3. Handle list items (this processes the structure)
         result = handleListItems(result, attributes: attributes)
-        print("[Handle List Items RESULT]: \(result)")
         
         // 4. Handle text formatting (bold, italic, underline, strikethrough)
         result = applyTextFormatting(result, attributes: attributes)
-        print("[Apply Text Formatting RESULT]: \(result)")
 
         // 5. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
         if headingResult != result {
             return headingResult // Headings with their formatting preserved
         }
-        print("[Heading RESULT]: \(result)")
         return result
     }
     
@@ -53,70 +47,6 @@ struct MarkdownUtilities {
         // The formatting will be applied later and will wrap around the entire link
         let linkText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return "[\(linkText)](\(url.absoluteString))"
-    }
-    
-    // MARK: - Table Handling
-    static func handleTables(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
-        // Check if this text is part of a table structure
-        // Tables in rich text are often represented with tab characters as column separators
-        
-        // Check for table-related attributes
-        if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
-            // Check for tab stops which often indicate table columns
-            if !paragraphStyle.tabStops.isEmpty {
-                return handleTabularData(text, paragraphStyle: paragraphStyle)
-            }
-        }
-        
-        // Check for simple tab-separated values
-        if text.contains("\t") && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return handleTabSeparatedText(text)
-        }
-        
-        return text
-    }
-    
-    // Helper function to handle text with tab stops (structured table data)
-    private static func handleTabularData(_ text: String, paragraphStyle: NSParagraphStyle) -> String {
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        // Split by tabs to create table cells
-        let cells = trimmedText.components(separatedBy: "\t")
-        
-        // Filter out empty cells and clean up
-        let cleanCells = cells.compactMap { cell in
-            let cleaned = cell.trimmingCharacters(in: .whitespacesAndNewlines)
-            return cleaned.isEmpty ? nil : cleaned
-        }
-        
-        // Only convert to table format if we have multiple cells
-        if cleanCells.count > 1 {
-            // Create markdown table row
-            return "| " + cleanCells.joined(separator: " | ") + " |"
-        }
-        
-        return text
-    }
-    
-    // Helper function to handle simple tab-separated text
-    private static func handleTabSeparatedText(_ text: String) -> String {
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        // Split by tabs
-        let parts = trimmedText.components(separatedBy: "\t")
-        
-        // Filter out empty parts
-        let cleanParts = parts.compactMap { part in
-            let cleaned = part.trimmingCharacters(in: .whitespacesAndNewlines)
-            return cleaned.isEmpty ? nil : cleaned
-        }
-        
-        // Only convert if we have multiple meaningful parts
-        if cleanParts.count > 1 {
-            return "| " + cleanParts.joined(separator: " | ") + " |"
-        }
-        
-        return text
     }
     
     // Helper function to extract content from formatting markers
@@ -149,7 +79,7 @@ struct MarkdownUtilities {
         
         return content.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-
+    
     // MARK: - List Handling
     static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         // special case happend one single number list and dashed list
@@ -185,7 +115,6 @@ struct MarkdownUtilities {
 
                 if let textList = paragraphStyle.textLists.last,
                 let format = textList.value(forKey: "markerFormat") as? String {
-                    print("[FORMAT]: \(format)")
                     switch format {
                     case "{disc}": prefix = "*"
                     case "{hyphen}": prefix = "-"
@@ -211,7 +140,6 @@ struct MarkdownUtilities {
                     result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
                     indentLevel = 1
                     foundSpecialUnorderedFormat = true
-                    print("[FOUND SPECIAL UNORDERED FORMAT]: \(symbol)")
                 } else {
                     // 📌 number pattern: \t42.\tTEXT
                     let orderedListPattern = #"^\t(\d+)\.\t(.*)$"#
@@ -224,7 +152,6 @@ struct MarkdownUtilities {
                         result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
                         indentLevel = 1
                         foundSpecialNumberFormat = true
-                        print("[FOUND SPECIAL NUMBER FORMAT]: \(prefix!)")
                     }
                 }
             }
