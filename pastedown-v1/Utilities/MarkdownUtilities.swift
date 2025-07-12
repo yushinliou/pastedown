@@ -20,13 +20,13 @@ struct MarkdownUtilities {
         
         // 1. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
-
-        // 2. Handle list items (this processes the structure)
-        result = handleListItems(result, attributes: attributes)
         
-        // 3. Handle text formatting (bold, italic, underline, strikethrough)
+        // 2. Handle text formatting (bold, italic, underline, strikethrough)
         result = applyTextFormatting(result, attributes: attributes)
 
+        // 3. Handle list items (this processes the structure)
+        result = handleListItems(result, attributes: attributes)
+        
         // 4. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
         if headingResult != result {

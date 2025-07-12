@@ -90,6 +90,7 @@ class RichTextProcessor: ObservableObject {
             if line.isEmpty {
                 if lineIndex < lines.count - 1 {
                     markdown += "\n"
+                    print("[handle empty line]")
                     currentLocation += 1
                 }
                 continue
@@ -110,6 +111,11 @@ class RichTextProcessor: ObservableObject {
                     } else {
                         lineMarkdown += "<!-- ![attachment] -->"
                     }
+                } else if let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle,
+                          paragraphStyle.description.contains("NSTextTableBlock") {
+                    // Handle table block
+                    lineMarkdown += "" // skip table block
+                    print("[handle table block lineMarkdown]\(lineMarkdown)")
                 }
                 else {
                     // Handle regular text with formatting
@@ -140,6 +146,7 @@ class RichTextProcessor: ObservableObject {
             
             if lineIndex < lines.count - 1 {
                 markdown += "\n"
+                print("[handle new line]")
             }
             
             currentLocation += line.count + 1

@@ -213,39 +213,43 @@ class AttributedStringTableContentExtractor {
     func extractTableContent(from attributedString: NSAttributedString, expectedCellCount: Int) -> [String] {
         var content: [String] = []
         // print paragraph style of the attributed string
-        let tableOnly = extractTableOnly(from: attributedString)
-        print("[tableOnly] \(tableOnly)")
-        
+        print("[attributedString number of elements] \(attributedString)")
+        print("[attributedString string] \(attributedString.string)")
+        let tableOnly = extractTableOnly(from: attributedString) // only keep the table blocks
+
+        print("[tableOnly type is] \(type(of: tableOnly))")
         // Method 1: Direct string extraction with smart cleaning
-        content = extractCleanTextContent(from: tableOnly, expectedCells: expectedCellCount)
+        content = tableOnly //.string.components(separatedBy: .newlines) // extractCleanTextContent(from: tableOnly, expectedCells: expectedCellCount)
+        print("[content] \(content)")
+        print("[content type is] \(type(of: content))")
         print("[extractCleanTextContent method 1]")
         
-        // Method 2: Look for tab-separated content if Method 1 didn't work well
-        if content.count < expectedCellCount || content.allSatisfy({ $0.isEmpty }) {
-            print("[extractTabSeparatedContent method 2]")
-            let tabContent = extractTabSeparatedContent(from: tableOnly)
-            if tabContent.count > content.count {
-                content = tabContent
-            }
-        }
+        // // Method 2: Look for tab-separated content if Method 1 didn't work well
+        // if content.count < expectedCellCount || content.allSatisfy({ $0.isEmpty }) {
+        //     print("[extractTabSeparatedContent method 2]")
+        //     let tabContent = extractTabSeparatedContent(from: tableOnly)
+        //     if tabContent.count > content.count {
+        //         content = tabContent
+        //     }
+        // }
         
-        // Method 3: Look for table-structured content using attachment boundaries
-        if content.count < expectedCellCount {
-            print("[extractContentAroundAttachments method 3]")
-            let attachmentContent = extractContentAroundAttachments(from: tableOnly)
-            if attachmentContent.count > content.count {
-                content = attachmentContent
-            }
-        }
+        // // Method 3: Look for table-structured content using attachment boundaries
+        // if content.count < expectedCellCount {
+        //     print("[extractContentAroundAttachments method 3]")
+        //     let attachmentContent = extractContentAroundAttachments(from: tableOnly)
+        //     if attachmentContent.count > content.count {
+        //         content = attachmentContent
+        //     }
+        // }
         
-        // Method 4: Split by lines and try to extract cells
-        if content.count < expectedCellCount {
-            print("[extractLineBasedContent method 4]")
-            let lineBasedContent = extractLineBasedContent(from: tableOnly, expectedCells: expectedCellCount)
-            if lineBasedContent.count > content.count {
-                content = lineBasedContent
-            }
-        }
+        // // Method 4: Split by lines and try to extract cells
+        // if content.count < expectedCellCount {
+        //     print("[extractLineBasedContent method 4]")
+        //     let lineBasedContent = extractLineBasedContent(from: tableOnly, expectedCells: expectedCellCount)
+        //     if lineBasedContent.count > content.count {
+        //         content = lineBasedContent
+        //     }
+        // }
         
         // Ensure we have enough content slots (pad with empty strings if needed)
         while content.count < expectedCellCount {
@@ -255,19 +259,82 @@ class AttributedStringTableContentExtractor {
         return content
     }
 
-    func extractTableOnly(from attributedString: NSAttributedString) -> NSAttributedString {
-        print("[extractTableOnly] \(attributedString)")
-        let result = NSMutableAttributedString()
+    // func extractTableOnly(from attributedString: NSAttributedString) -> NSAttributedString {
+    //     print("[extractTableOnly] \(attributedString)")
+    //     let result = NSMutableAttributedString()
+    //     attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length)) { attrs, range, _ in
+    //         let plainText = attributedString.attributedSubstring(from: range).string
+    //         print("[plainText] \(plainText)")
+    //         guard let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle else { return }
+    //         print("[paragraphStyle] \(paragraphStyle.description)")
+    //         if paragraphStyle.description.contains("NSTextTableBlock"){
+    //             let substring = attributedString.attributedSubstring(from: range)
+    //             result.append(substring)
+    //             print("[append table block]")
+    //         }
+    //         else {
+    //             print("[append non-table block]")
+    //         }
+    //     }
+    //     return result
+    // }
+
+func extractTableOnly(from attributedString: NSAttributedString) -> [String] {
+    var result: [String] = []
+    
+    var currentBlockID: String? = nil
+    var buffer = NSMutableAttributedString()
+    
     attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length)) { attrs, range, _ in
-        guard let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle else { return }
-        if paragraphStyle.description.contains("NSTextTableBlock"){
+        guard let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle else {
+            if buffer.length > 0 {
+                result.append(convertCellText(buffer.string))
+                buffer = NSMutableAttributedString()
+                currentBlockID = nil
+            }
+            return
+        }
+
+        let description = paragraphStyle.description
+        let blockID = extractNSTextTableBlockID(from: description)
+        
+        if let blockID = blockID {
+            if currentBlockID != nil && currentBlockID != blockID {
+                result.append(convertCellText(buffer.string))
+                buffer = NSMutableAttributedString()
+            }
+            currentBlockID = blockID
             let substring = attributedString.attributedSubstring(from: range)
-            result.append(substring)
+            buffer.append(substring)
+        } else {
+            if buffer.length > 0 {
+                result.append(convertCellText(buffer.string))
+                buffer = NSMutableAttributedString()
+                currentBlockID = nil
+            }
         }
     }
-        return result
+    
+    if buffer.length > 0 {
+        result.append(convertCellText(buffer.string))
     }
+    
+    return result
+}
 
+private func extractNSTextTableBlockID(from description: String) -> String? {
+    // 抓取 like "<NSTextTableBlock: 0x60000265efa0>"
+    let pattern = "<NSTextTableBlock:\\s*([^>]+)>"
+    if let match = description.range(of: pattern, options: .regularExpression) {
+        return String(description[match])
+    }
+    return nil
+}
+private func convertCellText(_ raw: String) -> String {
+    return raw
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+        .replacingOccurrences(of: "\n", with: "<br>")
+}
 
     
     // NEW: Method for extracting content for multiple tables with better separation
@@ -385,36 +452,36 @@ class AttributedStringTableContentExtractor {
         }
     }
     
-    private func extractCleanTextContent(from attributedString: NSAttributedString, expectedCells: Int) -> [String] {
-        let string = attributedString.string
+    // private func extractCleanTextContent(from attributedString: NSAttributedString, expectedCells: Int) -> [String] {
+    //     let string = attributedString.string
         
-        // For simple cases, just split the clean text intelligently
-        var content: [String] = []
-        let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
+    //     // For simple cases, just split the clean text intelligently
+    //     var content: [String] = []
+    //     let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        if !trimmedString.isEmpty {
-            // Try splitting by common separators
-            let separators = ["\t", "\n", "  "] // Tab, newline, double space
+    //     if !trimmedString.isEmpty {
+    //         // Try splitting by common separators
+    //         let separators = ["\t", "\n", "  "] // Tab, newline, double space
             
-            for separator in separators {
-                let parts = trimmedString.components(separatedBy: separator)
-                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                    .filter { !$0.isEmpty }
+    //         for separator in separators {
+    //             let parts = trimmedString.components(separatedBy: separator)
+    //                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+    //                 .filter { !$0.isEmpty }
                 
-                if parts.count >= expectedCells || (parts.count > 1 && parts.count >= content.count) {
-                    content = parts
-                    break
-                }
-            }
+    //             if parts.count >= expectedCells || (parts.count > 1 && parts.count >= content.count) {
+    //                 content = parts
+    //                 break
+    //             }
+    //         }
             
-            // If no good split found, treat as single content piece
-            if content.isEmpty {
-                content = [trimmedString]
-            }
-        }
+    //         // If no good split found, treat as single content piece
+    //         if content.isEmpty {
+    //             content = [trimmedString]
+    //         }
+    //     }
         
-        return content
-    }
+    //     return content
+    // }
     
     private func extractTabSeparatedContent(from attributedString: NSAttributedString) -> [String] {
         let string = attributedString.string
