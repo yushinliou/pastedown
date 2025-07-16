@@ -212,45 +212,9 @@ class AttributedStringTableContentExtractor {
     
     func extractTableContent(from attributedString: NSAttributedString, expectedCellCount: Int) -> [String] {
         var content: [String] = []
-        // print paragraph style of the attributed string
-        print("[attributedString number of elements] \(attributedString)")
-        print("[attributedString string] \(attributedString.string)")
         let tableOnly = extractTableOnly(from: attributedString) // only keep the table blocks
+        content = tableOnly
 
-        print("[tableOnly type is] \(type(of: tableOnly))")
-        // Method 1: Direct string extraction with smart cleaning
-        content = tableOnly //.string.components(separatedBy: .newlines) // extractCleanTextContent(from: tableOnly, expectedCells: expectedCellCount)
-        print("[content] \(content)")
-        print("[content type is] \(type(of: content))")
-        print("[extractCleanTextContent method 1]")
-        
-        // // Method 2: Look for tab-separated content if Method 1 didn't work well
-        // if content.count < expectedCellCount || content.allSatisfy({ $0.isEmpty }) {
-        //     print("[extractTabSeparatedContent method 2]")
-        //     let tabContent = extractTabSeparatedContent(from: tableOnly)
-        //     if tabContent.count > content.count {
-        //         content = tabContent
-        //     }
-        // }
-        
-        // // Method 3: Look for table-structured content using attachment boundaries
-        // if content.count < expectedCellCount {
-        //     print("[extractContentAroundAttachments method 3]")
-        //     let attachmentContent = extractContentAroundAttachments(from: tableOnly)
-        //     if attachmentContent.count > content.count {
-        //         content = attachmentContent
-        //     }
-        // }
-        
-        // // Method 4: Split by lines and try to extract cells
-        // if content.count < expectedCellCount {
-        //     print("[extractLineBasedContent method 4]")
-        //     let lineBasedContent = extractLineBasedContent(from: tableOnly, expectedCells: expectedCellCount)
-        //     if lineBasedContent.count > content.count {
-        //         content = lineBasedContent
-        //     }
-        // }
-        
         // Ensure we have enough content slots (pad with empty strings if needed)
         while content.count < expectedCellCount {
             content.append("")
@@ -259,82 +223,82 @@ class AttributedStringTableContentExtractor {
         return content
     }
 
-    // func extractTableOnly(from attributedString: NSAttributedString) -> NSAttributedString {
-    //     print("[extractTableOnly] \(attributedString)")
-    //     let result = NSMutableAttributedString()
-    //     attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length)) { attrs, range, _ in
-    //         let plainText = attributedString.attributedSubstring(from: range).string
-    //         print("[plainText] \(plainText)")
-    //         guard let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle else { return }
-    //         print("[paragraphStyle] \(paragraphStyle.description)")
-    //         if paragraphStyle.description.contains("NSTextTableBlock"){
-    //             let substring = attributedString.attributedSubstring(from: range)
-    //             result.append(substring)
-    //             print("[append table block]")
-    //         }
-    //         else {
-    //             print("[append non-table block]")
-    //         }
-    //     }
-    //     return result
-    // }
-
-func extractTableOnly(from attributedString: NSAttributedString) -> [String] {
-    var result: [String] = []
-    
-    var currentBlockID: String? = nil
-    var buffer = NSMutableAttributedString()
-    
-    attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length)) { attrs, range, _ in
-        guard let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle else {
-            if buffer.length > 0 {
-                result.append(convertCellText(buffer.string))
-                buffer = NSMutableAttributedString()
-                currentBlockID = nil
-            }
-            return
-        }
-
-        let description = paragraphStyle.description
-        let blockID = extractNSTextTableBlockID(from: description)
+    func extractTableOnly(from attributedString: NSAttributedString) -> [String] {
+        var result: [String] = []
         
-        if let blockID = blockID {
-            if currentBlockID != nil && currentBlockID != blockID {
-                result.append(convertCellText(buffer.string))
-                buffer = NSMutableAttributedString()
+        var currentBlockID: String? = nil
+        var buffer = NSMutableAttributedString()
+        
+        attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length)) { attrs, range, _ in
+            guard let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle else {
+                if buffer.length > 0 {
+                    result.append(convertCellTextWithFormatting(buffer))
+                    buffer = NSMutableAttributedString()
+                    currentBlockID = nil
+                }
+                return
             }
-            currentBlockID = blockID
-            let substring = attributedString.attributedSubstring(from: range)
-            buffer.append(substring)
-        } else {
-            if buffer.length > 0 {
-                result.append(convertCellText(buffer.string))
-                buffer = NSMutableAttributedString()
-                currentBlockID = nil
+
+            let description = paragraphStyle.description
+            let blockID = extractNSTextTableBlockID(from: description)
+            
+            if let blockID = blockID {
+                if currentBlockID != nil && currentBlockID != blockID {
+                    result.append(convertCellTextWithFormatting(buffer))
+                    buffer = NSMutableAttributedString()
+                }
+                currentBlockID = blockID
+                let substring = attributedString.attributedSubstring(from: range)
+                buffer.append(substring)
+            } else {
+                if buffer.length > 0 {
+                    result.append(convertCellTextWithFormatting(buffer))
+                    buffer = NSMutableAttributedString()
+                    currentBlockID = nil
+                }
             }
         }
+        
+        if buffer.length > 0 {
+            result.append(convertCellTextWithFormatting(buffer))
+        }
+        
+        return result
     }
-    
-    if buffer.length > 0 {
-        result.append(convertCellText(buffer.string))
-    }
-    
-    return result
-}
 
-private func extractNSTextTableBlockID(from description: String) -> String? {
-    // 抓取 like "<NSTextTableBlock: 0x60000265efa0>"
-    let pattern = "<NSTextTableBlock:\\s*([^>]+)>"
-    if let match = description.range(of: pattern, options: .regularExpression) {
-        return String(description[match])
+    private func extractNSTextTableBlockID(from description: String) -> String? {
+        // 抓取 like "<NSTextTableBlock: 0x60000265efa0>"
+        let pattern = "<NSTextTableBlock:\\s*([^>]+)>"
+        if let match = description.range(of: pattern, options: .regularExpression) {
+            return String(description[match])
+        }
+        return nil
     }
-    return nil
-}
-private func convertCellText(_ raw: String) -> String {
-    return raw
-        .trimmingCharacters(in: .whitespacesAndNewlines)
-        .replacingOccurrences(of: "\n", with: "<br>")
-}
+    
+    private func convertCellText(_ raw: String) -> String {
+        return raw
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "\n", with: "<br>")
+    }
+
+    private func convertCellTextWithFormatting(_ attributedString: NSAttributedString) -> String {
+        var result = ""
+        
+        attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length), options: []) { attrs, range, _ in
+            let substring = attributedString.attributedSubstring(from: range).string
+            
+            // Apply formatting similar to how it's done in RichTextProcessor
+            var formattedText = substring
+            formattedText = MarkdownUtilities.handleLinks(formattedText, attributes: attrs)
+            formattedText = MarkdownUtilities.applyTextFormatting(formattedText, attributes: attrs)
+            
+            result += formattedText
+        }
+        
+        return result
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "\n", with: "<br>")
+    }
 
     
     // NEW: Method for extracting content for multiple tables with better separation
@@ -452,36 +416,6 @@ private func convertCellText(_ raw: String) -> String {
         }
     }
     
-    // private func extractCleanTextContent(from attributedString: NSAttributedString, expectedCells: Int) -> [String] {
-    //     let string = attributedString.string
-        
-    //     // For simple cases, just split the clean text intelligently
-    //     var content: [String] = []
-    //     let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-    //     if !trimmedString.isEmpty {
-    //         // Try splitting by common separators
-    //         let separators = ["\t", "\n", "  "] // Tab, newline, double space
-            
-    //         for separator in separators {
-    //             let parts = trimmedString.components(separatedBy: separator)
-    //                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-    //                 .filter { !$0.isEmpty }
-                
-    //             if parts.count >= expectedCells || (parts.count > 1 && parts.count >= content.count) {
-    //                 content = parts
-    //                 break
-    //             }
-    //         }
-            
-    //         // If no good split found, treat as single content piece
-    //         if content.isEmpty {
-    //             content = [trimmedString]
-    //         }
-    //     }
-        
-    //     return content
-    // }
     
     private func extractTabSeparatedContent(from attributedString: NSAttributedString) -> [String] {
         let string = attributedString.string
@@ -528,53 +462,8 @@ private func convertCellText(_ raw: String) -> String {
         
         return content.filter { !$0.isEmpty }
     }
-    
-    private func extractLineBasedContent(from attributedString: NSAttributedString, expectedCells: Int) -> [String] {
-        let string = attributedString.string
-        let lines = string.components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-        
-        var content: [String] = []
-        
-        // Try to split content evenly among expected cells
-        if lines.count > 0 {
-            let cellsPerLine = max(1, expectedCells / max(1, lines.count / 2)) // Estimate
-            
-            for line in lines {
-                // Try different splitting approaches
-                var cells: [String] = []
-                
-                // First try tabs
-                let tabCells = line.components(separatedBy: "\t")
-                if tabCells.count > 1 {
-                    cells = tabCells
-                } else {
-                    // Try multiple spaces (2 or more)
-                    let pattern = "\\s{2,}"
-                    if let regex = try? NSRegularExpression(pattern: pattern) {
-                        let spaceCells = regex.stringByReplacingMatches(in: line, range: NSRange(location: 0, length: line.count), withTemplate: "\t")
-                            .components(separatedBy: "\t")
-                        if spaceCells.count > 1 {
-                            cells = spaceCells
-                        } else {
-                            // Single cell
-                            cells = [line]
-                        }
-                    } else {
-                        // Single cell
-                        cells = [line]
-                    }
-                }
-                
-                content.append(contentsOf: cells.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) })
-            }
-        }
-        
-        return content.filter { !$0.isEmpty }
-    }
 }
-
+    
 // MARK: - RTF Table Parser
 class RTFTableParser {
     
@@ -727,7 +616,6 @@ extension RTFTableParser {
         // Instead, we'll detect tables using tab stops and alignment patterns
         var potentialTableLines: [String] = []
         let string = attributedString.string
-        _ = attributedString.length
         
         let lines = string.components(separatedBy: .newlines)
         var currentLocation = 0
@@ -998,10 +886,33 @@ struct TableUtilities {
 
 // MARK: - Helper Functions
 private static func estimatePositionFromTableIndex(_ index: Int, in attributedString: NSAttributedString) -> Int {
-    // Simple heuristic: distribute tables evenly across the document
-    let totalLength = attributedString.length
-    let estimatedPosition = Int(Double(index + 1) / 10.0 * Double(totalLength))
-    return max(0, min(estimatedPosition, totalLength - 1))
+    // Find actual table content in the attributed string to get more accurate position
+    let string = attributedString.string
+    var tableBlockRanges: [NSRange] = []
+    
+    // Look for table blocks in the attributed string
+    attributedString.enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: attributedString.length), options: []) { value, range, _ in
+        if let paragraphStyle = value as? NSParagraphStyle,
+           paragraphStyle.description.contains("NSTextTableBlock") {
+            tableBlockRanges.append(range)
+        }
+    }
+    
+    // Sort ranges by location
+    tableBlockRanges.sort { $0.location < $1.location }
+    
+    // Return the actual position if we have enough table blocks
+    if index < tableBlockRanges.count {
+        return tableBlockRanges[index].location
+    }
+    
+    // Fallback: distribute remaining tables after the last known table
+    let lastKnownPosition = tableBlockRanges.last?.location ?? 0
+    let remainingLength = attributedString.length - lastKnownPosition
+    let tablesAfterKnown = index - tableBlockRanges.count + 1
+    let spacing = tablesAfterKnown > 1 ? remainingLength / tablesAfterKnown : remainingLength
+    
+    return lastKnownPosition + (spacing * (index - tableBlockRanges.count + 1))
 }
 
 // MARK: - Improved RTF Table Detection (Legacy - now simplified)
@@ -1043,8 +954,11 @@ private static func createTableInfoWithPlaceholder(from tableData: [[String]], p
 }
 
 private static func insertPlaceholders(for tables: [TableInfo], in mutableAttributedString: NSMutableAttributedString) {
-    // Sort tables by position (reverse order to maintain indices)
+    // Sort tables by position (reverse order to maintain indices when inserting)
     let sortedTables = tables.sorted { $0.estimatedPosition > $1.estimatedPosition }
+    
+    // Remove all existing table blocks first, then insert placeholders
+    removeTableBlocks(from: mutableAttributedString)
     
     for table in sortedTables {
         // Find a suitable location to insert the placeholder
@@ -1056,22 +970,60 @@ private static func insertPlaceholders(for tables: [TableInfo], in mutableAttrib
     }
 }
 
+private static func removeTableBlocks(from mutableAttributedString: NSMutableAttributedString) {
+    // Remove all NSTextTableBlock content from the attributed string
+    var tableBlockRanges: [NSRange] = []
+    
+    mutableAttributedString.enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: mutableAttributedString.length), options: []) { value, range, _ in
+        if let paragraphStyle = value as? NSParagraphStyle,
+           paragraphStyle.description.contains("NSTextTableBlock") {
+            tableBlockRanges.append(range)
+        }
+    }
+    
+    // Sort ranges by location in reverse order to maintain indices
+    tableBlockRanges.sort { $0.location > $1.location }
+    
+    // Remove table blocks
+    for range in tableBlockRanges {
+        mutableAttributedString.deleteCharacters(in: range)
+    }
+}
+
 private static func findBestInsertionPoint(for table: TableInfo, in attributedString: NSMutableAttributedString) -> Int {
     let content = attributedString.string
     let length = content.count
     
-    // Try to find table content in the attributed string
-    for cell in table.cells.prefix(3) { // Check first few cells
-        if !cell.content.isEmpty,
-           let range = content.range(of: cell.content) {
-            // Find the start of the line containing this cell
-            let lineStart = content.lineRange(for: range).lowerBound
-            return NSRange(lineStart..<lineStart, in: content).location
+    // Use the estimated position which is now more accurate
+    let estimatedPos = min(table.estimatedPosition, length)
+    
+    // Find the nearest line break before the estimated position
+    if estimatedPos > 0 {
+        let lowerBoundIndex = content.index(content.startIndex, offsetBy: max(0, estimatedPos - 50))
+        let upperBoundIndex = content.index(content.startIndex, offsetBy: min(length, estimatedPos + 50))
+        let searchRange = lowerBoundIndex..<upperBoundIndex
+        let searchString = String(content[searchRange])
+        
+        // Look for paragraph breaks (double newlines) near the estimated position
+        let paragraphPattern = "\n\n"
+        if let paragraphRange = searchString.range(of: paragraphPattern) {
+            let distanceToLower = content.distance(from: content.startIndex, to: lowerBoundIndex)
+            let distanceInSearch = searchString.distance(from: searchString.startIndex, to: paragraphRange.upperBound)
+            let absolutePosition = distanceToLower + distanceInSearch
+            return min(absolutePosition, length)
+        }
+        
+        // Look for single newlines
+        if let newlineRange = searchString.range(of: "\n") {
+            let distanceToLower = content.distance(from: content.startIndex, to: lowerBoundIndex)
+            let distanceInSearch = searchString.distance(from: searchString.startIndex, to: newlineRange.upperBound)
+            let absolutePosition = distanceToLower + distanceInSearch
+            return min(absolutePosition, length)
         }
     }
     
     // Fallback to estimated position
-    return min(table.estimatedPosition, length)
+    return estimatedPos
 }
 
 // MARK: - Placeholder Replacement

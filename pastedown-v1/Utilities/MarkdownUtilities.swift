@@ -20,13 +20,14 @@ struct MarkdownUtilities {
         
         // 1. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
-        
+        // print("[result after handleLinks] \(result)")
         // 2. Handle text formatting (bold, italic, underline, strikethrough)
         result = applyTextFormatting(result, attributes: attributes)
-
+        print("[result after applyTextFormatting] \(result)")
         // 3. Handle list items (this processes the structure)
+        print("[Attribute] \(attributes)")
         result = handleListItems(result, attributes: attributes)
-        
+        print("[result after handleListItems] \(result)")
         // 4. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
         if headingResult != result {
@@ -48,6 +49,21 @@ struct MarkdownUtilities {
     }
     
 
+    // MARK: - get prefix number
+    static func getPrefixNumber(_ text: String) -> String? {
+        // Check for a number prefix like "1. ", "2. ", etc.
+        let numberPattern = #"^(\d+)\.[\t\s]"#
+        if let regex = try? NSRegularExpression(pattern: numberPattern, options: []) {
+            let range = NSRange(text.startIndex..<text.endIndex, in: text)
+            if let match = regex.firstMatch(in: text, options: [], range: range) {
+                if let numberRange = Range(match.range(at: 1), in: text) {
+                    return String(text[numberRange])
+                }
+            }
+        }
+        print("No number prefix found in text: \(text)")
+        return "1" // Default to "1. " if no number prefix found
+    }
     
     // MARK: - List Handling
     static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
@@ -100,6 +116,7 @@ struct MarkdownUtilities {
             } else { // special case, happen when there is no extra element after list, we need to handle last line it manually
                 // 📌 unordered list pattern: \t•\t\t•\tTEXT
                 let unorderListPattern = #"^\t([^\t])\t\t([^\t])\t(.*)$"#
+
                 if let regex = try? NSRegularExpression(pattern: unorderListPattern),
                 let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
                 let symbolRange = Range(match.range(at: 2), in: text),
@@ -117,12 +134,13 @@ struct MarkdownUtilities {
                     let numberRange = Range(match.range(at: 1), in: text),
                     let contentRange = Range(match.range(at: 2), in: text) {
                         let number = String(text[numberRange])
-                        prefix = "\(number)."
+                        prefix = "1."
                         result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
                         indentLevel = 1
                         foundSpecialNumberFormat = true
                     }
                 }
+
             }
         }
         if result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !foundSpecialUnorderedFormat{
@@ -130,7 +148,7 @@ struct MarkdownUtilities {
         }
 
         if let prefix = prefix {
-            let indent = String(repeating: "  ", count: indentLevel)
+            let indent = String(repeating: "    ", count: max(indentLevel-1, 0)) // don add indent for first level, add indent(4 spaces) for sub-levels
             result = "\(indent)\(prefix) \(result)"
         }
         return result

@@ -90,7 +90,6 @@ class RichTextProcessor: ObservableObject {
             if line.isEmpty {
                 if lineIndex < lines.count - 1 {
                     markdown += "\n"
-                    print("[handle empty line]")
                     currentLocation += 1
                 }
                 continue
@@ -115,19 +114,13 @@ class RichTextProcessor: ObservableObject {
                           paragraphStyle.description.contains("NSTextTableBlock") {
                     // Handle table block
                     lineMarkdown += "" // skip table block
-                    print("[handle table block lineMarkdown]\(lineMarkdown)")
                 }
                 else {
                     // Handle regular text with formatting
                     let substring = attributedString.attributedSubstring(from: range).string
-                    
                     var formattedText = substring
-                    formattedText = MarkdownUtilities.handleLinks(formattedText, attributes: attrs)
-                    formattedText = MarkdownUtilities.handleListItems(formattedText, attributes: attrs)
-                    formattedText = MarkdownUtilities.applyTextFormatting(formattedText, attributes: attrs)
-                    
+                    formattedText = MarkdownUtilities.convertTextWithAttributes(formattedText, attributes: attrs)
                     lineMarkdown += formattedText
-                    print("[handle regular text lineMarkdown]\(lineMarkdown)")
                 }
             }
             

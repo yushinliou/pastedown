@@ -56,7 +56,7 @@ class ClipboardService: ObservableObject {
             
             // Handle standalone images if any
             if let image = pasteboard.image {
-                print("Handle standalone images if any")
+                // print("Handle standalone images if any")
                 let altText = await imageAnalyzer.generateAltText(for: image)
                 let imageMarkdown = MarkdownUtilities.generateImageMarkdown(altText: altText, settings: settings)
                 markdown += "\n\n" + imageMarkdown
