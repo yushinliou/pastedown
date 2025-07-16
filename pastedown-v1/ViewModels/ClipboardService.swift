@@ -26,6 +26,10 @@ class ClipboardService: ObservableObject {
         // Try to get rich text data from pasteboard and extract raw RTF
         var attributedString: NSAttributedString?
         var rawRTFString: String?
+        var plainTextReference: String?
+        
+        // Always try to get plain text for checkbox state validation
+        plainTextReference = pasteboard.string
         
         // Try RTFD first (Rich Text Format with attachments)
         if let rtfdData = pasteboard.data(forPasteboardType: "com.apple.flat-rtfd") {
@@ -52,7 +56,7 @@ class ClipboardService: ObservableObject {
             }
             
             // Process attributed string with inline images using new RTF-based table detection
-            markdown += await richTextProcessor.processAttributedStringWithImages(attributedString, rawRTF: rawRTFString)
+            markdown += await richTextProcessor.processAttributedStringWithImages(attributedString, rawRTF: rawRTFString, plainTextReference: plainTextReference)
             
             // Handle standalone images if any
             if let image = pasteboard.image {

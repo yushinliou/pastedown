@@ -12,7 +12,7 @@ import Foundation
 struct MarkdownUtilities {
 
     // MARK: - Main Logic Text Conversion
-    static func convertTextWithAttributes(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+    static func convertTextWithAttributes(_ text: String, attributes: [NSAttributedString.Key: Any], plainTextReference: String? = nil) -> String {
         // Debug: Print the text being processed
         // debugPrintText(text, context: "convertTextWithAttributes")
         
@@ -26,7 +26,7 @@ struct MarkdownUtilities {
         print("[result after applyTextFormatting] \(result)")
         // 3. Handle list items (this processes the structure)
         print("[Attribute] \(attributes)")
-        result = handleListItems(result, attributes: attributes)
+        result = handleListItems(result, attributes: attributes, plainTextReference: plainTextReference)
         print("[result after handleListItems] \(result)")
         // 4. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
@@ -36,6 +36,11 @@ struct MarkdownUtilities {
         return result
     }
     
+    // MARK: - List Handling (Delegated to ListUtilities)
+    static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any], plainTextReference: String? = nil) -> String {
+        return ListUtilities.processListItem(text, attributes: attributes, plainTextReference: plainTextReference)
+    }
+        
     // MARK: - Link Handling
     static func handleLinks(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         guard let url = attributes[.link] as? URL else {
@@ -46,112 +51,6 @@ struct MarkdownUtilities {
         // The formatting will be applied later and will wrap around the entire link
         let linkText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return "[\(linkText)](\(url.absoluteString))"
-    }
-    
-
-    // MARK: - get prefix number
-    static func getPrefixNumber(_ text: String) -> String? {
-        // Check for a number prefix like "1. ", "2. ", etc.
-        let numberPattern = #"^(\d+)\.[\t\s]"#
-        if let regex = try? NSRegularExpression(pattern: numberPattern, options: []) {
-            let range = NSRange(text.startIndex..<text.endIndex, in: text)
-            if let match = regex.firstMatch(in: text, options: [], range: range) {
-                if let numberRange = Range(match.range(at: 1), in: text) {
-                    return String(text[numberRange])
-                }
-            }
-        }
-        print("No number prefix found in text: \(text)")
-        return "1" // Default to "1. " if no number prefix found
-    }
-    
-    // MARK: - List Handling
-    static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
-        // special case happend one single number list and dashed list
-        if text == "\t•\t" {
-            return ""
-        }
-        if text == "\t⁃\t" {
-            return "  - "
-        }
-        // normal case
-        var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        var prefix: String? = nil
-        var indentLevel = 0
-        var foundSpecialUnorderedFormat = false
-        var foundSpecialNumberFormat = false
-
-        let symbolMap = [
-            "•": "*",
-            "⁃": "-",
-            "◦": "- [ ]",
-            "✓": "- [x]",
-            "1.": "1.",
-            "a.": "a.",
-            "A.": "A.",
-            "i.": "i.",
-            "I.": "I."
-        ]
-        // check paragraph style
-        if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
-            
-            if paragraphStyle.textLists.count > 0 {
-                indentLevel = paragraphStyle.textLists.count
-
-                if let textList = paragraphStyle.textLists.last,
-                let format = textList.value(forKey: "markerFormat") as? String {
-                    switch format {
-                    case "{disc}": prefix = "*"
-                    case "{hyphen}": prefix = "-"
-                    case "{circle}": prefix = "- [ ]"
-                    case "{check}": prefix = "- [x]"
-                    case "{decimal}.": prefix = "1."
-                    case "{loweralpha}.": prefix = "a."
-                    case "{upperalpha}.": prefix = "A."
-                    case "{lowerroman}.": prefix = "i."
-                    case "{upperroman}.": prefix = "I."
-                    default: prefix = "-"
-                    }
-                }
-            } else { // special case, happen when there is no extra element after list, we need to handle last line it manually
-                // 📌 unordered list pattern: \t•\t\t•\tTEXT
-                let unorderListPattern = #"^\t([^\t])\t\t([^\t])\t(.*)$"#
-
-                if let regex = try? NSRegularExpression(pattern: unorderListPattern),
-                let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
-                let symbolRange = Range(match.range(at: 2), in: text),
-                let contentRange = Range(match.range(at: 3), in: text) {
-                    let symbol = symbolMap[String(text[symbolRange])] ?? "*"
-                    prefix = symbol
-                    result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
-                    indentLevel = 1
-                    foundSpecialUnorderedFormat = true
-                } else {
-                    // 📌 number pattern: \t42.\tTEXT
-                    let orderedListPattern = #"^\t(\d+)\.\t(.*)$"#
-                    if let regex = try? NSRegularExpression(pattern: orderedListPattern),
-                    let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)),
-                    let numberRange = Range(match.range(at: 1), in: text),
-                    let contentRange = Range(match.range(at: 2), in: text) {
-                        let number = String(text[numberRange])
-                        prefix = "1."
-                        result = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
-                        indentLevel = 1
-                        foundSpecialNumberFormat = true
-                    }
-                }
-
-            }
-        }
-        if result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !foundSpecialUnorderedFormat{
-            return ""
-        }
-
-        if let prefix = prefix {
-            let indent = String(repeating: "    ", count: max(indentLevel-1, 0)) // don add indent for first level, add indent(4 spaces) for sub-levels
-            result = "\(indent)\(prefix) \(result)"
-        }
-        return result
     }
         
     static func convertHeadings(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {

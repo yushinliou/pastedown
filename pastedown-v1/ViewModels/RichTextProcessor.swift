@@ -12,7 +12,7 @@ class RichTextProcessor: ObservableObject {
         self.settings = settings
     }
     
-    func processAttributedStringWithImages(_ attributedString: NSAttributedString, rawRTF: String? = nil) async -> String {
+    func processAttributedStringWithImages(_ attributedString: NSAttributedString, rawRTF: String? = nil, plainTextReference: String? = nil) async -> String {
         var markdown = ""
         
         // First, collect all images and their positions
@@ -64,8 +64,11 @@ class RichTextProcessor: ObservableObject {
         else {
             print("No tables found")
         }
+        // Reset the list processor for new content
+        ListUtilities.resetProcessor()
+        
         // Process the attributed string with placeholders (this will include placeholders in the markdown)
-        markdown += await processContentLineByLine(attributedStringWithPlaceholders, imageAltTexts: altTexts)
+        markdown += await processContentLineByLine(attributedStringWithPlaceholders, imageAltTexts: altTexts, plainTextReference: plainTextReference)
         print("================================================")
         print("[processContentLineByLine markdown]\(markdown)")
         print("================================================")
@@ -78,13 +81,16 @@ class RichTextProcessor: ObservableObject {
         return markdown
     }
     
-    private func processContentLineByLine(_ attributedString: NSAttributedString, imageAltTexts: [String]) async -> String {
+    private func processContentLineByLine(_ attributedString: NSAttributedString, imageAltTexts: [String], plainTextReference: String? = nil) async -> String {
         var markdown = ""
         var imageIndex = 0
         
         let fullText = attributedString.string
         let lines = fullText.components(separatedBy: .newlines)
         var currentLocation = 0
+        
+        // Split plain text reference into lines for line-by-line comparison
+        let plainTextLines = plainTextReference?.components(separatedBy: .newlines) ?? []
         
         for (lineIndex, line) in lines.enumerated() {
             if line.isEmpty {
@@ -119,7 +125,11 @@ class RichTextProcessor: ObservableObject {
                     // Handle regular text with formatting
                     let substring = attributedString.attributedSubstring(from: range).string
                     var formattedText = substring
-                    formattedText = MarkdownUtilities.convertTextWithAttributes(formattedText, attributes: attrs)
+                    
+                    // Get line-specific plain text for this line
+                    let lineSpecificPlainText = lineIndex < plainTextLines.count ? plainTextLines[lineIndex] : nil
+                    
+                    formattedText = MarkdownUtilities.convertTextWithAttributes(formattedText, attributes: attrs, plainTextReference: lineSpecificPlainText)
                     lineMarkdown += formattedText
                 }
             }
