@@ -20,19 +20,35 @@ struct MarkdownUtilities {
         
         // 1. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
-        // print("[result after handleLinks] \(result)")
+        
         // 2. Handle text formatting (bold, italic, underline, strikethrough)
         result = applyTextFormatting(result, attributes: attributes)
-        print("[result after applyTextFormatting] \(result)")
+        
         // 3. Handle list items (this processes the structure)
-        print("[Attribute] \(attributes)")
         result = handleListItems(result, attributes: attributes, plainTextReference: plainTextReference)
-        print("[result after handleListItems] \(result)")
+        
         // 4. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
         if headingResult != result {
+            print("[convertTextWithAttributes] [\(result)]")
             return headingResult // Headings with their formatting preserved
         }
+        print("[convertTextWithAttributes] [\(result)]")
+        return result
+    }
+    
+    // MARK: - Text Conversion without List Processing (for attribute ranges)
+    static func convertTextWithAttributesNoList(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
+        var result = text
+        // boldlink should be [**boldlink**](url), so handle formatting first
+        // 1. Handle text formatting (bold, italic, underline, strikethrough)
+        result = applyTextFormatting(result, attributes: attributes)
+
+        // 2. Add URL (if any, remember to preserve format)
+        result = handleLinks(result, attributes: attributes)
+        
+        // Skip list processing - this will be handled at the line level
+        
         return result
     }
     
@@ -40,7 +56,7 @@ struct MarkdownUtilities {
     static func handleListItems(_ text: String, attributes: [NSAttributedString.Key: Any], plainTextReference: String? = nil) -> String {
         return ListUtilities.processListItem(text, attributes: attributes, plainTextReference: plainTextReference)
     }
-        
+
     // MARK: - Link Handling
     static func handleLinks(_ text: String, attributes: [NSAttributedString.Key: Any]) -> String {
         guard let url = attributes[.link] as? URL else {
@@ -76,38 +92,52 @@ struct MarkdownUtilities {
         var result = text //.trimmingCharacters(in: .whitespacesAndNewlines)
         var formattingStack: [String] = []
         var closingStack: [String] = []
+        var findUnderline = false
+        var findStrikethrough = false
+        var findItalic = false
+        var findBold = false
         
         // Check for font-based formatting
         if let font = attributes[.font] as? UIFont {
             let traits = font.fontDescriptor.symbolicTraits
-            
-            // Bold
-            if traits.contains(.traitBold) {
-                formattingStack.append("**")
-                closingStack.insert("**", at: 0)
-            }
-            
-            // Italic
-            if traits.contains(.traitItalic) {
-                formattingStack.append("*")
-                closingStack.insert("*", at: 0)
-            }
-        }
         
-        // Underline
-        if let underlineStyle = attributes[.underlineStyle] as? NSNumber,
-           underlineStyle.intValue != 0 {
-            formattingStack.append("<u>")
-            closingStack.insert("</u>", at: 0)
-        }
-        
+        // order matters: underline, strikethrough, italic, bold
         // Strikethrough
         if let strikethroughStyle = attributes[.strikethroughStyle] as? NSNumber,
            strikethroughStyle.intValue != 0 {
             formattingStack.append("~~")
             closingStack.insert("~~", at: 0)
+            findStrikethrough = true
+        }        
+        // Italic
+        if traits.contains(.traitItalic) {
+                formattingStack.append("*")
+                closingStack.insert("*", at: 0)
+                findItalic = true
+            }
+
+            // Bold
+            if traits.contains(.traitBold) {
+                formattingStack.append("**")
+                closingStack.insert("**", at: 0)
+                findBold = true
+            }
         }
         
+        if let underlineStyle = attributes[.underlineStyle] as? NSNumber,
+           underlineStyle.intValue != 0 {
+            formattingStack.append("<u>")
+            closingStack.insert("</u>", at: 0)
+            findUnderline = true
+        }
+
+        // if find multiple formatting, we need to add space in last position in formattingStack
+        if findUnderline || findStrikethrough || findItalic || findBold {
+            if !formattingStack.isEmpty {
+                formattingStack.append(" ")
+                closingStack.insert(" ", at: 0)
+            }
+        }
         // Apply all formatting
         let openingTags = formattingStack.joined()
         let closingTags = closingStack.joined()

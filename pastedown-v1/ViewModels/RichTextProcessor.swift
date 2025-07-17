@@ -69,15 +69,8 @@ class RichTextProcessor: ObservableObject {
         
         // Process the attributed string with placeholders (this will include placeholders in the markdown)
         markdown += await processContentLineByLine(attributedStringWithPlaceholders, imageAltTexts: altTexts, plainTextReference: plainTextReference)
-        print("================================================")
-        print("[processContentLineByLine markdown]\(markdown)")
-        print("================================================")
         // Replace placeholders with actual table markdown
         markdown = TableUtilities.replacePlaceholdersWithMarkdown(markdown, tables: detectedTables)
-        print("================================================")
-        print("[replacePlaceholdersWithMarkdown markdown]\(markdown)")
-        print("================================================")
-        
         return markdown
     }
     
@@ -116,28 +109,36 @@ class RichTextProcessor: ObservableObject {
                     } else {
                         lineMarkdown += "<!-- ![attachment] -->"
                     }
-                } else if let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle,
+                } else if let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle, // skip table block
                           paragraphStyle.description.contains("NSTextTableBlock") {
                     // Handle table block
-                    lineMarkdown += "" // skip table block
+                    lineMarkdown += ""
                 }
-                else {
-                    // Handle regular text with formatting
+                else { // Handle regular text and list items with formatting
                     let substring = attributedString.attributedSubstring(from: range).string
                     var formattedText = substring
                     
-                    // Get line-specific plain text for this line
-                    let lineSpecificPlainText = lineIndex < plainTextLines.count ? plainTextLines[lineIndex] : nil
+                    // Apply only formatting (links, bold, etc.) but NOT list processing here
+                    formattedText = MarkdownUtilities.convertTextWithAttributesNoList(formattedText, attributes: attrs)
                     
-                    formattedText = MarkdownUtilities.convertTextWithAttributes(formattedText, attributes: attrs, plainTextReference: lineSpecificPlainText)
                     lineMarkdown += formattedText
                 }
             }
             
-            // Check for headings at line level
+            // Process list items once per line (after all formatting has been applied)
             if lineRange.length > 0 {
                 let firstCharRange = NSRange(location: lineRange.location, length: 1)
                 attributedString.enumerateAttributes(in: firstCharRange, options: []) { attrs, _, _ in
+                    // Get line-specific plain text for this line
+                    let lineSpecificPlainText = lineIndex < plainTextLines.count ? plainTextLines[lineIndex] : nil
+                    
+                    // Apply list processing once per line
+                    let listProcessedText = MarkdownUtilities.handleListItems(lineMarkdown, attributes: attrs, plainTextReference: lineSpecificPlainText)
+                    if listProcessedText != lineMarkdown {
+                        lineMarkdown = listProcessedText
+                    }
+                    
+                    // Check for headings at line level
                     let headingResult = MarkdownUtilities.convertHeadings(lineMarkdown, attributes: attrs)
                     if headingResult != lineMarkdown {
                         lineMarkdown = headingResult
@@ -149,7 +150,6 @@ class RichTextProcessor: ObservableObject {
             
             if lineIndex < lines.count - 1 {
                 markdown += "\n"
-                print("[handle new line]")
             }
             
             currentLocation += line.count + 1

@@ -57,6 +57,13 @@ class ListProcessor {
         }
         
         var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        print("[processListItem] [\(result)]") // Debugging output
+        // if there is already a prefix, we don't need to add one, use pattern to match number prefix
+        if result.hasPrefix("* ") || result.hasPrefix("- ") || result.hasPrefix("- [ ]") || result.hasPrefix("- [x]") || result.hasPrefix("1. ") ||
+           result.hasPrefix("a. ") || result.hasPrefix("A. ") || result.hasPrefix("i. ") || result.hasPrefix("I. ") {
+            return result // Already has a prefix, return as is
+        }
+        
         var prefix: String? = nil
         var indentLevel = 0
         var foundSpecialUnorderedFormat = false
@@ -86,16 +93,15 @@ class ListProcessor {
                     case "{disc}": prefix = "*"
                     case "{hyphen}": prefix = "-"
                     case "{circle}":
+                        print("[circle]")
                         // Check plain text reference for actual checkbox state
                         prefix = getCheckboxState(from: plainTextReference) ? "- [x]" : "- [ ]" // if getcheckboxState returns true, use checked box
                     case "{check}":
-                        print("[check] \(plainTextReference ?? "nil")")
                         // Check plain text reference for actual checkbox state
                         prefix = getCheckboxState(from: plainTextReference) ? "- [x]" : "- [ ]"
                     case "{decimal}.": 
-                        let counter = context.getNumberedCounter(for: indentLevel)
-                        prefix = "\(counter)."
-                        context.incrementNumberedCounter(for: indentLevel)
+                        print("[decimal]")
+                        prefix = "1." // Use lazy numbering - all items use "1."
                         context.lastWasNumberedList = true
                     case "{loweralpha}.": prefix = "a."
                     case "{upperalpha}.": prefix = "A."
@@ -130,6 +136,7 @@ class ListProcessor {
         // Apply prefix and indentation
         if let prefix = prefix {
             let indent = String(repeating: "    ", count: max(indentLevel - 1, 0))
+            print("[processListItem] Final prefix: [\(indent)\(prefix) \(result)]") // Debugging output
             result = "\(indent)\(prefix) \(result)"
         }
         
@@ -152,8 +159,6 @@ class ListProcessor {
         // Check for checked state first
         for pattern in checkedPatterns {
             if trimmedText.hasPrefix(pattern) || trimmedText.contains(" \(pattern) ") || trimmedText.contains("\t\(pattern)\t") {
-                print("[text] [\(plainText)]")
-                print("[getCheckboxState] true - found pattern: \(pattern)")
                 return true
             }
         }
@@ -161,14 +166,10 @@ class ListProcessor {
         // Check for unchecked state
         for pattern in uncheckedPatterns {
             if trimmedText.hasPrefix(pattern) || trimmedText.contains(" \(pattern) ") || trimmedText.contains("\t\(pattern)\t") {
-                print("[text] [\(plainText)]")
-                print("[getCheckboxState] false - found unchecked pattern: \(pattern)")
                 return false
             }
         }
         
-        print("[text] [\(plainText)]")
-        print("[getCheckboxState] false - no pattern found")
         return false // Default to unchecked if unclear
     }
     
@@ -200,11 +201,8 @@ class ListProcessor {
            let numberRange = Range(match.range(at: 1), in: text),
            let contentRange = Range(match.range(at: 2), in: text) {
             
-            // Use sequential numbering instead of the original number
-            context.resetIfNeeded(for: 1, isNumberedList: true)
-            let counter = context.getNumberedCounter(for: 1)
-            let prefix = "\(counter)."
-            context.incrementNumberedCounter(for: 1)
+            // Use lazy numbering - all items use "1."
+            let prefix = "1."
             
             let content = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
             return (prefix, content, 1, true, false)
