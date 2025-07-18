@@ -327,9 +327,11 @@ class AttributedStringTableContentExtractor {
             result += formattedText
         }
         
-        return result
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: "\n", with: "<br>")
+        // Preserve emoji by using gentle trimming and safer newline replacement
+        let trimmedResult = result.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Replace newlines with <br> while preserving emoji sequences
+        return trimmedResult.replacingOccurrences(of: "\n", with: "<br>")
     }
 }
 

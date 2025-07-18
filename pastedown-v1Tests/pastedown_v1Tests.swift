@@ -342,7 +342,7 @@ struct MarkdownUtilitiesTests {
         #expect(result.contains("id: \""))
         // UUID should be 36 characters long (including hyphens)
         let uuidRegex = try! NSRegularExpression(pattern: "id: \"[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\"", options: .caseInsensitive)
-        let matches = uuidRegex.matches(in: result, options: [], range: NSRange(location: 0, length: result.count))
+        let matches = uuidRegex.matches(in: result, options: [], range: NSRange(location: 0, length: (result as NSString).length))
         #expect(matches.count == 1)
     }
     
@@ -384,7 +384,7 @@ struct MarkdownUtilitiesTests {
         
         // Check format HH:mm:ss
         let timeRegex = try! NSRegularExpression(pattern: "\\d{2}:\\d{2}:\\d{2}")
-        let matches = timeRegex.matches(in: result, options: [], range: NSRange(location: 0, length: result.count))
+        let matches = timeRegex.matches(in: result, options: [], range: NSRange(location: 0, length: (result as NSString).length))
         
         #expect(matches.count == 1)
     }

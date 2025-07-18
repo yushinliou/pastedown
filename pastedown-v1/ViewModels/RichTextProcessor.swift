@@ -73,6 +73,7 @@ class RichTextProcessor: ObservableObject {
         var imageIndex = 0
         
         let fullText = attributedString.string
+        let nsString = fullText as NSString
         let lines = fullText.components(separatedBy: .newlines)
         var currentLocation = 0
         
@@ -89,7 +90,7 @@ class RichTextProcessor: ObservableObject {
             }
             
             var lineMarkdown = ""
-            let lineRange = NSRange(location: currentLocation, length: line.count)
+            let lineRange = nsString.range(of: line, options: [], range: NSRange(location: currentLocation, length: nsString.length - currentLocation))
             
             // Process each attribute range for formatting
             attributedString.enumerateAttributes(in: lineRange, options: []) { attrs, range, _ in
@@ -146,7 +147,7 @@ class RichTextProcessor: ObservableObject {
             if lineIndex < lines.count - 1 {
                 markdown += "\n"
             }          
-            currentLocation += line.count + 1
+            currentLocation = lineRange.location + lineRange.length + 1
         }
         
         return markdown

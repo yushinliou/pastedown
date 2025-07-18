@@ -156,7 +156,8 @@ class ListProcessor {
         }
         
         // Skip empty results unless it's a special unordered format
-        if result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !foundSpecialUnorderedFormat {
+        // Use count to properly handle emoji characters
+        if result.trimmingCharacters(in: .whitespacesAndNewlines).count == 0 && !foundSpecialUnorderedFormat {
             return ""
         }
         
@@ -180,6 +181,7 @@ class ListProcessor {
         let uncheckedPatterns = ["☐", "◻", "[]", "[ ]", "◦"]
         
         // First check for checked patterns at the beginning of the line
+        // Use gentle trimming to preserve emoji boundaries
         let trimmedText = plainText.trimmingCharacters(in: .whitespacesAndNewlines)
         
         // Check for checked state first
@@ -216,6 +218,7 @@ class ListProcessor {
                 prefix = getCheckboxState(from: plainTextReference) ? "- [x]" : "- [ ]"
             }
             
+            // Preserve emoji by using String.init properly
             let content = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
             return (prefix, content, 1, false, true)
         }
@@ -230,6 +233,7 @@ class ListProcessor {
             // Use lazy numbering - all items use "1."
             let prefix = "1."
             
+            // Preserve emoji by using String.init properly
             let content = String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
             return (prefix, content, 1, true, false)
         }

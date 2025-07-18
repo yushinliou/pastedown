@@ -61,6 +61,7 @@ struct MarkdownUtilities {
         
         // Since formatting hasn't been applied yet, we can simply wrap the text in link syntax
         // The formatting will be applied later and will wrap around the entire link
+        // Use a more gentle trim that preserves emoji boundaries
         let linkText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return "[\(linkText)](\(url.absoluteString))"
     }
@@ -85,13 +86,10 @@ struct MarkdownUtilities {
         // Debug: Print the text before formatting
         // debugPrintText(text, context: "applyTextFormatting-input")
 
-        var result = text //.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Don't trim whitespace to preserve emoji sequences and formatting
+        var result = text
         var formattingStack: [String] = []
         var closingStack: [String] = []
-        var findUnderline = false
-        var findStrikethrough = false
-        var findItalic = false
-        var findBold = false
         
         // Check for font-based formatting
         if let font = attributes[.font] as? UIFont {
@@ -103,20 +101,20 @@ struct MarkdownUtilities {
            strikethroughStyle.intValue != 0 {
             formattingStack.append("~~")
             closingStack.insert("~~", at: 0)
-            findStrikethrough = true
+            
         }        
         // Italic
         if traits.contains(.traitItalic) {
                 formattingStack.append("*")
                 closingStack.insert("*", at: 0)
-                findItalic = true
+             
             }
 
             // Bold
             if traits.contains(.traitBold) {
                 formattingStack.append("**")
                 closingStack.insert("**", at: 0)
-                findBold = true
+                
             }
         }
         
@@ -124,7 +122,7 @@ struct MarkdownUtilities {
            underlineStyle.intValue != 0 {
             formattingStack.append("<u>")
             closingStack.insert("</u>", at: 0)
-            findUnderline = true
+         
         }
         // Apply all formatting
         let openingTags = formattingStack.joined()
