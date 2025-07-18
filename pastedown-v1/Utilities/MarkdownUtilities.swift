@@ -46,7 +46,7 @@ struct MarkdownUtilities {
 
         // 2. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
-        
+
         // Skip list processing - this will be handled at the line level
         
         return result
@@ -129,14 +129,6 @@ struct MarkdownUtilities {
             formattingStack.append("<u>")
             closingStack.insert("</u>", at: 0)
             findUnderline = true
-        }
-
-        // if find multiple formatting, we need to add space in last position in formattingStack
-        if findUnderline || findStrikethrough || findItalic || findBold {
-            if !formattingStack.isEmpty {
-                formattingStack.append(" ")
-                closingStack.insert(" ", at: 0)
-            }
         }
         // Apply all formatting
         let openingTags = formattingStack.joined()

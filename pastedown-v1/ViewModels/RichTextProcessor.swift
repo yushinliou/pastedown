@@ -54,10 +54,10 @@ class RichTextProcessor: ObservableObject {
         }
         
         // NEW: Use placeholder-based table detection with raw RTF
-        let tableDetectionResult = TableUtilities.detectTablesWithPlaceholders(in: attributedString, rawRTF: rawRTF)
+        let tableDetectionResult = TableUtilities.detectTablesWithDirectInsertion(in: attributedString, rawRTF: rawRTF)
         let detectedTables = tableDetectionResult.tables
-        let attributedStringWithPlaceholders = tableDetectionResult.attributedStringWithPlaceholders
-        
+        let attributedStringWithTables = tableDetectionResult.attributedStringWithTables
+
         if !detectedTables.isEmpty {
             print("Found \(detectedTables.count) tables using RTF-based detection")
         }
@@ -67,13 +67,13 @@ class RichTextProcessor: ObservableObject {
         // Reset the list processor for new content
         ListUtilities.resetProcessor()
         
-        // Process the attributed string with placeholders (this will include placeholders in the markdown)
-        markdown += await processContentLineByLine(attributedStringWithPlaceholders, imageAltTexts: altTexts, plainTextReference: plainTextReference)
-        // Replace placeholders with actual table markdown
-        markdown = TableUtilities.replacePlaceholdersWithMarkdown(markdown, tables: detectedTables)
+        // Process the attributed string with tables already converted to markdown
+        markdown += await processContentLineByLine(attributedStringWithTables, imageAltTexts: altTexts, plainTextReference: plainTextReference)
+
         return markdown
     }
     
+    // MARK: - Helper Methods
     private func processContentLineByLine(_ attributedString: NSAttributedString, imageAltTexts: [String], plainTextReference: String? = nil) async -> String {
         var markdown = ""
         var imageIndex = 0
@@ -133,7 +133,8 @@ class RichTextProcessor: ObservableObject {
                     let lineSpecificPlainText = lineIndex < plainTextLines.count ? plainTextLines[lineIndex] : nil
                     
                     // Apply list processing once per line
-                    let listProcessedText = MarkdownUtilities.handleListItems(lineMarkdown, attributes: attrs, plainTextReference: lineSpecificPlainText)
+                    // let listProcessedText = MarkdownUtilities.handleListItems(lineMarkdown, attributes: attrs, plainTextReference: lineSpecificPlainText)
+                    let listProcessedText = ListUtilities.processListItem(lineMarkdown, attributes: attrs, plainTextReference: lineSpecificPlainText)
                     if listProcessedText != lineMarkdown {
                         lineMarkdown = listProcessedText
                     }
@@ -150,8 +151,7 @@ class RichTextProcessor: ObservableObject {
             
             if lineIndex < lines.count - 1 {
                 markdown += "\n"
-            }
-            
+            }          
             currentLocation += line.count + 1
         }
         

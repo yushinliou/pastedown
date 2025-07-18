@@ -46,8 +46,38 @@ class ListProcessor {
         context = ListContext()
     }
     
+    // helper function to determine if a line is a list item
+    private func isListItem(_ text: String, attributes: [NSAttributedString.Key: Any]) -> Bool {
+        let unorderedListPattern = #"^\t([^\t])\t\t([^\t])\t(.*)$"#
+        let emptyListPattern = #"^\t[-•*]\t"#
+        let orderedListPattern = #"^\t(\d+)\.\t(.*)$"#
+        
+        // Check if attribute contain "NSTextList" in paragraph style
+        if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
+            return paragraphStyle.textLists.count > 0
+        }
+        // if find pattern in prefix, it is a list item
+        if let regex = try? NSRegularExpression(pattern: unorderedListPattern, options: []),
+           regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)) != nil {
+            return true
+        } else if let regex = try? NSRegularExpression(pattern: orderedListPattern, options: []),
+                  regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)) != nil {
+            
+            return true
+        } else if let regex = try? NSRegularExpression(pattern: emptyListPattern, options: []),
+                  regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..<text.endIndex, in: text)) != nil {
+            
+            return true
+        }
+        return false
+    }
+
     // Main list processing function
     func processListItem(_ text: String, attributes: [NSAttributedString.Key: Any], plainTextReference: String? = nil) -> String {
+        // return if text is not a list item
+        if !isListItem(text, attributes: attributes) {
+            return text
+        }
         // Handle special empty cases
         if text == "\t•\t" {
             return ""
@@ -57,7 +87,6 @@ class ListProcessor {
         }
         
         var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        print("[processListItem] [\(result)]") // Debugging output
         // if there is already a prefix, we don't need to add one, use pattern to match number prefix
         if result.hasPrefix("* ") || result.hasPrefix("- ") || result.hasPrefix("- [ ]") || result.hasPrefix("- [x]") || result.hasPrefix("1. ") ||
            result.hasPrefix("a. ") || result.hasPrefix("A. ") || result.hasPrefix("i. ") || result.hasPrefix("I. ") {
@@ -93,14 +122,12 @@ class ListProcessor {
                     case "{disc}": prefix = "*"
                     case "{hyphen}": prefix = "-"
                     case "{circle}":
-                        print("[circle]")
                         // Check plain text reference for actual checkbox state
                         prefix = getCheckboxState(from: plainTextReference) ? "- [x]" : "- [ ]" // if getcheckboxState returns true, use checked box
                     case "{check}":
                         // Check plain text reference for actual checkbox state
                         prefix = getCheckboxState(from: plainTextReference) ? "- [x]" : "- [ ]"
                     case "{decimal}.": 
-                        print("[decimal]")
                         prefix = "1." // Use lazy numbering - all items use "1."
                         context.lastWasNumberedList = true
                     case "{loweralpha}.": prefix = "a."
@@ -136,7 +163,6 @@ class ListProcessor {
         // Apply prefix and indentation
         if let prefix = prefix {
             let indent = String(repeating: "    ", count: max(indentLevel - 1, 0))
-            print("[processListItem] Final prefix: [\(indent)\(prefix) \(result)]") // Debugging output
             result = "\(indent)\(prefix) \(result)"
         }
         
