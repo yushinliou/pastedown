@@ -30,10 +30,8 @@ struct MarkdownUtilities {
         // 4. Handle headings - add heading markers while preserving formatting
         let headingResult = convertHeadings(result, attributes: attributes)
         if headingResult != result {
-            print("[convertTextWithAttributes] [\(result)]")
             return headingResult // Headings with their formatting preserved
         }
-        print("[convertTextWithAttributes] [\(result)]")
         return result
     }
     
@@ -46,8 +44,6 @@ struct MarkdownUtilities {
 
         // 2. Add URL (if any, remember to preserve format)
         result = handleLinks(result, attributes: attributes)
-
-        // Skip list processing - this will be handled at the line level
         
         return result
     }

@@ -1,9 +1,6 @@
-//
 //  TableUtilities.swift
 //  pastedown-v1
-//
-//  Created by AI Assistant on 2025/6/30.
-//
+// Create by Yu Shin
 
 import SwiftUI
 import Foundation
@@ -14,8 +11,15 @@ struct TableCell {
     let content: String
     let row: Int
     let column: Int
-    let blockID: String?
+    let blockID: String
     let range: NSRange
+}
+
+// sample usage: let firstCell = tableCells.first ?? .empty
+extension TableCell {
+    static var empty: TableCell {
+        TableCell(content: "", row: 0, column: 0, blockID: "", range: NSRange(location: 0, length: 0))
+    }
 }
 
 struct TableStructure {
@@ -27,11 +31,10 @@ struct TableStructure {
 struct TableInfo {
     let structure: TableStructure
     let cells: [TableCell] // Direct storage of cells with content, range, and blockID
-    let firstCellNSTableBlockID: String? // Optional NSTextTableBlock ID for the first cell, if available
-    let firstCellRange: NSRange
-    
     var rows: Int { structure.rows }
     var columns: Int { structure.columns }
+    let firstCellNSTableBlockID: String? // Optional NSTextTableBlock ID for the first cell, if available
+    let firstCellRange: NSRange
 }
 
 struct TableDetectionResult {
@@ -219,7 +222,7 @@ class AttributedStringTableContentExtractor {
                     content: extractedCell.content,
                     row: position.row,
                     column: position.column,
-                    blockID: extractedCell.blockID,
+                    blockID: extractedCell.blockID ?? "",
                     range: extractedCell.range
                 )
                 cells.append(cell)
@@ -229,7 +232,7 @@ class AttributedStringTableContentExtractor {
                     content: "",
                     row: position.row,
                     column: position.column,
-                    blockID: nil,
+                    blockID: "",
                     range: NSRange(location: 0, length: 0)
                 )
                 cells.append(cell)
@@ -308,37 +311,7 @@ class AttributedStringTableContentExtractor {
             return String(description[match])
         }
         return nil
-    }
-    
-    // New method to extract first cell NSTextTableBlock ID for each table
-    func extractFirstCellTableBlockIDs(from attributedString: NSAttributedString) -> [String] {
-        var firstCellIDs: [String] = []
-        var seenBlockIDs: Set<String> = []
-        
-        attributedString.enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: attributedString.length), options: []) { value, range, _ in
-            guard let paragraphStyle = value as? NSParagraphStyle else { return }
-            
-            let description = paragraphStyle.description
-            if let blockID = extractNSTextTableBlockID(from: description) {
-                if !seenBlockIDs.contains(blockID) {
-                    seenBlockIDs.insert(blockID)
-                    firstCellIDs.append(blockID)
-                }
-            }
-        }
-        
-        return firstCellIDs
-    }
-
-    // private func extractNSTextTableBlockID(from description: String) -> String? {
-    //     // get pattern "<NSTextTableBlock: 0x60000265efa0>"
-    //     let pattern = "<NSTextTableBlock:\\s*([^>]+)>"
-    //     if let match = description.range(of: pattern, options: .regularExpression) {
-    //         return String(description[match])
-    //     }
-    //     return nil
-    // }
-    
+    }    
 
     private func convertCellTextWithFormatting(_ attributedString: NSAttributedString) -> String {
         var result = ""
@@ -382,36 +355,11 @@ struct TableUtilities {
         return TableDetectionResult(tables: detectedTables, attributedStringWithTables: mutableAttributedString)
     }
 
-    private static func findFirstCellRange(for blockID: String?, in attributedString: NSAttributedString) -> NSRange {
-        print("[findFirstCellRange] \(attributedString.string)")
-        guard let blockID = blockID else { return NSRange(location: 0, length: 0) }
-
-        var firstCellRange = NSRange(location: 0, length: 0)
-
-        attributedString.enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: attributedString.length), options: []) { value, range, stop in
-            guard let paragraphStyle = value as? NSParagraphStyle else { return }
-
-            let description = paragraphStyle.description
-            if let foundBlockID = extractNSTextTableBlockID(from: description),
-            foundBlockID == blockID {
-                firstCellRange = range
-                stop.pointee = true
-                print("firstCellRange: \(firstCellRange)")
-                print("attributedString: \(attributedString.attributedSubstring(from: range).string)")
-            }
-        }
-    
-    return firstCellRange
-    }
-
     // MARK: - New Separated Approach
     private static func detectTablesWithSeparatedApproach(rawRTF: String, attributedString: NSAttributedString) -> [TableInfo] {
         // Step 1: Extract table structures from raw RTF
         let structures = structureParser.extractTableStructures(from: rawRTF)
-        
-        // Step 2: Extract first cell NSTextTableBlock IDs
-        let firstCellBlockIDs = contentExtractor.extractFirstCellTableBlockIDs(from: attributedString)
-        
+                
         // Step 3: Extract all table cells with their content, range, and blockID
         let cellExtractor = AttributedStringTableContentExtractor()
         let allExtractedCells = cellExtractor.extractTableCellsWithDetails(from: attributedString)
@@ -436,7 +384,7 @@ struct TableUtilities {
                         content: extractedCell.content,
                         row: position.row,
                         column: position.column,
-                        blockID: extractedCell.blockID,
+                        blockID: extractedCell.blockID ?? "",
                         range: extractedCell.range
                     )
                     tableCells.append(cell)
@@ -446,27 +394,18 @@ struct TableUtilities {
                         content: "",
                         row: position.row,
                         column: position.column,
-                        blockID: nil,
+                        blockID: "",
                         range: NSRange(location: 0, length: 0)
                     )
                     tableCells.append(cell)
                 }
             }
-            
-            // Get the first cell NSTextTableBlock ID for this table
-            let firstCellBlockID = index < firstCellBlockIDs.count ? firstCellBlockIDs[index] : nil
-            let firstCellRange = findFirstCellRange(for: firstCellBlockID, in: attributedString)
-            
-            print("[table \(index)] cells: \(tableCells.count)")
-            for cell in tableCells {
-                print("  Cell(\(cell.row),\(cell.column)): '\(cell.content)' blockID: \(cell.blockID ?? "nil") range: \(cell.range)")
-            }
 
             let tableInfo = TableInfo(
                 structure: structure,
                 cells: tableCells,
-                firstCellNSTableBlockID: firstCellBlockID,
-                firstCellRange: firstCellRange
+                firstCellNSTableBlockID: tableCells.first?.blockID ?? "",
+                firstCellRange: tableCells.first?.range ?? NSRange(location: 0, length: 0)
             )
             
             tables.append(tableInfo)
@@ -513,125 +452,18 @@ struct TableUtilities {
 
 
 // MARK: - Helper Functions
-private static func estimatePositionFromTableIndex(_ index: Int, in attributedString: NSAttributedString) -> Int {
-    // Find actual table content in the attributed string to get more accurate position
-    let string = attributedString.string
-    var tableBlockRanges: [NSRange] = []
-    
-    // Look for table blocks in the attributed string
-    attributedString.enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: attributedString.length), options: []) { value, range, _ in
-        if let paragraphStyle = value as? NSParagraphStyle,
-           paragraphStyle.description.contains("NSTextTableBlock") {
-            tableBlockRanges.append(range)
-        }
-    }
-    
-    // Sort ranges by location
-    tableBlockRanges.sort { $0.location < $1.location }
-    
-    // Return the actual position if we have enough table blocks
-    if index < tableBlockRanges.count {
-        return tableBlockRanges[index].location
-    }
-    
-    // Fallback: distribute remaining tables after the last known table
-    let lastKnownPosition = tableBlockRanges.last?.location ?? 0
-    let remainingLength = attributedString.length - lastKnownPosition
-    let tablesAfterKnown = index - tableBlockRanges.count + 1
-    let spacing = tablesAfterKnown > 1 ? remainingLength / tablesAfterKnown : remainingLength
-    
-    return lastKnownPosition + (spacing * (index - tableBlockRanges.count + 1))
-}
-
-// MARK: - Direct markdown table insertion based on NSTextTableBlock ID
-// private static func insertMarkdownTablesDirectly(for tables: [TableInfo], in mutableAttributedString: NSMutableAttributedString) {
-//     // Create a mapping of table block IDs to tables
-//     var tableBlockIDToTable: [String: TableInfo] = [:]
-//     for table in tables {
-//         if let blockID = table.firstCellNSTableBlockID {
-//             tableBlockIDToTable[blockID] = table
-//         }
-//     }
-    
-//     // Track processed tables and collect insertion points
-//     var processedTables: Set<String> = []
-//     var insertions: [(position: Int, table: TableInfo)] = []
-    
-//     // Iterate through the attributed string to find table blocks
-//     mutableAttributedString.enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: mutableAttributedString.length), options: []) { value, range, _ in
-//         let substring = mutableAttributedString.attributedSubstring(from: range).string
-//         print("───")
-//         print("[substring] \(substring)")
-//         print("[range] \(range)")
-//         print("[has style] \(value != nil)")
-//         guard let paragraphStyle = value as? NSParagraphStyle else { return }
-        
-//         let description = paragraphStyle.description
-//         if let blockID = extractNSTextTableBlockID(from: description),
-//            let table = tableBlockIDToTable[blockID] {
-            
-//             // Use a unique identifier for the table to avoid processing the same table multiple times
-//             let tableIdentifier = table.firstCellNSTableBlockID ?? UUID().uuidString
-//             // print char in location
-//             let currentString = mutableAttributedString.attributedSubstring(from: range).string
-//             print("[currentString] \(currentString)")
-//             print("[blockID] \(blockID)")
-//             print("[range] \(range)")
-//             print("[range.location] \(range.location)")
-
-//             if !processedTables.contains(tableIdentifier) {
-//                 // Found a matching table block ID, record the insertion position
-//                 insertions.append((position: range.location, table: table))
-//                 print("[range \(range.location) to table \(table)")
-//                 processedTables.insert(tableIdentifier)
-//             }
-//         }
-//     }
-    
-//     // Sort insertions by position in reverse order to maintain indices when replacing
-//     insertions.sort { $0.position > $1.position }
-    
-//     // Remove all existing table blocks first
-//     removeTableBlocks(from: mutableAttributedString)
-    
-//     // Insert markdown tables at the recorded positions
-//     for insertion in insertions {
-//         let adjustedPosition = min(insertion.position, mutableAttributedString.length)
-//         print("[adjust Pos] \(adjustedPosition)")
-//         print("min(\(insertion.position)), \(mutableAttributedString.length)")
-//         let markdownTable = convertTableToMarkdown(insertion.table)
-//         let tableAttributedString = NSAttributedString(string: "\n\(markdownTable)\n")
-//         mutableAttributedString.insert(tableAttributedString, at: adjustedPosition)
-//         print("[table after insert] \(mutableAttributedString.string)")
-//     }
-// }
 
 private static func insertMarkdownTablesDirectly(for tables: [TableInfo], in mutableAttributedString: NSMutableAttributedString) {
     // Sort tables by their first cell location in reverse order to maintain indices when replacing
     let sortedTables = tables.sorted { $0.firstCellRange.location > $1.firstCellRange.location }
     
-    // Debug: Print table cells info
-    for table in sortedTables {
-        print("[Table cells count: \(table.cells.count)]")
-        for cell in table.cells {
-            print("  Cell(\(cell.row),\(cell.column)): '\(cell.content)' blockID: \(cell.blockID ?? "nil") range: \(cell.range)")
-        }
-    }
-    print("========start insert========")
     // Insert markdown tables at the recorded positions
     for table in sortedTables {
         let adjustedPosition = min(table.firstCellRange.location, mutableAttributedString.length)
         if let firstCell = table.cells.first{
-            print("[firstCell: Content=\(firstCell.content), BlockID=\(firstCell.blockID), Range=\(firstCell.range)]")
-            print("[before insert]")
-            print("\(mutableAttributedString.string)")
-            print("[insert in \(adjustedPosition)=max(\(table.firstCellRange.location), \(mutableAttributedString.length))]")
             let markdownTable = convertTableToMarkdown(table)
             let tableAttributedString = NSAttributedString(string: "\n\(markdownTable)\n")
             mutableAttributedString.insert(tableAttributedString, at: firstCell.range.location)
-            print("[after insert]")
-            print("\(mutableAttributedString.string)")
-            print("---")
         }
         
     }
@@ -639,14 +471,6 @@ private static func insertMarkdownTablesDirectly(for tables: [TableInfo], in mut
     removeTableBlocks(from: mutableAttributedString)
 }
 
-private static func extractNSTextTableBlockID(from description: String) -> String? {
-    // get pattern "<NSTextTableBlock: 0x60000265efa0>"
-    let pattern = "<NSTextTableBlock:\\s*([^>]+)>"
-    if let match = description.range(of: pattern, options: .regularExpression) {
-        return String(description[match])
-    }
-    return nil
-}
 
 private static func removeTableBlocks(from mutableAttributedString: NSMutableAttributedString) {
     // Remove all NSTextTableBlock content from the attributed string
@@ -666,13 +490,6 @@ private static func removeTableBlocks(from mutableAttributedString: NSMutableAtt
     for range in tableBlockRanges {
         mutableAttributedString.deleteCharacters(in: range)
     }
-}
-
-// MARK: - Legacy method for backward compatibility
-static func replacePlaceholdersWithMarkdown(_ markdown: String, tables: [TableInfo]) -> String {
-    // This method is now deprecated since we insert markdown directly
-    // Keep it for backward compatibility if needed
-    return markdown
 }
 
 }

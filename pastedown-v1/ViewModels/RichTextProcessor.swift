@@ -58,12 +58,6 @@ class RichTextProcessor: ObservableObject {
         let detectedTables = tableDetectionResult.tables
         let attributedStringWithTables = tableDetectionResult.attributedStringWithTables
 
-        if !detectedTables.isEmpty {
-            print("Found \(detectedTables.count) tables using RTF-based detection")
-        }
-        else {
-            print("No tables found")
-        }
         // Reset the list processor for new content
         ListUtilities.resetProcessor()
         
