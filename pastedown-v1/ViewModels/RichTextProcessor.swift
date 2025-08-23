@@ -4,7 +4,7 @@ import UIKit
 
 @MainActor
 class RichTextProcessor: ObservableObject {
-    private let imageAnalyzer: ImageAnalyzer
+    // private let imageAnalyzer: ImageAnalyzer
     private let settings: SettingsStore
     
     init(imageAnalyzer: ImageAnalyzer, settings: SettingsStore) {
@@ -28,6 +28,7 @@ class RichTextProcessor: ObservableObject {
         // Generate alt text for all images while preserving order
         var altTexts: [String] = []
         if !imageOperations.isEmpty {
+            print("Found images:", imageOperations)
             altTexts = await withTaskGroup(of: (Int, String).self) { group in
                 for (index, operation) in imageOperations.enumerated() {
                     group.addTask {
@@ -45,6 +46,9 @@ class RichTextProcessor: ObservableObject {
                 results.sort { $0.0 < $1.0 }
                 return results.map { $0.1 }
             }
+        }
+        else{
+            print("No images found")
         }
         
         // Add front matter if configured
@@ -95,6 +99,7 @@ class RichTextProcessor: ObservableObject {
             // Process each attribute range for formatting
             attributedString.enumerateAttributes(in: lineRange, options: []) { attrs, range, _ in
                 if let attachment = attrs[.attachment] as? NSTextAttachment {
+                    print("Attachment:", attachment)
                     // Handle image attachment
                     if let image = attachment.image {
                         let altText = imageIndex < imageAltTexts.count ? imageAltTexts[imageIndex] : "image"

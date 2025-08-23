@@ -97,12 +97,13 @@ struct MarkdownUtilities {
         
         // order matters: underline, strikethrough, italic, bold
         // Strikethrough
+
         if let strikethroughStyle = attributes[.strikethroughStyle] as? NSNumber,
            strikethroughStyle.intValue != 0 {
             formattingStack.append("~~")
             closingStack.insert("~~", at: 0)
             
-        }        
+        }
         // Italic
         if traits.contains(.traitItalic) {
                 formattingStack.append("*")
@@ -110,20 +111,26 @@ struct MarkdownUtilities {
              
             }
 
-            // Bold
-            if traits.contains(.traitBold) {
+        // Bold
+        if traits.contains(.traitBold) {
                 formattingStack.append("**")
                 closingStack.insert("**", at: 0)
                 
             }
         }
-        
+
         if let underlineStyle = attributes[.underlineStyle] as? NSNumber,
            underlineStyle.intValue != 0 {
             formattingStack.append("<u>")
             closingStack.insert("</u>", at: 0)
          
         }
+
+        if let highlightStyle = attributes[NSAttributedString.Key.textHighlightStyle] {
+            formattingStack.append("==")
+            closingStack.insert("==", at: 0)
+        }
+
         // Apply all formatting
         let openingTags = formattingStack.joined()
         let closingTags = closingStack.joined()
