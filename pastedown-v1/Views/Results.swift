@@ -8,99 +8,81 @@ struct ResultView: View {
     @ObservedObject var settings: SettingsStore
 
     var body: some View {
-        VStack(spacing: 20) {
-            // Quick settings in result view
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text("Settings")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    
-                    Spacer()
-                    
-                    Button("Advanced") {
-                        showingAdvancedSettings = true
-                    }
-                    .font(.caption)
-                    .foregroundColor(.blue)
-                }
-                
-                HStack(spacing: 15) {
-                    // Image handling quick toggle
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Images")
-                            .font(.caption)
+        ZStack {
+            VStack(spacing: 0) {
+                // Editor - takes full space
+                VStack(alignment: .leading, spacing: 8) {
+
+                    // Done (close) button
+                    Button(action: {
+                        convertedMarkdown = ""
+                    }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.secondary)
-                        
-                        Picker("", selection: $settings.imageHandling) {
-                            Text("Ignore").tag(ImageHandling.ignore)
-                            Text("Base64").tag(ImageHandling.base64)
-                            Text("Folder").tag(ImageHandling.saveToFolder)
-                        }
-                        .pickerStyle(MenuPickerStyle())
-                        .onChange(of: settings.imageHandling) {  oldValue, newValue in
-                            print("\(oldValue) -> \(newValue)")
-                            settings.saveSettings()
-                        }
+                            .frame(width: 44, height: 44)
+                            .background(Color.gray.opacity(0.1))
+                            .clipShape(Circle())
+                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)      .padding(.horizontal)
+                            .padding(.top)
                     }
                     
-                    // Alt text toggle
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Alt Text")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Toggle("", isOn: $settings.enableAutoAlt)
-                            .onChange(of: settings.enableAutoAlt) {  oldValue, newValue in
-                                print("\(oldValue) -> \(newValue)")
-                                settings.saveSettings()
-                            }
-                    }
+//                    Text("Markdown Output")
+//                        .font(.headline)
+//                        .fontWeight(.semibold)
+//                        .padding(.horizontal)
+//                        .padding(.top)
                     
-                    Spacer()
+                    TextEditor(text: $convertedMarkdown)
+                        .font(.system(.body, design: .monospaced))
+                        .padding()
+                        .cornerRadius(15)
+                        .padding(.horizontal)
+                      .background(Color.gray.opacity(0.05))
                 }
             }
-            .padding()
-            .background(Color.gray.opacity(0.05))
-            .cornerRadius(12)
             
-            // Editor
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Markdown Output")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                
-                TextEditor(text: $convertedMarkdown)
-                    .font(.system(.body, design: .monospaced))
-                    .padding()
-                    .background(Color.gray.opacity(0.05))
-                    .cornerRadius(8)
-                    .frame(minHeight: 300)
-            }
-            
-            // Bottom buttons
-            HStack {
-                Button("Done") {
-                    convertedMarkdown = ""
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-                
+            // Floating action buttons in bottom right
+            VStack(spacing: 12) {
                 Spacer()
                 
-                Button("Copy Markdown") {
-                    UIPasteboard.general.string = convertedMarkdown
-                    alertMessage = "Markdown copied to clipboard!"
-                    showingAlert = true
+                HStack {
+                    Spacer()
+                    
+                    VStack(spacing: 12) {
+                        // Copy button
+                        Button(action: {
+                            UIPasteboard.general.string = convertedMarkdown
+                            alertMessage = "Markdown copied to clipboard!"
+                            showingAlert = true
+                        }) {
+                            Image(systemName: "doc.on.doc")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(width: 50, height: 50)
+                                .background(Color("primaryColour"))
+                                .clipShape(Circle())
+                                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+                        }
+                        
+
+                    }
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .background(Color("primaryColour"))
-                .foregroundColor(Color("backgroundColour"))
-                .cornerRadius(8)
+                .padding(.trailing, 20)
+                .padding(.bottom, 30)
             }
         }
    }
+}
+
+
+#Preview {
+    // 先準備一些假的 Binding 和設定物件來讓 Preview 可以跑
+    ResultView(
+        convertedMarkdown: .constant("# Hello World\nThis is a preview.# "),
+        showingAlert: .constant(false),
+        alertMessage: .constant(""),
+        showingAdvancedSettings: .constant(false),
+        settings: SettingsStore()
+    )
 }

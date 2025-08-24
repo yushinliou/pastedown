@@ -187,10 +187,16 @@ class SettingsStore: ObservableObject {
     
     // MARK: - Preview Generation
     func generateImagePathPreview() -> String {
-        return processImageFolderPath(imageIndex: 1, contentPreview: "example content")
+        let clipboardPreview = getClipboardPreviewForDemo()
+        return processImageFolderPath(imageIndex: 1, contentPreview: clipboardPreview)
     }
     
     func generateOutputFilenamePreview() -> String {
-        return generateFinalOutputFilename(contentPreview: "example content")
+        let clipboardPreview = getClipboardPreviewForDemo()
+        return generateFinalOutputFilename(contentPreview: clipboardPreview)
+    }
+    
+    private func getClipboardPreviewForDemo() -> String {
+        return "example preview"
     }
 }
