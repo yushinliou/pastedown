@@ -71,12 +71,16 @@ struct AdvancedSettingsView: View {
                             .fontWeight(.medium)
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("• {title} - Front Matter title field")
-                            Text("• {date} - Current date (YYYY-MM-DD)")
-                            Text("• {time} - Current time (HH:MM:SS)")
-                            Text("• {uuid} - Generated UUID")
-                            Text("• {index} - Auto-increment number")
+                            Text("Filename variables:")
+                                .fontWeight(.medium)
                             Text("• {clipboard_preview} - First 20 chars of clipboard")
+                            Text("• {date} - Current date (YYYY-MM-DD)")
+                            Text("• {time} - Current time (YYYY-MM-DD_HH-MM-SS)")
+                            
+                            Text("Front Matter variables:")
+                                .fontWeight(.medium)
+                                .padding(.top, 8)
+                            Text("• {title} - Front Matter title field")
                             Text("• {current_date} - For Front Matter templates")
                             Text("• {current_time} - For Front Matter templates")
                         }

@@ -48,13 +48,15 @@ struct ImageUtilities {
     }
     
     /// Processes a batch of images and generates markdown with alt text
-    static func processImages(_ imageTasks: [ImageTask], imageAnalyzer: ImageAnalyzer, settings: SettingsStore) async -> [ImageResult] {
-        return await withTaskGroup(of: ImageResult.self) { group in
+    static func processImages(_ imageTasks: [ImageTask], imageAnalyzer: ImageAnalyzer, contentPreview: String, globalImageIndex: Int, settings: SettingsStore) async -> ([ImageResult], Int) {
+        var currentGlobalIndex = globalImageIndex
+        let results = await withTaskGroup(of: ImageResult.self) { group in
             // Add tasks for each image
             for task in imageTasks {
+                let imageIndex = currentGlobalIndex + task.index + 1
                 group.addTask {
                     let altText = await imageAnalyzer.generateAltText(for: task.image)
-                    let markdown = generateImageMarkdown(image: task.image, altText: altText, settings: settings)
+                    let markdown = generateImageMarkdown(image: task.image, altText: altText, imageIndex: imageIndex, contentPreview: contentPreview, settings: settings)
                     return ImageResult(index: task.index, altText: altText, markdown: markdown)
                 }
             }
@@ -69,12 +71,15 @@ struct ImageUtilities {
             results.sort { $0.index < $1.index }
             return results
         }
+        
+        currentGlobalIndex += imageTasks.count
+        return (results, currentGlobalIndex)
     }
     
     // MARK: - Image Markdown Generation
     
     /// Generates markdown for an image with various handling options
-    static func generateImageMarkdown(image: UIImage, altText: String, settings: SettingsStore) -> String {
+    static func generateImageMarkdown(image: UIImage, altText: String, imageIndex: Int, contentPreview: String, settings: SettingsStore) -> String {
         switch settings.imageHandling {
         case .ignore:
             return "<!-- Image ignored -->"
@@ -86,7 +91,7 @@ struct ImageUtilities {
                 return "![\(altText)](<image>)"
             }
         case .saveToFolder:
-            let imagePath = settings.processImageFolderPath()
+            let imagePath = settings.processImageFolderPath(imageIndex: imageIndex, contentPreview: contentPreview)
             return "![\(altText)](\(imagePath))"
         }
     }

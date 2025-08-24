@@ -83,13 +83,39 @@ struct InitialViewWithSettings: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 TextField("Folder path", text: $settings.imageFolderPath)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(settings.isValidImagePath() ? Color.clear : Color.red, lineWidth: 2)
+                                    )
                                     .onChange(of: settings.imageFolderPath) { oldValue, newValue in
                                         print("\(oldValue) -> \(newValue)")
                                         settings.saveSettings()
                                     }
-                                Text("Variables: {uuid}, {time}, {date}, {title}, <image file>")
+                                
+                                Text("Variables: {time}, {date}, {clipboard_preview}")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
+                                
+                                // Preview
+                                if settings.isValidImagePath() {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Preview:")
+                                            .font(.caption2)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.secondary)
+                                        Text(settings.generateImagePathPreview())
+                                            .font(.caption2)
+                                            .foregroundColor(.blue)
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(Color.blue.opacity(0.1))
+                                            .cornerRadius(4)
+                                    }
+                                } else {
+                                    Text("Invalid path format")
+                                        .font(.caption2)
+                                        .foregroundColor(.red)
+                                }
                             }
                         }
                     }
@@ -130,16 +156,41 @@ struct InitialViewWithSettings: View {
                             .font(.subheadline)
                             .fontWeight(.medium)
                         
-                        TextField("Filename format", text: $settings.outputFilenameFormat)
+                        TextField("Filename format (without .md)", text: $settings.outputFilenameFormat)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(settings.isValidOutputFilename() ? Color.clear : Color.red, lineWidth: 2)
+                            )
                             .onChange(of: settings.outputFilenameFormat) {  oldValue, newValue in
                                 print("\(oldValue) -> \(newValue)")
                                 settings.saveSettings()
                             }
                         
-                        Text("Variables: {title}, {date}, {time}, {uuid}, {index}, {clipboard_preview}")
+                        Text("Variables: {clipboard_preview}, {date}, {time}")
                             .font(.caption2)
                             .foregroundColor(.secondary)
+                        
+                        // Filename Preview
+                        if settings.isValidOutputFilename() {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Preview:")
+                                    .font(.caption2)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
+                                Text(settings.generateOutputFilenamePreview())
+                                    .font(.caption2)
+                                    .foregroundColor(.blue)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.blue.opacity(0.1))
+                                    .cornerRadius(4)
+                            }
+                        } else {
+                            Text("Invalid filename format")
+                                .font(.caption2)
+                                .foregroundColor(.red)
+                        }
                     }
                     
                     // Front Matter Preview

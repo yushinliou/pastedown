@@ -22,6 +22,7 @@ struct ContentView: View {
     @State private var alertMessage = ""
     @State private var isConverting = false
     @State private var showingAdvancedSettings = false
+    @State private var currentContentPreview: String = ""
     
     init() {
         let settings = SettingsStore()
@@ -71,7 +72,8 @@ struct ContentView: View {
                 AdvancedSettingsView(settings: settings)
             }
             .sheet(isPresented: $showingShareSheet) {
-                ShareSheet(items: [convertedMarkdown])
+                let filename = settings.generateFinalOutputFilename(contentPreview: currentContentPreview)
+                ShareSheet(items: [convertedMarkdown], suggestedFilename: filename)
             }
             .alert("Alert", isPresented: $showingAlert) {
                 Button("OK") { }
@@ -83,6 +85,20 @@ struct ContentView: View {
     
     // MARK: - Paste from Clipboard
     private func pasteFromClipboard() {
+        // Validate image path if saveToFolder is selected
+        if settings.imageHandling == .saveToFolder && !settings.isValidImagePath() {
+            alertMessage = "Invalid image path format. Please check your folder path."
+            showingAlert = true
+            return
+        }
+        
+        // Validate output filename format
+        if !settings.isValidOutputFilename() {
+            alertMessage = "Invalid filename format. Please check your filename template."
+            showingAlert = true
+            return
+        }
+        
         isConverting = true
         
         Task {
@@ -92,6 +108,10 @@ struct ContentView: View {
                 switch result {
                 case .success(let markdown):
                     self.convertedMarkdown = markdown
+                    // Store content preview for filename generation
+                    if let firstLine = markdown.components(separatedBy: .newlines).first(where: { !$0.isEmpty && !$0.hasPrefix("---") }) {
+                        self.currentContentPreview = String(firstLine.prefix(100))
+                    }
                 case .failure(let error):
                     self.alertMessage = error.localizedDescription
                     self.showingAlert = true

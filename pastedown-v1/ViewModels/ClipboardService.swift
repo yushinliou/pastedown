@@ -49,6 +49,10 @@ class ClipboardService: ObservableObject {
         }
 
         if let attributedString = attributedString {
+            // Generate filename based on content preview
+            let contentPreview = attributedString.string.prefix(100).trimmingCharacters(in: .whitespacesAndNewlines)
+            let contentPreviewString = String(contentPreview)
+            
             // Add front matter if configured
             if !settings.frontMatterFields.isEmpty {
                 let frontMatter = MarkdownUtilities.generateFrontMatter(settings: settings)
@@ -56,13 +60,13 @@ class ClipboardService: ObservableObject {
             }
             
             // Process attributed string with inline images using new RTF-based table detection
-            markdown += await richTextProcessor.processAttributedStringWithImages(attributedString, rawRTF: rawRTFString, plainTextReference: plainTextReference)
+            markdown += await richTextProcessor.processAttributedStringWithImages(attributedString, rawRTF: rawRTFString, plainTextReference: plainTextReference, contentPreview: contentPreviewString)
             
             // Handle standalone images if any
             if let image = pasteboard.image {
                 // print("Handle standalone images if any")
                 let altText = await imageAnalyzer.generateAltText(for: image)
-                let imageMarkdown = ImageUtilities.generateImageMarkdown(image: image, altText: altText, settings: settings)
+                let imageMarkdown = ImageUtilities.generateImageMarkdown(image: image, altText: altText, imageIndex: 1, contentPreview: contentPreviewString, settings: settings)
                 markdown += "\n\n" + imageMarkdown
             }
         } else if let plainText = pasteboard.string {

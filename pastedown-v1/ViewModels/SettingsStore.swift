@@ -11,12 +11,12 @@ import SwiftUI
 class SettingsStore: ObservableObject {
     @Published var frontMatterFields: [FrontMatterField] = []
     @Published var imageHandling: ImageHandling = .ignore
-    @Published var imageFolderPath: String = "./<image file>"
+    @Published var imageFolderPath: String = "./images"
     @Published var enableAutoAlt: Bool = true
     @Published var altTextTemplate: AltTextTemplate = .imageOf
     @Published var apiKey: String = ""
     @Published var useExternalAPI: Bool = false
-    @Published var outputFilenameFormat: String = "note_{date}_{title}.md"
+    @Published var outputFilenameFormat: String = "note_{date}_{clipboard_preview}"
     
     init() {
         loadSettings()
@@ -33,7 +33,7 @@ class SettingsStore: ObservableObject {
             imageHandling = handling
         }
         
-        imageFolderPath = UserDefaults.standard.string(forKey: "imageFolderPath") ?? "./<image file>"
+        imageFolderPath = UserDefaults.standard.string(forKey: "imageFolderPath") ?? "./images"
         enableAutoAlt = UserDefaults.standard.bool(forKey: "enableAutoAlt")
         
         if let templateRaw = UserDefaults.standard.string(forKey: "altTextTemplate"),
@@ -43,7 +43,7 @@ class SettingsStore: ObservableObject {
         
         apiKey = UserDefaults.standard.string(forKey: "apiKey") ?? ""
         useExternalAPI = UserDefaults.standard.bool(forKey: "useExternalAPI")
-        outputFilenameFormat = UserDefaults.standard.string(forKey: "outputFilenameFormat") ?? "note_{date}_{title}.md"
+        outputFilenameFormat = UserDefaults.standard.string(forKey: "outputFilenameFormat") ?? "note_{date}_{clipboard_preview}"
     }
     
     func saveSettings() {
@@ -61,28 +61,136 @@ class SettingsStore: ObservableObject {
     }
     
     // MARK: - Image Path Processing
-    func processImageFolderPath(originalImageName: String? = nil) -> String {
-        var processedPath = imageFolderPath
+    func processImageFolderPath(imageIndex: Int = 1, contentPreview: String = "") -> String {
+        var processedPath = imageFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
         
         let currentDate = Date()
         let formatter = DateFormatter()
         
         // Replace variables with actual values
-        processedPath = processedPath.replacingOccurrences(of: "{uuid}", with: UUID().uuidString)
-        
         formatter.dateFormat = "yyyy-MM-dd"
         processedPath = processedPath.replacingOccurrences(of: "{date}", with: formatter.string(from: currentDate))
         
         formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         processedPath = processedPath.replacingOccurrences(of: "{time}", with: formatter.string(from: currentDate))
         
-        // For title, we'll use a placeholder for now - this could be extracted from front matter or content
-        processedPath = processedPath.replacingOccurrences(of: "{title}", with: "untitled")
+        // Use clipboard preview (first 20 chars, cleaned)
+        let clipboardPreview = contentPreview.isEmpty ? "clipboard" : String(contentPreview.prefix(20))
+            .replacingOccurrences(of: " ", with: "-")
+            .replacingOccurrences(of: "\n", with: "")
+            .lowercased()
+        processedPath = processedPath.replacingOccurrences(of: "{clipboard_preview}", with: clipboardPreview)
         
-        // Handle <image file> placeholder
-        let imageFileName = originalImageName ?? "image.png"
-        processedPath = processedPath.replacingOccurrences(of: "<image file>", with: imageFileName)
+        // Ensure path ends with / if it doesn't already
+        if !processedPath.isEmpty && !processedPath.hasSuffix("/") {
+            processedPath += "/"
+        }
+        
+        // Generate image filename (image1.png, image2.png, etc.) and append to path
+        let imageFileName = "image\(imageIndex).png"
+        processedPath += imageFileName
         
         return processedPath
+    }
+    
+    // MARK: - Path Validation
+    func isValidImagePath() -> Bool {
+        let path = imageFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Check if path is empty
+        if path.isEmpty {
+            return false
+        }
+        
+        // Check for NULL and /0 characters
+        if path.contains("\0") || path.contains("NULL") {
+            return false
+        }
+        
+        // Check for invalid characters in file paths (removed < and > since user won't use placeholders)
+        let invalidChars = CharacterSet(charactersIn: ":\"|?*")
+        if path.rangeOfCharacter(from: invalidChars) != nil {
+            return false
+        }
+        
+        // Basic path format validation - should not end with a file extension
+        if path.hasSuffix(".png") || path.hasSuffix(".jpg") || path.hasSuffix(".jpeg") || path.hasSuffix(".gif") {
+            return false
+        }
+        
+        return true
+    }
+    
+    // MARK: - Filename Processing
+    func generateOutputFilename(contentPreview: String = "") -> String {
+        var filename = outputFilenameFormat
+        
+        let currentDate = Date()
+        let formatter = DateFormatter()
+        
+        // Replace date variables
+        formatter.dateFormat = "yyyy-MM-dd"
+        filename = filename.replacingOccurrences(of: "{date}", with: formatter.string(from: currentDate))
+        
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss" 
+        filename = filename.replacingOccurrences(of: "{time}", with: formatter.string(from: currentDate))
+        
+        // Use clipboard preview (first 20 chars, cleaned)
+        let clipboardPreview = contentPreview.isEmpty ? "clipboard" : String(contentPreview.prefix(20))
+            .replacingOccurrences(of: " ", with: "-")
+            .replacingOccurrences(of: "\n", with: "")
+            .lowercased()
+        filename = filename.replacingOccurrences(of: "{clipboard_preview}", with: clipboardPreview)
+        
+        return filename
+    }
+    
+    // MARK: - Filename Validation
+    func isValidOutputFilename() -> Bool {
+        let filename = outputFilenameFormat.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Check if filename is empty
+        if filename.isEmpty {
+            return false
+        }
+        
+        // Check for just a period
+        if filename == "." || filename == ".." {
+            return false
+        }
+        
+        // Check for invalid characters in filenames
+        let invalidChars = CharacterSet(charactersIn: "<>:\"/|?*")
+        if filename.rangeOfCharacter(from: invalidChars) != nil {
+            return false
+        }
+        
+        // Check for control characters
+        if filename.rangeOfCharacter(from: CharacterSet.controlCharacters) != nil {
+            return false
+        }
+        
+        return true
+    }
+    
+    // MARK: - Final Filename Generation with .md Extension
+    func generateFinalOutputFilename(contentPreview: String = "") -> String {
+        var filename = generateOutputFilename(contentPreview: contentPreview)
+        
+        // Auto-append .md extension if not present
+        if !filename.hasSuffix(".md") {
+            filename += ".md"
+        }
+        
+        return filename
+    }
+    
+    // MARK: - Preview Generation
+    func generateImagePathPreview() -> String {
+        return processImageFolderPath(imageIndex: 1, contentPreview: "example content")
+    }
+    
+    func generateOutputFilenamePreview() -> String {
+        return generateFinalOutputFilename(contentPreview: "example content")
     }
 }

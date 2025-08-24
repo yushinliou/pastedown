@@ -12,7 +12,7 @@ class RichTextProcessor: ObservableObject {
         self.settings = settings
     }
     
-    func processAttributedStringWithImages(_ attributedString: NSAttributedString, rawRTF: String? = nil, plainTextReference: String? = nil) async -> String {
+    func processAttributedStringWithImages(_ attributedString: NSAttributedString, rawRTF: String? = nil, plainTextReference: String? = nil, contentPreview: String? = nil) async -> String {
         var markdown = ""
         
         // Add front matter if configured
@@ -30,14 +30,15 @@ class RichTextProcessor: ObservableObject {
         ListUtilities.resetProcessor()
         
         // Process the attributed string with tables already converted to markdown
-        markdown += await processContentLineByLine(attributedStringWithTables, plainTextReference: plainTextReference)
+        markdown += await processContentLineByLine(attributedStringWithTables, plainTextReference: plainTextReference, contentPreview: contentPreview)
 
         return markdown
     }
     
     // MARK: - Helper Methods
-    private func processContentLineByLine(_ attributedString: NSAttributedString, plainTextReference: String? = nil) async -> String {
+    private func processContentLineByLine(_ attributedString: NSAttributedString, plainTextReference: String? = nil, contentPreview: String? = nil) async -> String {
         var markdown = ""
+        var globalImageIndex = 0
         
         let fullText = attributedString.string
         let nsString = fullText as NSString
@@ -74,7 +75,9 @@ class RichTextProcessor: ObservableObject {
             }
             
             // Process images for this line
-            let imageResults = await ImageUtilities.processImages(imageTasks, imageAnalyzer: imageAnalyzer, settings: settings)
+            let finalContentPreview = contentPreview ?? "untitled"
+            let (imageResults, updatedGlobalIndex) = await ImageUtilities.processImages(imageTasks, imageAnalyzer: imageAnalyzer, contentPreview: finalContentPreview, globalImageIndex: globalImageIndex, settings: settings)
+            globalImageIndex = updatedGlobalIndex
             var currentImageIndex = 0
             
             // Second pass: process attributes with image results
