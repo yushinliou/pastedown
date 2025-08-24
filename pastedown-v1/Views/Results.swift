@@ -34,8 +34,8 @@ struct ResultView: View {
                         
                         Picker("", selection: $settings.imageHandling) {
                             Text("Ignore").tag(ImageHandling.ignore)
-                            Text("Local").tag(ImageHandling.saveLocal)
-                            Text("Custom").tag(ImageHandling.saveCustom)
+                            Text("Base64").tag(ImageHandling.base64)
+                            Text("Folder").tag(ImageHandling.saveToFolder)
                         }
                         .pickerStyle(MenuPickerStyle())
                         .onChange(of: settings.imageHandling) {  oldValue, newValue in

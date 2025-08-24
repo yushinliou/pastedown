@@ -62,7 +62,7 @@ class ClipboardService: ObservableObject {
             if let image = pasteboard.image {
                 // print("Handle standalone images if any")
                 let altText = await imageAnalyzer.generateAltText(for: image)
-                let imageMarkdown = MarkdownUtilities.generateImageMarkdown(altText: altText, settings: settings)
+                let imageMarkdown = ImageUtilities.generateImageMarkdown(image: image, altText: altText, settings: settings)
                 markdown += "\n\n" + imageMarkdown
             }
         } else if let plainText = pasteboard.string {
@@ -81,7 +81,7 @@ class ClipboardService: ObservableObject {
     // MARK: - RTF Extraction Helper
     private func extractRTFFromRTFD(_ rtfdData: Data) -> String? {
         // try to extract RTF from RTFD 
-        guard let rtfdFileWrapper = try? FileWrapper(serializedRepresentation: rtfdData),
+        guard let rtfdFileWrapper = FileWrapper(serializedRepresentation: rtfdData),
             let fileWrappers = rtfdFileWrapper.fileWrappers else {
             return nil
         }
@@ -100,8 +100,6 @@ class ClipboardService: ObservableObject {
         // try to decode to original RTF string
         let rtfString = String(data: rtfData, encoding: .ascii)
             ?? String(data: rtfData, encoding: .utf8)
-        if let rtfString = rtfString {
-        }
         return rtfString
     }
 }

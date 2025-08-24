@@ -78,20 +78,16 @@ struct ImageUtilities {
         switch settings.imageHandling {
         case .ignore:
             return "<!-- Image ignored -->"
-        case .saveLocal:
+        case .base64:
             if let imageData = image.pngData() {
                 let base64 = imageData.base64EncodedString()
                 return "![image](data:image/png;base64,\(base64))"
             } else {
-                return "![\(altText)](./images/image.png)"
+                return "![\(altText)](<image>)"
             }
-        case .saveCustom:
-            if let imageData = image.pngData() {
-                let base64 = imageData.base64EncodedString()
-                return "![image](data:image/png;base64,\(base64))"
-            } else {
-                return "![\(altText)](.//\(settings.customImageFolder)/image.png)"
-            }
+        case .saveToFolder:
+            let imagePath = settings.processImageFolderPath()
+            return "![\(altText)](\(imagePath))"
         }
     }
     
@@ -100,9 +96,9 @@ struct ImageUtilities {
         switch settings.imageHandling {
         case .ignore:
             return "<!-- Image ignored -->"
-        case .saveLocal:
+        case .base64:
             return "![\(altText)](<image>)"
-        case .saveCustom:
+        case .saveToFolder:
             return "![\(altText)](<image>)"
         }
     }

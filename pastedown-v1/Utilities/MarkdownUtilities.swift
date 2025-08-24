@@ -142,39 +142,6 @@ struct MarkdownUtilities {
         return result
     }
     
-    // MARK: - Image Conversion
-    static func generateImageMarkdownWithBase64(image: UIImage, altText: String, settings: SettingsStore) -> String {
-        switch settings.imageHandling {
-        case .ignore:
-            return "<!-- Image ignored -->"
-        case .saveLocal:
-            if let imageData = image.pngData() {
-                let base64 = imageData.base64EncodedString()
-                return "![image](data:image/png;base64,\(base64))"
-            } else {
-                return "![\(altText)](./images/image.png)"
-            }
-        case .saveCustom:
-            if let imageData = image.pngData() {
-                let base64 = imageData.base64EncodedString()
-                return "![image](data:image/png;base64,\(base64))"
-            } else {
-                return "![\(altText)](.//\(settings.customImageFolder)/image.png)"
-            }
-        }
-    }
-    
-    static func generateImageMarkdown(altText: String, settings: SettingsStore) -> String {
-        switch settings.imageHandling {
-        case .ignore:
-            return "<!-- Image ignored -->"
-        case .saveLocal:
-            return "![\(altText)](./images/image.png)"
-        case .saveCustom:
-            return "![\(altText)](.//\(settings.customImageFolder)/image.png)"
-        }
-    }
-    
     // MARK: - Front Matter Generation
     static func generateFrontMatter(settings: SettingsStore) -> String {
         guard !settings.frontMatterFields.isEmpty else { return "" }

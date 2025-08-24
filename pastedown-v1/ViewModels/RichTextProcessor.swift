@@ -4,7 +4,7 @@ import UIKit
 
 @MainActor
 class RichTextProcessor: ObservableObject {
-    // private let imageAnalyzer: ImageAnalyzer
+    private let imageAnalyzer: ImageAnalyzer
     private let settings: SettingsStore
     
     init(imageAnalyzer: ImageAnalyzer, settings: SettingsStore) {
@@ -14,42 +14,6 @@ class RichTextProcessor: ObservableObject {
     
     func processAttributedStringWithImages(_ attributedString: NSAttributedString, rawRTF: String? = nil, plainTextReference: String? = nil) async -> String {
         var markdown = ""
-        
-        // First, collect all images and their positions
-        var imageOperations: [(range: NSRange, image: UIImage)] = []
-        
-        attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length), options: []) { attrs, range, _ in
-            if let attachment = attrs[.attachment] as? NSTextAttachment,
-               let image = attachment.image {
-                imageOperations.append((range: range, image: image))
-            }
-        }
-        
-        // Generate alt text for all images while preserving order
-        var altTexts: [String] = []
-        if !imageOperations.isEmpty {
-            print("Found images:", imageOperations)
-            altTexts = await withTaskGroup(of: (Int, String).self) { group in
-                for (index, operation) in imageOperations.enumerated() {
-                    group.addTask {
-                        let altText = await self.imageAnalyzer.generateAltText(for: operation.image)
-                        return (index, altText)
-                    }
-                }
-                
-                var results: [(Int, String)] = []
-                for await result in group {
-                    results.append(result)
-                }
-                
-                // Sort by index to maintain order
-                results.sort { $0.0 < $1.0 }
-                return results.map { $0.1 }
-            }
-        }
-        else{
-            print("No images found")
-        }
         
         // Add front matter if configured
         if !settings.frontMatterFields.isEmpty {
@@ -66,15 +30,14 @@ class RichTextProcessor: ObservableObject {
         ListUtilities.resetProcessor()
         
         // Process the attributed string with tables already converted to markdown
-        markdown += await processContentLineByLine(attributedStringWithTables, imageAltTexts: altTexts, plainTextReference: plainTextReference)
+        markdown += await processContentLineByLine(attributedStringWithTables, plainTextReference: plainTextReference)
 
         return markdown
     }
     
     // MARK: - Helper Methods
-    private func processContentLineByLine(_ attributedString: NSAttributedString, imageAltTexts: [String], plainTextReference: String? = nil) async -> String {
+    private func processContentLineByLine(_ attributedString: NSAttributedString, plainTextReference: String? = nil) async -> String {
         var markdown = ""
-        var imageIndex = 0
         
         let fullText = attributedString.string
         let nsString = fullText as NSString
@@ -96,18 +59,41 @@ class RichTextProcessor: ObservableObject {
             var lineMarkdown = ""
             let lineRange = nsString.range(of: line, options: [], range: NSRange(location: currentLocation, length: nsString.length - currentLocation))
             
-            // Process each attribute range for formatting
+            // Collect image tasks for this line
+            var imageTasks: [ImageUtilities.ImageTask] = []
+            var imageTaskIndex = 0
+            
+            // First pass: collect image tasks
+            attributedString.enumerateAttributes(in: lineRange, options: []) { attrs, range, _ in
+                if let attachment = attrs[.attachment] as? NSTextAttachment {
+                    if let image = ImageUtilities.extractImage(from: attachment) {
+                        imageTasks.append(ImageUtilities.ImageTask(image: image, index: imageTaskIndex))
+                        imageTaskIndex += 1
+                    }
+                }
+            }
+            
+            // Process images for this line
+            let imageResults = await ImageUtilities.processImages(imageTasks, imageAnalyzer: imageAnalyzer, settings: settings)
+            var currentImageIndex = 0
+            
+            // Second pass: process attributes with image results
             attributedString.enumerateAttributes(in: lineRange, options: []) { attrs, range, _ in
                 if let attachment = attrs[.attachment] as? NSTextAttachment {
                     print("Attachment:", attachment)
                     // Handle image attachment
-                    if let image = attachment.image {
-                        let altText = imageIndex < imageAltTexts.count ? imageAltTexts[imageIndex] : "image"
-                        let imageMarkdown = MarkdownUtilities.generateImageMarkdownWithBase64(image: image, altText: altText, settings: settings)
-                        lineMarkdown += imageMarkdown
-                        imageIndex += 1
+                    if let _ = ImageUtilities.extractImage(from: attachment) {
+                        // Use processed image result
+                        if currentImageIndex < imageResults.count {
+                            lineMarkdown += imageResults[currentImageIndex].markdown
+                            currentImageIndex += 1
+                        } else {
+                            // Fallback if something went wrong
+                            lineMarkdown += ImageUtilities.generateFallbackImageMarkdown(altText: "image", settings: settings)
+                        }
                     } else {
-                        lineMarkdown += "<!-- ![attachment] -->"
+                        // Non-image attachment or failed image extraction
+                        lineMarkdown += ImageUtilities.generateAttachmentMarkdown()
                     }
                 } else if let paragraphStyle = attrs[.paragraphStyle] as? NSParagraphStyle, // skip table block
                           paragraphStyle.description.contains("NSTextTableBlock") {

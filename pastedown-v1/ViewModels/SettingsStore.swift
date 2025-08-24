@@ -11,7 +11,7 @@ import SwiftUI
 class SettingsStore: ObservableObject {
     @Published var frontMatterFields: [FrontMatterField] = []
     @Published var imageHandling: ImageHandling = .ignore
-    @Published var customImageFolder: String = "images"
+    @Published var imageFolderPath: String = "./<image file>"
     @Published var enableAutoAlt: Bool = true
     @Published var altTextTemplate: AltTextTemplate = .imageOf
     @Published var apiKey: String = ""
@@ -33,7 +33,7 @@ class SettingsStore: ObservableObject {
             imageHandling = handling
         }
         
-        customImageFolder = UserDefaults.standard.string(forKey: "customImageFolder") ?? "images"
+        imageFolderPath = UserDefaults.standard.string(forKey: "imageFolderPath") ?? "./<image file>"
         enableAutoAlt = UserDefaults.standard.bool(forKey: "enableAutoAlt")
         
         if let templateRaw = UserDefaults.standard.string(forKey: "altTextTemplate"),
@@ -52,11 +52,37 @@ class SettingsStore: ObservableObject {
         }
         
         UserDefaults.standard.set(imageHandling.rawValue, forKey: "imageHandling")
-        UserDefaults.standard.set(customImageFolder, forKey: "customImageFolder")
+        UserDefaults.standard.set(imageFolderPath, forKey: "imageFolderPath")
         UserDefaults.standard.set(enableAutoAlt, forKey: "enableAutoAlt")
         UserDefaults.standard.set(altTextTemplate.rawValue, forKey: "altTextTemplate")
         UserDefaults.standard.set(apiKey, forKey: "apiKey")
         UserDefaults.standard.set(useExternalAPI, forKey: "useExternalAPI")
         UserDefaults.standard.set(outputFilenameFormat, forKey: "outputFilenameFormat")
+    }
+    
+    // MARK: - Image Path Processing
+    func processImageFolderPath(originalImageName: String? = nil) -> String {
+        var processedPath = imageFolderPath
+        
+        let currentDate = Date()
+        let formatter = DateFormatter()
+        
+        // Replace variables with actual values
+        processedPath = processedPath.replacingOccurrences(of: "{uuid}", with: UUID().uuidString)
+        
+        formatter.dateFormat = "yyyy-MM-dd"
+        processedPath = processedPath.replacingOccurrences(of: "{date}", with: formatter.string(from: currentDate))
+        
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        processedPath = processedPath.replacingOccurrences(of: "{time}", with: formatter.string(from: currentDate))
+        
+        // For title, we'll use a placeholder for now - this could be extracted from front matter or content
+        processedPath = processedPath.replacingOccurrences(of: "{title}", with: "untitled")
+        
+        // Handle <image file> placeholder
+        let imageFileName = originalImageName ?? "image.png"
+        processedPath = processedPath.replacingOccurrences(of: "<image file>", with: imageFileName)
+        
+        return processedPath
     }
 }

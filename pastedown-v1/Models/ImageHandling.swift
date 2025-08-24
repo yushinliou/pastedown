@@ -8,14 +8,14 @@
 
 enum ImageHandling: String, CaseIterable, Codable {
     case ignore = "ignore"
-    case saveLocal = "saveLocal"
-    case saveCustom = "saveCustom"
+    case base64 = "base64"
+    case saveToFolder = "saveToFolder"
     
     var displayName: String {
         switch self {
         case .ignore: return "Ignore images"
-        case .saveLocal: return "Save to local"
-        case .saveCustom: return "Save to custom folder"
+        case .base64: return "Use base64 to represent image"
+        case .saveToFolder: return "Save to folder"
         }
     }
 }

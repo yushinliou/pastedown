@@ -79,13 +79,18 @@ struct InitialViewWithSettings: View {
                             settings.saveSettings()
                         }
                         
-                        if settings.imageHandling == .saveCustom {
-                            TextField("Custom folder", text: $settings.customImageFolder)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .onChange(of: settings.customImageFolder) { oldValue, newValue in
-                                    print("\(oldValue) -> \(newValue)")
-                                    settings.saveSettings()
-                                }
+                        if settings.imageHandling == .saveToFolder {
+                            VStack(alignment: .leading, spacing: 4) {
+                                TextField("Folder path", text: $settings.imageFolderPath)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .onChange(of: settings.imageFolderPath) { oldValue, newValue in
+                                        print("\(oldValue) -> \(newValue)")
+                                        settings.saveSettings()
+                                    }
+                                Text("Variables: {uuid}, {time}, {date}, {title}, <image file>")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                     
