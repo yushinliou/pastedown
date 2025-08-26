@@ -91,9 +91,7 @@ class SettingsStore: ObservableObject {
         let imageFileName = "image\(imageIndex).\(fileExtension)"
         processedPath += imageFileName
 
-        imagePreview = "![alt](\(processedPath))"
-
-        return imagePreview //processedPath
+        return processedPath
     }
     
     // MARK: - Path Validation
@@ -160,8 +158,20 @@ class SettingsStore: ObservableObject {
             return false
         }
         
-        // Check for just a period
+        // Check for just a period or periods with spaces
         if filename == "." || filename == ".." {
+            return false
+        }
+        
+        // Check if filename would result in empty name (like '.md', ' .md', '\.md')
+        let testGenerated = generateOutputFilename(contentPreview: "test")
+        let testGeneratedTrimmed = testGenerated.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Check if generated filename is effectively empty or starts with just a dot
+        if testGeneratedTrimmed.isEmpty || 
+           testGeneratedTrimmed == "." || 
+           testGeneratedTrimmed == ".." ||
+           testGeneratedTrimmed.hasPrefix(".") && testGeneratedTrimmed.count <= 4 { // catches '.md', '\.md' etc.
             return false
         }
         
@@ -173,6 +183,16 @@ class SettingsStore: ObservableObject {
         
         // Check for control characters
         if filename.rangeOfCharacter(from: CharacterSet.controlCharacters) != nil {
+            return false
+        }
+        
+        // Check if filename starts or ends with whitespace after variable substitution
+        if testGenerated != testGeneratedTrimmed {
+            return false
+        }
+        
+        // Check for backslashes (escaped characters)
+        if filename.contains("\\") {
             return false
         }
         
@@ -194,7 +214,8 @@ class SettingsStore: ObservableObject {
     // MARK: - Preview Generation
     func generateImagePathPreview() -> String {
         let clipboardPreview = getClipboardPreviewForDemo()
-        return processImageFolderPath(imageIndex: 1, contentPreview: clipboardPreview)
+        let imagePath = processImageFolderPath(imageIndex: 1, contentPreview: clipboardPreview)
+        return "![alt](\(imagePath))"
     }
     
     func generateImageHandlingPreview() -> String {
@@ -205,7 +226,8 @@ class SettingsStore: ObservableObject {
             return "![alt](data:image/png;base64,yourbase64string)"
         case .saveToFolder:
             let clipboardPreview = getClipboardPreviewForDemo()
-            return processImageFolderPath(imageIndex: 1, contentPreview: clipboardPreview)
+            let imagePath = processImageFolderPath(imageIndex: 1, contentPreview: clipboardPreview)
+            return "![alt](\(imagePath))"
         }
     }
     
