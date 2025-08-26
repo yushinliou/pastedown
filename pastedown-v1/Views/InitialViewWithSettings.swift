@@ -117,26 +117,41 @@ struct InitialViewWithSettings: View {
                                         .foregroundColor(.red)
                                 }
                             }
+                        } else {
+                            // Preview for base64 and ignore
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Preview:")
+                                    .font(.caption2)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
+                                Text(settings.generateImageHandlingPreview())
+                                    .font(.caption2)
+                                    .foregroundColor(.blue)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background((Color.blue).opacity(0.1))
+                                    .cornerRadius(4)
+                            }
                         }
                     }
                     
                     // Alt Text Generation
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Alt Text Generation")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            
-                            Spacer()
-                            
-                            Toggle("", isOn: $settings.enableAutoAlt)
-                                .onChange(of: settings.enableAutoAlt) { oldValue, newValue in
-                                    print("\(oldValue) -> \(newValue)")
-                                    settings.saveSettings()
-                                }
-                        }
-                        
-                        if settings.enableAutoAlt {
+                        if settings.imageHandling != .ignore {
+                            HStack {
+                                Text("Alt Text Generation")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                
+                                Spacer()
+                                
+                                Toggle("", isOn: $settings.enableAutoAlt)
+                                    .onChange(of: settings.enableAutoAlt) { oldValue, newValue in
+                                        print("\(oldValue) -> \(newValue)")
+                                        settings.saveSettings()
+                                    }
+                            }
+                            if settings.enableAutoAlt {
                             Picker("Template", selection: $settings.altTextTemplate) {
                                 ForEach(AltTextTemplate.allCases, id: \.self) { template in
                                     Text(template.displayName).tag(template)
@@ -147,6 +162,7 @@ struct InitialViewWithSettings: View {
                                 print("\(oldValue) -> \(newValue)")
                                 settings.saveSettings()
                             }
+                        }
                         }
                     }
                     

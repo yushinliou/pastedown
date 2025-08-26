@@ -61,11 +61,12 @@ class SettingsStore: ObservableObject {
     }
     
     // MARK: - Image Path Processing
-    func processImageFolderPath(imageIndex: Int = 1, contentPreview: String = "") -> String {
+    func processImageFolderPath(imageIndex: Int = 1, contentPreview: String = "", fileExtension: String = "png") -> String {
         var processedPath = imageFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
         
         let currentDate = Date()
         let formatter = DateFormatter()
+        var imagePreview = ""
         
         // Replace variables with actual values
         formatter.dateFormat = "yyyy-MM-dd"
@@ -86,11 +87,13 @@ class SettingsStore: ObservableObject {
             processedPath += "/"
         }
         
-        // Generate image filename (image1.png, image2.png, etc.) and append to path
-        let imageFileName = "image\(imageIndex).png"
+        // Generate image filename with proper extension (image1.jpg, image2.png, etc.) and append to path
+        let imageFileName = "image\(imageIndex).\(fileExtension)"
         processedPath += imageFileName
-        
-        return processedPath
+
+        imagePreview = "![alt](\(processedPath))"
+
+        return imagePreview //processedPath
     }
     
     // MARK: - Path Validation
@@ -114,8 +117,11 @@ class SettingsStore: ObservableObject {
         }
         
         // Basic path format validation - should not end with a file extension
-        if path.hasSuffix(".png") || path.hasSuffix(".jpg") || path.hasSuffix(".jpeg") || path.hasSuffix(".gif") {
-            return false
+        let imageExtensions = [".png", ".jpg", ".jpeg", ".gif", ".tiff", ".tif", ".jp2", ".webp", ".heic", ".heif", ".exr"]
+        for ext in imageExtensions {
+            if path.hasSuffix(ext) {
+                return false
+            }
         }
         
         return true
@@ -189,6 +195,18 @@ class SettingsStore: ObservableObject {
     func generateImagePathPreview() -> String {
         let clipboardPreview = getClipboardPreviewForDemo()
         return processImageFolderPath(imageIndex: 1, contentPreview: clipboardPreview)
+    }
+    
+    func generateImageHandlingPreview() -> String {
+        switch imageHandling {
+        case .ignore:
+            return "<!-- Image ignored -->"
+        case .base64:
+            return "![alt](data:image/png;base64,yourbase64string)"
+        case .saveToFolder:
+            let clipboardPreview = getClipboardPreviewForDemo()
+            return processImageFolderPath(imageIndex: 1, contentPreview: clipboardPreview)
+        }
     }
     
     func generateOutputFilenamePreview() -> String {

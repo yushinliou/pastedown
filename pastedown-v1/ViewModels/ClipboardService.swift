@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 @MainActor
 class ClipboardService: ObservableObject {
@@ -15,6 +16,16 @@ class ClipboardService: ObservableObject {
     }
     
     func processClipboard() async -> Result<String, ClipboardError> {
+        let result = await processClipboardWithFiles()
+        switch result {
+        case .success(let processingResult):
+            return .success(processingResult.markdown)
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+    
+    func processClipboardWithFiles() async -> Result<ImageUtilities.ProcessingResult, ClipboardError> {
         let pasteboard = UIPasteboard.general
         
         guard pasteboard.hasStrings || pasteboard.hasImages else {
@@ -53,33 +64,27 @@ class ClipboardService: ObservableObject {
             let contentPreview = attributedString.string.prefix(100).trimmingCharacters(in: .whitespacesAndNewlines)
             let contentPreviewString = String(contentPreview)
             
-            // Add front matter if configured
-            if !settings.frontMatterFields.isEmpty {
-                let frontMatter = MarkdownUtilities.generateFrontMatter(settings: settings)
-                markdown = frontMatter + "\n"
-            }
-            
             // Process attributed string with inline images using new RTF-based table detection
-            markdown += await richTextProcessor.processAttributedStringWithImages(attributedString, rawRTF: rawRTFString, plainTextReference: plainTextReference, contentPreview: contentPreviewString)
+            let processingResult = await richTextProcessor.processAttributedStringWithFileSaving(attributedString, rawRTF: rawRTFString, plainTextReference: plainTextReference, contentPreview: contentPreviewString)
+            return .success(processingResult)
             
-            // Handle standalone images if any
-            if let image = pasteboard.image {
-                // print("Handle standalone images if any")
-                let altText = await imageAnalyzer.generateAltText(for: image)
-                let imageMarkdown = ImageUtilities.generateImageMarkdown(image: image, altText: altText, imageIndex: 1, contentPreview: contentPreviewString, settings: settings)
-                markdown += "\n\n" + imageMarkdown
-            }
         } else if let plainText = pasteboard.string {
-            // Add front matter if configured
+            // Handle plain text with front matter
+            var markdown = ""
             if !settings.frontMatterFields.isEmpty {
                 let frontMatter = MarkdownUtilities.generateFrontMatter(settings: settings)
                 markdown = frontMatter + "\n" + plainText
             } else {
                 markdown = plainText
             }
+            
+            // Create simple result for plain text
+            let contentPreview = String(plainText.prefix(100)).trimmingCharacters(in: .whitespacesAndNewlines)
+            let simpleResult = ImageUtilities.createFinalOutput(markdown: markdown, imageResults: [], settings: settings, contentPreview: contentPreview)
+            return .success(simpleResult)
         }
         
-        return .success(markdown)
+        return .failure(.emptyClipboard)
     }
     
     // MARK: - RTF Extraction Helper

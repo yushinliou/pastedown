@@ -6,83 +6,93 @@ struct ResultView: View {
     @Binding var alertMessage: String
     @Binding var showingAdvancedSettings: Bool
     @ObservedObject var settings: SettingsStore
+    var processingResult: ImageUtilities.ProcessingResult?
 
     var body: some View {
         ZStack {
-            VStack(spacing: 0) {
-                // Editor - takes full space
-                VStack(alignment: .leading, spacing: 8) {
+            // 背景（確保整頁）
+            Color(.systemBackground).ignoresSafeArea()
 
-                    // Done (close) button
-                    Button(action: {
-                        convertedMarkdown = ""
-                    }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .frame(width: 44, height: 44)
-                            .background(Color.gray.opacity(0.1))
-                            .clipShape(Circle())
-                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)      .padding(.horizontal)
-                            .padding(.top)
-                    }
-                    
-//                    Text("Markdown Output")
-//                        .font(.headline)
-//                        .fontWeight(.semibold)
-//                        .padding(.horizontal)
-//                        .padding(.top)
-                    
-                    TextEditor(text: $convertedMarkdown)
-                        .font(.system(.body, design: .monospaced))
-                        .padding()
-                        .cornerRadius(15)
-                        .padding(.horizontal)
-                      .background(Color.gray.opacity(0.05))
-                }
-            }
-            
-            // Floating action buttons in bottom right
-            VStack(spacing: 12) {
-                Spacer()
-                
-                HStack {
-                    Spacer()
-                    
-                    VStack(spacing: 12) {
-                        // Copy button
-                        Button(action: {
-                            UIPasteboard.general.string = convertedMarkdown
-                            alertMessage = "Markdown copied to clipboard!"
-                            showingAlert = true
-                        }) {
-                            Image(systemName: "doc.on.doc")
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(.white)
-                                .frame(width: 50, height: 50)
-                                .background(Color("primaryColour"))
-                                .clipShape(Circle())
-                                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+            // 內容層：讓卡片吃滿
+            VStack(spacing: 16) {
+                // File Status Indicator (if file was created)
+                if let result = processingResult,
+                   let fileURL = result.fileURL {
+                    HStack {
+                        Image(systemName: result.fileType == .zip ? "archivebox" : "doc.text")
+                            .foregroundColor(.blue)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("File created: \(fileURL.lastPathComponent)")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                            Text("Size: \(FileManagerUtilities.getFileSize(url: fileURL))")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
                         }
                         
+                        Spacer()
+                        
+                        Text(result.fileType == .zip ? "ZIP" : "MD")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.blue.opacity(0.1))
+                            .foregroundColor(.blue)
+                            .cornerRadius(4)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.05))
+                    .cornerRadius(8)
+                }
+                
+                // 卡片：包住 TextEditor，背景/圓角在卡片上，別直接加在 TextEditor 身上
+                VStack(spacing: 0) {
+                    TextEditor(text: $convertedMarkdown)
+                        .font(.system(.body, design: .monospaced))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .padding(12)
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.gray.opacity(0.06))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(.quaternary, lineWidth: 1)
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 16)
+            .ignoresSafeArea(.keyboard) // 鍵盤彈出時不要亂擠版
 
+            // 懸浮：右下角 Copy
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button {
+                        UIPasteboard.general.string = convertedMarkdown
+                        alertMessage = "Markdown copied to clipboard!"
+                        showingAlert = true
+                    } label: {
+                        Image(systemName: "doc.on.doc")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color("primaryColour"))
+                            .clipShape(Circle())
+                            .shadow(radius: 4)
                     }
                 }
-                .padding(.trailing, 20)
-                .padding(.bottom, 30)
             }
+            .padding(.trailing, 20)
+            .padding(.bottom, 30)
         }
-   }
+    }
 }
 
-
-#Preview {
-    // 先準備一些假的 Binding 和設定物件來讓 Preview 可以跑
-    ResultView(
-        convertedMarkdown: .constant("# Hello World\nThis is a preview.# "),
-        showingAlert: .constant(false),
-        alertMessage: .constant(""),
-        showingAdvancedSettings: .constant(false),
-        settings: SettingsStore()
-    )
-}
