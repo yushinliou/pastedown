@@ -16,7 +16,6 @@ enum FrontMatterType: String, CaseIterable, Codable {
     case list = "list"
     case tag = "tag"
     case multiline = "multiline"
-    case uuid = "uuid"
     case current_date = "current_date"
     case current_datetime = "current_datetime"
     
@@ -30,9 +29,17 @@ enum FrontMatterType: String, CaseIterable, Codable {
         case .list: return "List"
         case .tag: return "Tag"
         case .multiline: return "Multiline"
-        case .uuid: return "UUID"
         case .current_date: return "Current Date"
         case .current_datetime: return "Current DateTime"
+        }
+    }
+    
+    var needsUserInput: Bool {
+        switch self {
+        case .current_date, .current_datetime:
+            return false
+        default:
+            return true
         }
     }
 }

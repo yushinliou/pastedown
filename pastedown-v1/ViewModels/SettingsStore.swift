@@ -66,9 +66,8 @@ class SettingsStore: ObservableObject {
         
         let currentDate = Date()
         let formatter = DateFormatter()
-        var imagePreview = ""
         
-        // Replace variables with actual values
+        // Replace built-in variables with actual values
         formatter.dateFormat = "yyyy-MM-dd"
         processedPath = processedPath.replacingOccurrences(of: "{date}", with: formatter.string(from: currentDate))
         
@@ -81,6 +80,9 @@ class SettingsStore: ObservableObject {
             .replacingOccurrences(of: "\n", with: "")
             .lowercased()
         processedPath = processedPath.replacingOccurrences(of: "{clipboard_preview}", with: clipboardPreview)
+        
+        // Process front matter field variables
+        processedPath = processFrontMatterVariables(in: processedPath, sanitizeForPath: true)
         
         // Ensure path ends with / if it doesn't already
         if !processedPath.isEmpty && !processedPath.hasSuffix("/") {
@@ -132,7 +134,7 @@ class SettingsStore: ObservableObject {
         let currentDate = Date()
         let formatter = DateFormatter()
         
-        // Replace date variables
+        // Replace built-in date variables
         formatter.dateFormat = "yyyy-MM-dd"
         filename = filename.replacingOccurrences(of: "{date}", with: formatter.string(from: currentDate))
         
@@ -145,6 +147,9 @@ class SettingsStore: ObservableObject {
             .replacingOccurrences(of: "\n", with: "")
             .lowercased()
         filename = filename.replacingOccurrences(of: "{clipboard_preview}", with: clipboardPreview)
+        
+        // Process front matter field variables
+        filename = processFrontMatterVariables(in: filename, sanitizeForPath: true)
         
         return filename
     }
@@ -238,5 +243,99 @@ class SettingsStore: ObservableObject {
     
     private func getClipboardPreviewForDemo() -> String {
         return "example preview"
+    }
+    
+    // MARK: - Front Matter Variable Processing
+    private func processFrontMatterVariables(in text: String, sanitizeForPath: Bool = false) -> String {
+        var processedText = text
+        
+        // Process each front matter field variable
+        for field in frontMatterFields {
+            let placeholder = "{\(field.name)}"
+            if processedText.contains(placeholder) {
+                var fieldValue = getProcessedFieldValue(field)
+                
+                // Sanitize for file paths if needed
+                if sanitizeForPath {
+                    fieldValue = sanitizeForFilePath(fieldValue)
+                }
+                
+                processedText = processedText.replacingOccurrences(of: placeholder, with: fieldValue)
+            }
+        }
+        
+        return processedText
+    }
+    
+    private func getProcessedFieldValue(_ field: FrontMatterField) -> String {
+        // Use the same logic as MarkdownUtilities for consistency
+        switch field.type {
+        case .current_date:
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.string(from: Date())
+        case .current_datetime:
+            let dateTimeFormatter = DateFormatter()
+            dateTimeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            return dateTimeFormatter.string(from: Date())
+        case .tag, .list:
+            // For paths, use comma-separated format instead of YAML
+            let items = parseArrayField(field.value)
+            return items.joined(separator: ", ")
+        default:
+            // Process any variables within this field's value
+            var value = field.value
+            
+            // Process built-in date/time variables
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let currentDate = dateFormatter.string(from: Date())
+            
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "HH:mm:ss"
+            let currentTime = timeFormatter.string(from: Date())
+            
+            value = value.replacingOccurrences(of: "{current_date}", with: currentDate)
+            value = value.replacingOccurrences(of: "{current_time}", with: currentTime)
+            
+            // For simplicity, avoid recursive field references in paths to prevent complexity
+            // Could be enhanced later if needed
+            
+            return value
+        }
+    }
+    
+    private func parseArrayField(_ value: String) -> [String] {
+        // First try to parse as JSON array (same logic as MarkdownUtilities)
+        if let jsonData = value.data(using: .utf8),
+           let items = try? JSONDecoder().decode([String].self, from: jsonData) {
+            return items.filter { !$0.isEmpty }
+        }
+        
+        // Fallback to comma-separated format
+        if !value.isEmpty {
+            return value.components(separatedBy: ",")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        }
+        
+        return []
+    }
+    
+    private func sanitizeForFilePath(_ text: String) -> String {
+        return text
+            .replacingOccurrences(of: " ", with: "-")
+            .replacingOccurrences(of: "\n", with: "-")
+            .replacingOccurrences(of: "\t", with: "-")
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: "\\", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+            .replacingOccurrences(of: "*", with: "-")
+            .replacingOccurrences(of: "?", with: "-")
+            .replacingOccurrences(of: "\"", with: "-")
+            .replacingOccurrences(of: "<", with: "-")
+            .replacingOccurrences(of: ">", with: "-")
+            .replacingOccurrences(of: "|", with: "-")
+            .lowercased()
     }
 }

@@ -10,41 +10,36 @@
 struct AdvancedSettingsView: View {
     @ObservedObject var settings: SettingsStore
     @Environment(\.presentationMode) var presentationMode
-    @State private var newFieldName = ""
-    @State private var newFieldType = FrontMatterType.string
-    @State private var newFieldValue = ""
+    @Environment(\.editMode) var editMode
     
     var body: some View {
         NavigationView {
             Form {
-                Section("Front Matter Template") {
-                    ForEach(settings.frontMatterFields) { field in
-                        FrontMatterFieldRow(field: field, settings: settings)
+                Section(header: 
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Front Matter Template")
+                        if !settings.frontMatterFields.isEmpty {
+                            Text("Tap 'Edit' to reorder fields by dragging")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                ) {
+                    ForEach($settings.frontMatterFields) { $field in
+                        SmartFrontMatterFieldView(field: $field, settings: settings) {
+                            if let index = settings.frontMatterFields.firstIndex(where: { $0.id == field.id }) {
+                                settings.frontMatterFields[index] = field
+                                settings.saveSettings()
+                            }
+                        }
                     }
                     .onDelete(perform: deleteFrontMatterField)
+                    .onMove(perform: moveFrontMatterField)
                     
                     // Add new field
-                    VStack(alignment: .leading) {
-                        HStack {
-                            TextField("Field name", text: $newFieldName)
-                            Picker("Type", selection: $newFieldType) {
-                                ForEach(FrontMatterType.allCases, id: \.self) { type in
-                                    Text(type.displayName).tag(type)
-                                }
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                        }
-                        
-                        TextField("Value", text: $newFieldValue)
-                        
-                        Button("Add Field") {
-                            let newField = FrontMatterField(name: newFieldName, type: newFieldType, value: newFieldValue)
-                            settings.frontMatterFields.append(newField)
-                            newFieldName = ""
-                            newFieldValue = ""
-                            settings.saveSettings()
-                        }
-                        .disabled(newFieldName.isEmpty)
+                    SmartAddNewFieldView(settings: settings) { newField in
+                        settings.frontMatterFields.append(newField)
+                        settings.saveSettings()
                     }
                 }
                 
@@ -92,6 +87,9 @@ struct AdvancedSettingsView: View {
             .navigationTitle("Advanced Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         settings.saveSettings()
@@ -106,42 +104,11 @@ struct AdvancedSettingsView: View {
         settings.frontMatterFields.remove(atOffsets: offsets)
         settings.saveSettings()
     }
+    
+    private func moveFrontMatterField(from source: IndexSet, to destination: Int) {
+        settings.frontMatterFields.move(fromOffsets: source, toOffset: destination)
+        settings.saveSettings()
+    }
 }
 
-struct FrontMatterFieldRow: View {
-    @State var field: FrontMatterField
-    @ObservedObject var settings: SettingsStore
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                TextField("Name", text: $field.name)
-                    .onChange(of: field.name) {  oldValue, newValue in
-                        print("\(oldValue) -> \(newValue)")
-                        updateField() }
-                
-                Picker("Type", selection: $field.type) {
-                    ForEach(FrontMatterType.allCases, id: \.self) { type in
-                        Text(type.displayName).tag(type)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-                .onChange(of: field.type) {  oldValue, newValue in
-                    print("\(oldValue) -> \(newValue)")
-                    updateField() }
-            }
-            
-            TextField("Value", text: $field.value)
-                .onChange(of: field.value) {  oldValue, newValue in
-                    print("\(oldValue) -> \(newValue)")
-                    updateField() }
-        }
-    }
-    
-    private func updateField() {
-        if let index = settings.frontMatterFields.firstIndex(where: { $0.id == field.id }) {
-            settings.frontMatterFields[index] = field
-        }
-    }
-}
 

@@ -81,7 +81,7 @@ struct InitialViewWithSettings: View {
                         
                         if settings.imageHandling == .saveToFolder {
                             VStack(alignment: .leading, spacing: 4) {
-                                TextField("Folder path", text: $settings.imageFolderPath)
+                                TextFieldWithVariablePicker(title: "Folder path", text: $settings.imageFolderPath, context: .filename, settings: settings)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
@@ -172,7 +172,7 @@ struct InitialViewWithSettings: View {
                             .font(.subheadline)
                             .fontWeight(.medium)
                         
-                        TextField("Filename format (without .md)", text: $settings.outputFilenameFormat)
+                        TextFieldWithVariablePicker(title: "Filename format (without .md)", text: $settings.outputFilenameFormat, context: .filename, settings: settings)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)

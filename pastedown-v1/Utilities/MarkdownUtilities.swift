@@ -149,7 +149,7 @@ struct MarkdownUtilities {
         var frontMatter = "---\n"
         
         for field in settings.frontMatterFields {
-            let processedValue = processFieldValue(field)
+            let processedValue = processFieldValueWithContext(field, allFields: settings.frontMatterFields)
             
             switch field.type {
             case .string:
@@ -159,15 +159,15 @@ struct MarkdownUtilities {
             case .boolean:
                 frontMatter += "\(field.name): \(processedValue.lowercased() == "true" ? "true" : "false")\n"
             case .date, .datetime:
-                frontMatter += "\(field.name): \"\(processedValue)\"\n"
+                frontMatter += "\(field.name): \(processedValue)\n"
             case .list:
-                let items = processedValue.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+                let items = parseArrayField(processedValue)
                 frontMatter += "\(field.name): [\(items.map { "\"\($0)\"" }.joined(separator: ", "))]\n"
             case .tag:
-                let items = processedValue.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+                let items = parseArrayField(processedValue)
                 frontMatter += "\(field.name):\n"
                 for item in items {
-                    frontMatter += "  - \"\(item)\"\n"
+                    frontMatter += "    - \"\(item)\"\n"
                 }
             case .multiline:
                 frontMatter += "\(field.name): >-\n"
@@ -175,12 +175,16 @@ struct MarkdownUtilities {
                 for line in lines {
                     frontMatter += "  \(line)\n"
                 }
-            case .uuid:
-                frontMatter += "\(field.name): \"\(UUID().uuidString)\"\n"
             case .current_date:
-                frontMatter += "\(field.name): \"\(processFieldValue(field))\"\n"
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                let currentDate = dateFormatter.string(from: Date())
+                frontMatter += "\(field.name): \(currentDate)\n"
             case .current_datetime:
-                frontMatter += "\(field.name): \"\(processFieldValue(field))\"\n"
+                let dateTimeFormatter = DateFormatter()
+                dateTimeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                let currentDateTime = dateTimeFormatter.string(from: Date())
+                frontMatter += "\(field.name): \(currentDateTime)\n"
             }
         }
         
@@ -203,5 +207,118 @@ struct MarkdownUtilities {
         value = value.replacingOccurrences(of: "{current_time}", with: currentTime)
         
         return value
+    }
+    
+    // Enhanced version that can resolve field references
+    static func processFieldValueWithContext(_ field: FrontMatterField, allFields: [FrontMatterField]) -> String {
+        var value = field.value
+        
+        // Process date/time variables
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDate = dateFormatter.string(from: Date())
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm:ss"
+        let currentTime = timeFormatter.string(from: Date())
+        
+        value = value.replacingOccurrences(of: "{current_date}", with: currentDate)
+        value = value.replacingOccurrences(of: "{current_time}", with: currentTime)
+        
+        // Process field references like {title}, {author}, etc.
+        for otherField in allFields {
+            if otherField.id != field.id { // Don't reference self
+                let placeholder = "{\(otherField.name)}"
+                if value.contains(placeholder) {
+                    let fieldValue = getFieldDisplayValue(otherField, allFields: allFields, processedFields: [field.id.uuidString])
+                    value = value.replacingOccurrences(of: placeholder, with: fieldValue)
+                }
+            }
+        }
+        
+        return value
+    }
+    
+    // Get the display value of a field (recursively process variables but avoid circular references)
+    private static func getFieldDisplayValue(_ field: FrontMatterField, allFields: [FrontMatterField]? = nil, processedFields: Set<String> = []) -> String {
+        // Prevent circular references by tracking processed fields
+        guard !processedFields.contains(field.id.uuidString) else {
+            return field.value // Return raw value if circular reference detected
+        }
+        
+        var newProcessedFields = processedFields
+        newProcessedFields.insert(field.id.uuidString)
+        
+        switch field.type {
+        case .current_date:
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.string(from: Date())
+        case .current_datetime:
+            let dateTimeFormatter = DateFormatter()
+            dateTimeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            return dateTimeFormatter.string(from: Date())
+        case .tag:
+            let items = parseArrayField(field.value)
+            return items.joined(separator: ", ")
+        case .list:
+            let items = parseArrayField(field.value)
+            return items.joined(separator: ", ")
+        default:
+            // If we have access to all fields, process variables recursively
+            if let allFields = allFields {
+                return processFieldValueRecursive(field, allFields: allFields, processedFields: newProcessedFields)
+            } else {
+                return field.value
+            }
+        }
+    }
+    
+    // Process field value recursively with circular reference protection
+    private static func processFieldValueRecursive(_ field: FrontMatterField, allFields: [FrontMatterField], processedFields: Set<String>) -> String {
+        var value = field.value
+        
+        // Process date/time variables
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDate = dateFormatter.string(from: Date())
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm:ss"
+        let currentTime = timeFormatter.string(from: Date())
+        
+        value = value.replacingOccurrences(of: "{current_date}", with: currentDate)
+        value = value.replacingOccurrences(of: "{current_time}", with: currentTime)
+        
+        // Process field references recursively
+        for otherField in allFields {
+            if otherField.id != field.id { // Don't reference self
+                let placeholder = "{\(otherField.name)}"
+                if value.contains(placeholder) {
+                    let fieldValue = getFieldDisplayValue(otherField, allFields: allFields, processedFields: processedFields)
+                    value = value.replacingOccurrences(of: placeholder, with: fieldValue)
+                }
+            }
+        }
+        
+        return value
+    }
+    
+    // MARK: - Array Field Parsing
+    static func parseArrayField(_ value: String) -> [String] {
+        // First try to parse as JSON array (new format from SmartFrontMatterFieldView)
+        if let jsonData = value.data(using: .utf8),
+           let items = try? JSONDecoder().decode([String].self, from: jsonData) {
+            return items.filter { !$0.isEmpty }
+        }
+        
+        // Fallback to comma-separated format (legacy/manual input)
+        if !value.isEmpty {
+            return value.components(separatedBy: ",")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        }
+        
+        return []
     }
 } 

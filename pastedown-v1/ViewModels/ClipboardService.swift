@@ -28,7 +28,14 @@ class ClipboardService: ObservableObject {
     func processClipboardWithFiles() async -> Result<ImageUtilities.ProcessingResult, ClipboardError> {
         let pasteboard = UIPasteboard.general
         
-        guard pasteboard.hasStrings || pasteboard.hasImages else {
+        // Debug: Check what's actually in the pasteboard
+        print("=== Pasteboard Debug ===")
+        print("hasStrings: \(pasteboard.hasStrings)")
+        print("hasImages: \(pasteboard.hasImages)")
+        print("types: \(pasteboard.types)")
+        print("=======================")
+        
+        guard pasteboard.hasStrings || pasteboard.hasImages || pasteboard.contains(pasteboardTypes: ["public.png", "public.jpeg"]) else {
             return .failure(.emptyClipboard)
         }
         
@@ -82,8 +89,12 @@ class ClipboardService: ObservableObject {
             let contentPreview = String(plainText.prefix(100)).trimmingCharacters(in: .whitespacesAndNewlines)
             let simpleResult = ImageUtilities.createFinalOutput(markdown: markdown, imageResults: [], settings: settings, contentPreview: contentPreview)
             return .success(simpleResult)
+
+        } else if pasteboard.hasImages {
+            // Handle image-only content
+            return await processImageOnlyClipboard()
         }
-        
+
         return .failure(.emptyClipboard)
     }
     
@@ -110,6 +121,52 @@ class ClipboardService: ObservableObject {
         let rtfString = String(data: rtfData, encoding: .ascii)
             ?? String(data: rtfData, encoding: .utf8)
         return rtfString
+    }
+    
+    // MARK: - Image-Only Processing
+    private func processImageOnlyClipboard() async -> Result<ImageUtilities.ProcessingResult, ClipboardError> {
+        let pasteboard = UIPasteboard.general
+        var images: [UIImage] = []
+        
+        // Try to get images from pasteboard
+        if let pasteboardImages = pasteboard.images {
+            images = pasteboardImages
+        } else {
+            // Try to get image data directly from pasteboard types
+            for type in ["public.png", "public.jpeg", "public.tiff", "public.heif"] {
+                if let imageData = pasteboard.data(forPasteboardType: type),
+                   let image = UIImage(data: imageData) {
+                    images.append(image)
+                }
+            }
+        }
+        
+        guard !images.isEmpty else {
+            return .failure(.emptyClipboard)
+        }
+        
+        // Create attributed string with image attachments
+        let mutableAttributedString = NSMutableAttributedString()
+        
+        for (index, image) in images.enumerated() {
+            // Create text attachment for the image
+            let attachment = NSTextAttachment()
+            attachment.image = image
+            
+            // Create attributed string with the attachment
+            let attachmentString = NSAttributedString(attachment: attachment)
+            mutableAttributedString.append(attachmentString)
+            
+            // Add newline between multiple images
+            if index < images.count - 1 {
+                mutableAttributedString.append(NSAttributedString(string: "\n"))
+            }
+        }
+        
+        // Process using existing logic
+        let contentPreview = "clipboard-images"
+        let processingResult = await richTextProcessor.processAttributedStringWithFileSaving(mutableAttributedString, rawRTF: nil, plainTextReference: nil, contentPreview: contentPreview)
+        return .success(processingResult)
     }
 }
 enum ClipboardError: Error, LocalizedError {
