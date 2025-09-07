@@ -7,6 +7,59 @@
 
 import SwiftUI
 
+// MARK: - LLM Provider
+enum LLMProvider: String, CaseIterable, Identifiable {
+    case openai = "openai"
+    case anthropic = "anthropic"
+    case custom = "custom"
+    
+    var id: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .openai:
+            return "OpenAI (GPT-4o)"
+        case .anthropic:
+            return "Anthropic (Claude)"
+        case .custom:
+            return "Custom API"
+        }
+    }
+    
+    var apiEndpoint: String {
+        switch self {
+        case .openai:
+            return "https://api.openai.com/v1/chat/completions"
+        case .anthropic:
+            return "https://api.anthropic.com/v1/messages"
+        case .custom:
+            return "" // User-provided
+        }
+    }
+    
+    var supportedModels: [String] {
+        switch self {
+        case .openai:
+            return ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"]
+        case .anthropic:
+            return ["claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
+        case .custom:
+            return []
+        }
+    }
+    
+    var defaultModel: String {
+        switch self {
+        case .openai:
+            return "gpt-4o"
+        case .anthropic:
+            return "claude-3-5-sonnet-20240620"
+        case .custom:
+            return ""
+        }
+    }
+}
+
 // MARK: - Settings Store
 class SettingsStore: ObservableObject {
     @Published var frontMatterFields: [FrontMatterField] = []
@@ -16,6 +69,8 @@ class SettingsStore: ObservableObject {
     @Published var altTextTemplate: AltTextTemplate = .imageOf
     @Published var apiKey: String = ""
     @Published var useExternalAPI: Bool = false
+    @Published var llmProvider: LLMProvider = .openai
+    @Published var customPrompt: String = ""
     @Published var outputFilenameFormat: String = "note_{date}_{clipboard_preview}"
     
     init() {
@@ -43,10 +98,18 @@ class SettingsStore: ObservableObject {
         
         apiKey = UserDefaults.standard.string(forKey: "apiKey") ?? ""
         useExternalAPI = UserDefaults.standard.bool(forKey: "useExternalAPI")
+        
+        if let providerRaw = UserDefaults.standard.string(forKey: "llmProvider"),
+           let provider = LLMProvider(rawValue: providerRaw) {
+            llmProvider = provider
+        }
+        
+        customPrompt = UserDefaults.standard.string(forKey: "customPrompt") ?? ""
         outputFilenameFormat = UserDefaults.standard.string(forKey: "outputFilenameFormat") ?? "note_{date}_{clipboard_preview}"
     }
     
     func saveSettings() {
+        // Save to UserDefaults (for backwards compatibility)
         if let data = try? JSONEncoder().encode(frontMatterFields) {
             UserDefaults.standard.set(data, forKey: "frontMatterFields")
         }
@@ -57,7 +120,45 @@ class SettingsStore: ObservableObject {
         UserDefaults.standard.set(altTextTemplate.rawValue, forKey: "altTextTemplate")
         UserDefaults.standard.set(apiKey, forKey: "apiKey")
         UserDefaults.standard.set(useExternalAPI, forKey: "useExternalAPI")
+        UserDefaults.standard.set(llmProvider.rawValue, forKey: "llmProvider")
+        UserDefaults.standard.set(customPrompt, forKey: "customPrompt")
         UserDefaults.standard.set(outputFilenameFormat, forKey: "outputFilenameFormat")
+        
+        // Also save to shared container for Share Extension
+        saveToSharedContainer()
+    }
+    
+    private func saveToSharedContainer() {
+        guard let sharedContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.Yu-shin.pastedown") else {
+            print("Could not access shared container")
+            return
+        }
+        
+        let settingsURL = sharedContainer.appendingPathComponent("SharedSettings.plist")
+        
+        var plist: [String: Any] = [:]
+        
+        // Serialize front matter fields
+        if let frontMatterData = try? JSONEncoder().encode(frontMatterFields) {
+            plist["frontMatterFields"] = frontMatterData
+        }
+        
+        plist["imageHandling"] = imageHandling.rawValue
+        plist["imageFolderPath"] = imageFolderPath
+        plist["enableAutoAlt"] = enableAutoAlt
+        plist["altTextTemplate"] = altTextTemplate.rawValue
+        plist["apiKey"] = apiKey
+        plist["useExternalAPI"] = useExternalAPI
+        plist["llmProvider"] = llmProvider.rawValue
+        plist["customPrompt"] = customPrompt
+        plist["outputFilenameFormat"] = outputFilenameFormat
+        
+        do {
+            let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
+            try data.write(to: settingsURL)
+        } catch {
+            print("Error saving settings to shared container: \(error)")
+        }
     }
     
     // MARK: - Image Path Processing

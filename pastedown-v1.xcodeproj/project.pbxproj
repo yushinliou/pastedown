@@ -6,7 +6,18 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		530A31EE2E6D6F14005015AD /* PastedownShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 530A31E42E6D6F14005015AD /* PastedownShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		530A31EC2E6D6F14005015AD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531AF45D2E12685900FACBA5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 530A31E32E6D6F14005015AD;
+			remoteInfo = PastedownShareExtension;
+		};
 		531AF4732E12685B00FACBA5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 531AF45D2E12685900FACBA5 /* Project object */;
@@ -23,15 +34,70 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		530A31EF2E6D6F14005015AD /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				530A31EE2E6D6F14005015AD /* PastedownShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		530A31E42E6D6F14005015AD /* PastedownShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PastedownShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		531AF4652E12685900FACBA5 /* pastedown-v1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pastedown-v1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		531AF4722E12685B00FACBA5 /* pastedown-v1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pastedown-v1Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		531AF47C2E12685B00FACBA5 /* pastedown-v1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pastedown-v1UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		53643EC62E6D825F009F6C60 /* PastedownShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PastedownShareExtension.entitlements; path = PastedownShareExtension/PastedownShareExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		53643EBC2E6D80BB009F6C60 /* Exceptions for "pastedown-v1" folder in "PastedownShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/AltTextTemplate.swift,
+				Models/FrontMatterField.swift,
+				Models/FrontMatterType.swift,
+				Models/ImageHandling.swift,
+				"Utilities/FileManager+Extensions.swift",
+				Utilities/ImageUtilities.swift,
+				Utilities/ListUtilities.swift,
+				Utilities/MarkdownUtilities.swift,
+				Utilities/TableUtilities.swift,
+				ViewModels/ImageAnalyzer.swift,
+				ViewModels/RichTextProcessor.swift,
+				ViewModels/SettingsStore.swift,
+			);
+			target = 530A31E32E6D6F14005015AD /* PastedownShareExtension */;
+		};
+		53643ECD2E6DB51C009F6C60 /* Exceptions for "pastedownShareExtension" folder in "pastedown-v1" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: MainInterface.storyboard",
+			);
+			target = 531AF4642E12685900FACBA5 /* pastedown-v1 */;
+		};
+		53643ECE2E6DB51C009F6C60 /* Exceptions for "pastedownShareExtension" folder in "PastedownShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: MainInterface.storyboard",
+				ShareViewController.swift,
+			);
+			target = 530A31E32E6D6F14005015AD /* PastedownShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		531AF4672E12685900FACBA5 /* pastedown-v1 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				53643EBC2E6D80BB009F6C60 /* Exceptions for "pastedown-v1" folder in "PastedownShareExtension" target */,
+			);
 			path = "pastedown-v1";
 			sourceTree = "<group>";
 		};
@@ -45,9 +111,25 @@
 			path = "pastedown-v1UITests";
 			sourceTree = "<group>";
 		};
+		53643EAD2E6D71E4009F6C60 /* pastedownShareExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				53643ECD2E6DB51C009F6C60 /* Exceptions for "pastedownShareExtension" folder in "pastedown-v1" target */,
+				53643ECE2E6DB51C009F6C60 /* Exceptions for "pastedownShareExtension" folder in "PastedownShareExtension" target */,
+			);
+			path = pastedownShareExtension;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		530A31E12E6D6F14005015AD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		531AF4622E12685900FACBA5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -75,9 +157,11 @@
 		531AF45C2E12685900FACBA5 = {
 			isa = PBXGroup;
 			children = (
+				53643EC62E6D825F009F6C60 /* PastedownShareExtension.entitlements */,
 				531AF4672E12685900FACBA5 /* pastedown-v1 */,
 				531AF4752E12685B00FACBA5 /* pastedown-v1Tests */,
 				531AF47F2E12685B00FACBA5 /* pastedown-v1UITests */,
+				53643EAD2E6D71E4009F6C60 /* pastedownShareExtension */,
 				531AF4662E12685900FACBA5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +172,7 @@
 				531AF4652E12685900FACBA5 /* pastedown-v1.app */,
 				531AF4722E12685B00FACBA5 /* pastedown-v1Tests.xctest */,
 				531AF47C2E12685B00FACBA5 /* pastedown-v1UITests.xctest */,
+				530A31E42E6D6F14005015AD /* PastedownShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,6 +180,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		530A31E32E6D6F14005015AD /* PastedownShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 530A31F32E6D6F14005015AD /* Build configuration list for PBXNativeTarget "PastedownShareExtension" */;
+			buildPhases = (
+				530A31E02E6D6F14005015AD /* Sources */,
+				530A31E12E6D6F14005015AD /* Frameworks */,
+				530A31E22E6D6F14005015AD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PastedownShareExtension;
+			packageProductDependencies = (
+			);
+			productName = PastedownShareExtension;
+			productReference = 530A31E42E6D6F14005015AD /* PastedownShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		531AF4642E12685900FACBA5 /* pastedown-v1 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 531AF4862E12685B00FACBA5 /* Build configuration list for PBXNativeTarget "pastedown-v1" */;
@@ -102,10 +206,12 @@
 				531AF4612E12685900FACBA5 /* Sources */,
 				531AF4622E12685900FACBA5 /* Frameworks */,
 				531AF4632E12685900FACBA5 /* Resources */,
+				530A31EF2E6D6F14005015AD /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				530A31ED2E6D6F14005015AD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				531AF4672E12685900FACBA5 /* pastedown-v1 */,
@@ -173,6 +279,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					530A31E32E6D6F14005015AD = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					531AF4642E12685900FACBA5 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -203,11 +312,19 @@
 				531AF4642E12685900FACBA5 /* pastedown-v1 */,
 				531AF4712E12685B00FACBA5 /* pastedown-v1Tests */,
 				531AF47B2E12685B00FACBA5 /* pastedown-v1UITests */,
+				530A31E32E6D6F14005015AD /* PastedownShareExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		530A31E22E6D6F14005015AD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		531AF4632E12685900FACBA5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -232,6 +349,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		530A31E02E6D6F14005015AD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		531AF4612E12685900FACBA5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -256,6 +380,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		530A31ED2E6D6F14005015AD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 530A31E32E6D6F14005015AD /* PastedownShareExtension */;
+			targetProxy = 530A31EC2E6D6F14005015AD /* PBXContainerItemProxy */;
+		};
 		531AF4742E12685B00FACBA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 531AF4642E12685900FACBA5 /* pastedown-v1 */;
@@ -269,6 +398,58 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		530A31F02E6D6F14005015AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PastedownShareExtension/PastedownShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B3699PGRBJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PastedownShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PastedownShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Yu-shin.pastedown-v1.PastedownShareExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		530A31F12E6D6F14005015AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PastedownShareExtension/PastedownShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B3699PGRBJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PastedownShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PastedownShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Yu-shin.pastedown-v1.PastedownShareExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		531AF4842E12685B00FACBA5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -393,6 +574,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "pastedown-v1/pastedown-v1.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B3699PGRBJ;
@@ -421,6 +603,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "pastedown-v1/pastedown-v1.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B3699PGRBJ;
@@ -515,6 +698,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		530A31F32E6D6F14005015AD /* Build configuration list for PBXNativeTarget "PastedownShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				530A31F02E6D6F14005015AD /* Debug */,
+				530A31F12E6D6F14005015AD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		531AF4602E12685900FACBA5 /* Build configuration list for PBXProject "pastedown-v1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

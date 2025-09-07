@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'PastedownShareExtension' in project 'pastedown-v1' (no dependencies)

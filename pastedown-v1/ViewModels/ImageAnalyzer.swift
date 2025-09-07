@@ -60,21 +60,36 @@ class ImageAnalyzer: ObservableObject {
     }
     
 private func generateAltTextWithAPI(_ image: UIImage) async -> String {
+    switch settings.llmProvider {
+    case .openai:
+        return await generateAltTextWithOpenAI(image)
+    case .anthropic:
+        return await generateAltTextWithAnthropic(image)
+    case .custom:
+        return await generateAltTextWithCustomAPI(image)
+    }
+}
+
+private func generateAltTextWithOpenAI(_ image: UIImage) async -> String {
     guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-        return "Invalid image"
+        print("Failed to convert image to JPEG data")
+        return await generateAltTextWithVision(image)
     }
 
     let base64Image = imageData.base64EncodedString()
+    let prompt = settings.customPrompt.isEmpty ? 
+        "Generate a concise, descriptive alt text for this image. Focus on the main content, objects, and context that would be useful for someone who cannot see the image. Keep it under 100 characters." :
+        settings.customPrompt
 
     let requestBody: [String: Any] = [
-        "model": "gpt-4-vision-preview",
+        "model": "gpt-4o",
         "messages": [
             [
                 "role": "user",
                 "content": [
                     [
                         "type": "text",
-                        "text": "請幫我生成這張圖片的 alt text（簡潔描述這張圖）。"
+                        "text": prompt
                     ],
                     [
                         "type": "image_url",
@@ -85,34 +100,152 @@ private func generateAltTextWithAPI(_ image: UIImage) async -> String {
                 ]
             ]
         ],
-        "max_tokens": 100
+        "max_tokens": 150,
+        "temperature": 0.3
     ]
 
-    guard let url = URL(string: "https://api.openai.com/v1/chat/completions") else {
-        return "Invalid API URL"
+    return await makeAPIRequest(
+        url: "https://api.openai.com/v1/chat/completions",
+        requestBody: requestBody,
+        headers: ["Authorization": "Bearer \(settings.apiKey)"],
+        responseParser: parseOpenAIResponse
+    )
+}
+
+private func generateAltTextWithAnthropic(_ image: UIImage) async -> String {
+    guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+        print("Failed to convert image to JPEG data")
+        return await generateAltTextWithVision(image)
     }
 
-    var request = URLRequest(url: url)
+    let base64Image = imageData.base64EncodedString()
+    let prompt = settings.customPrompt.isEmpty ? 
+        "Generate a concise, descriptive alt text for this image. Focus on the main content, objects, and context that would be useful for someone who cannot see the image. Keep it under 100 characters." :
+        settings.customPrompt
+
+    let requestBody: [String: Any] = [
+        "model": "claude-3-5-sonnet-20240620",
+        "max_tokens": 150,
+        "messages": [
+            [
+                "role": "user",
+                "content": [
+                    [
+                        "type": "text",
+                        "text": prompt
+                    ],
+                    [
+                        "type": "image",
+                        "source": [
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": base64Image
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+
+    return await makeAPIRequest(
+        url: "https://api.anthropic.com/v1/messages",
+        requestBody: requestBody,
+        headers: [
+            "x-api-key": settings.apiKey,
+            "anthropic-version": "2023-06-01"
+        ],
+        responseParser: parseAnthropicResponse
+    )
+}
+
+private func generateAltTextWithCustomAPI(_ image: UIImage) async -> String {
+    // For custom API, fallback to Vision since we don't have endpoint configuration yet
+    print("Custom API not yet implemented, falling back to Vision")
+    return await generateAltTextWithVision(image)
+}
+
+private func makeAPIRequest(
+    url: String,
+    requestBody: [String: Any],
+    headers: [String: String],
+    responseParser: @escaping ([String: Any]) -> String?
+) async -> String {
+    guard let requestURL = URL(string: url) else {
+        print("Invalid API URL: \(url)")
+        return await generateAltTextWithVision(UIImage())
+    }
+
+    var request = URLRequest(url: requestURL)
     request.httpMethod = "POST"
-    request.addValue("Bearer \(settings.apiKey)", forHTTPHeaderField: "Authorization")
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.timeoutInterval = 30
+
+    for (key, value) in headers {
+        request.addValue(value, forHTTPHeaderField: key)
+    }
 
     do {
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        if let httpResponse = response as? HTTPURLResponse {
+            print("API Response Status: \(httpResponse.statusCode)")
+            if httpResponse.statusCode != 200 {
+                if let errorData = String(data: data, encoding: .utf8) {
+                    print("API Error Response: \(errorData)")
+                }
+                return await generateAltTextWithVision(UIImage())
+            }
+        }
 
-        if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let choices = json["choices"] as? [[String: Any]],
-           let message = choices.first?["message"] as? [String: Any],
-           let content = message["content"] as? String {
-            return content
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            print("Failed to parse JSON response")
+            return await generateAltTextWithVision(UIImage())
+        }
+        
+        if let content = responseParser(json) {
+            return content.trimmingCharacters(in: .whitespacesAndNewlines)
         } else {
-            return "Failed to parse API response"
+            print("Failed to extract content from API response")
+            return await generateAltTextWithVision(UIImage())
         }
 
     } catch {
-        return "Error: \(error.localizedDescription)"
+        print("API request failed: \(error.localizedDescription)")
+        return await generateAltTextWithVision(UIImage())
     }
+}
+
+private func parseOpenAIResponse(_ json: [String: Any]) -> String? {
+    if let error = json["error"] as? [String: Any],
+       let message = error["message"] as? String {
+        print("OpenAI API Error: \(message)")
+        return nil
+    }
+    
+    if let choices = json["choices"] as? [[String: Any]],
+       let message = choices.first?["message"] as? [String: Any],
+       let content = message["content"] as? String {
+        return content
+    }
+    
+    return nil
+}
+
+private func parseAnthropicResponse(_ json: [String: Any]) -> String? {
+    if let error = json["error"] as? [String: Any],
+       let message = error["message"] as? String {
+        print("Anthropic API Error: \(message)")
+        return nil
+    }
+    
+    if let content = json["content"] as? [[String: Any]],
+       let firstContent = content.first,
+       let text = firstContent["text"] as? String {
+        return text
+    }
+    
+    return nil
 }
 }
 

@@ -43,19 +43,48 @@ struct AdvancedSettingsView: View {
                     }
                 }
                 
-                Section("External API Settings") {
-                    Toggle("Use external API", isOn: $settings.useExternalAPI)
-                        .onChange(of: settings.useExternalAPI) {  oldValue, newValue in
-                            print("\(oldValue) -> \(newValue)")
+                Section("LLM Alt Text Generation") {
+                    Toggle("Use LLM for Alt Text", isOn: $settings.useExternalAPI)
+                        .onChange(of: settings.useExternalAPI) { oldValue, newValue in
                             settings.saveSettings()
                         }
                     
                     if settings.useExternalAPI {
-                        SecureField("API Key", text: $settings.apiKey)
-                            .onChange(of: settings.apiKey) {  oldValue, newValue in
-                                print("\(oldValue) -> \(newValue)")
-                                settings.saveSettings()
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Provider")
+                                Spacer()
+                                Picker("LLM Provider", selection: $settings.llmProvider) {
+                                    ForEach(LLMProvider.allCases) { provider in
+                                        Text(provider.displayName).tag(provider)
+                                    }
+                                }
+                                .pickerStyle(MenuPickerStyle())
+                                .onChange(of: settings.llmProvider) { oldValue, newValue in
+                                    settings.saveSettings()
+                                }
                             }
+                            
+                            SecureField("API Key", text: $settings.apiKey)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .onChange(of: settings.apiKey) { oldValue, newValue in
+                                    settings.saveSettings()
+                                }
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Custom Prompt (optional)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                TextField("Leave empty to use default prompt", text: $settings.customPrompt, axis: .vertical)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .onChange(of: settings.customPrompt) { oldValue, newValue in
+                                        settings.saveSettings()
+                                    }
+                                Text("Default: Generate concise, descriptive alt text focusing on main content and context.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
                 }
                 

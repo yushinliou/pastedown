@@ -1,0 +1,138 @@
+{
+  "" : {
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/PastedownShareExtension-master.dia",
+    "emit-module-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/PastedownShareExtension-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/PastedownShareExtension-master-emit-module.dia",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/PastedownShareExtension-master.swiftdeps"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/AltTextTemplate.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/AltTextTemplate~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/FrontMatterField.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterField~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/FrontMatterType.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FrontMatterType~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/ImageHandling.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageHandling~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/FileManager+Extensions.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/FileManager+Extensions~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/ImageUtilities.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageUtilities~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/ListUtilities.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ListUtilities~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/MarkdownUtilities.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/MarkdownUtilities~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/TableUtilities.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/TableUtilities~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/ImageAnalyzer.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ImageAnalyzer~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/RichTextProcessor.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/RichTextProcessor~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/SettingsStore.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/SettingsStore~partial.swiftmodule"
+  },
+  "/Users/liuyuxin/Programming/pastedown-v1/pastedownShareExtension/ShareViewController.swift" : {
+    "const-values" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController.swiftconstvalues",
+    "dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController.d",
+    "diagnostics" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController.dia",
+    "index-unit-output-path" : "/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController.o",
+    "llvm-bc" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController.bc",
+    "object" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController.o",
+    "swift-dependencies" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController.swiftdeps",
+    "swiftmodule" : "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/PastedownShareExtension.build/Objects-normal/arm64/ShareViewController~partial.swiftmodule"
+  }
+}
