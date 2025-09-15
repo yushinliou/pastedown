@@ -246,7 +246,7 @@ struct SmartFrontMatterFieldView: View {
                             
                             Spacer()
                             
-                            VariablePickerButton(text: $field.value, context: .frontMatter, settings: settings, excludeFieldName: field.name)
+                            SimpleVariablePickerButton(text: $field.value, context: .frontMatter, settings: settings, excludeFieldName: field.name)
                         }
                         
                         TextEditor(text: $field.value)
@@ -609,7 +609,7 @@ struct SmartAddNewFieldView: View {
                             
                             Spacer()
                             
-                            VariablePickerButton(text: $newFieldValue, context: .frontMatter, settings: settings, excludeFieldName: nil)
+                            SimpleVariablePickerButton(text: $newFieldValue, context: .frontMatter, settings: settings, excludeFieldName: nil)
                         }
                         
                         TextEditor(text: $newFieldValue)

@@ -11,6 +11,16 @@ struct AdvancedSettingsView: View {
     @ObservedObject var settings: SettingsStore
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.editMode) var editMode
+
+    // Template management state
+    @State private var showingSaveTemplateDialog = false
+    @State private var showingRenameDialog = false
+    @State private var showingDuplicateDialog = false
+    @State private var showingDeleteConfirmation = false
+    @State private var templateName = ""
+    @State private var renameName = ""
+    @State private var duplicateName = ""
+    @State private var selectedTemplate: FrontMatterTemplate?
     
     var body: some View {
         NavigationView {
@@ -41,8 +51,58 @@ struct AdvancedSettingsView: View {
                         settings.frontMatterFields.append(newField)
                         settings.saveSettings()
                     }
+
+                    // Save current as template button
+                    if !settings.frontMatterFields.isEmpty {
+                        Button(action: {
+                            templateName = ""
+                            showingSaveTemplateDialog = true
+                        }) {
+                            HStack {
+                                Image(systemName: "square.and.arrow.down")
+                                Text("Save Current as Template")
+                            }
+                        }
+                        .foregroundColor(.blue)
+                    }
                 }
-                
+
+                // Saved Templates Section
+                if !settings.savedTemplates.isEmpty {
+                    Section(header:
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Saved Templates")
+                            Text("\(settings.savedTemplates.count) template(s) available")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    ) {
+                        ForEach(settings.savedTemplates) { template in
+                            TemplateRowView(
+                                template: template,
+                                settings: settings,
+                                onApply: {
+                                    settings.applyTemplate(template)
+                                },
+                                onRename: {
+                                    selectedTemplate = template
+                                    renameName = template.name
+                                    showingRenameDialog = true
+                                },
+                                onDuplicate: {
+                                    selectedTemplate = template
+                                    duplicateName = "\(template.name) Copy"
+                                    showingDuplicateDialog = true
+                                },
+                                onDelete: {
+                                    selectedTemplate = template
+                                    showingDeleteConfirmation = true
+                                }
+                            )
+                        }
+                    }
+                }
+
                 Section("LLM Alt Text Generation") {
                     Toggle("Use LLM for Alt Text", isOn: $settings.useExternalAPI)
                         .onChange(of: settings.useExternalAPI) { oldValue, newValue in
@@ -125,6 +185,48 @@ struct AdvancedSettingsView: View {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
+            }
+        }
+        .sheet(isPresented: $showingSaveTemplateDialog) {
+            SaveTemplateDialog(
+                isPresented: $showingSaveTemplateDialog,
+                templateName: $templateName,
+                onSave: { _ in },
+                settings: settings
+            )
+        }
+        .sheet(isPresented: $showingRenameDialog) {
+            if let template = selectedTemplate {
+                RenameTemplateDialog(
+                    isPresented: $showingRenameDialog,
+                    newName: $renameName,
+                    template: template,
+                    settings: settings,
+                    onRename: { _ in }
+                )
+            }
+        }
+        .sheet(isPresented: $showingDuplicateDialog) {
+            if let template = selectedTemplate {
+                DuplicateTemplateDialog(
+                    isPresented: $showingDuplicateDialog,
+                    duplicateName: $duplicateName,
+                    template: template,
+                    settings: settings,
+                    onDuplicate: { _ in }
+                )
+            }
+        }
+        .alert("Delete Template", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                if let template = selectedTemplate {
+                    settings.deleteTemplate(template)
+                }
+            }
+        } message: {
+            if let template = selectedTemplate {
+                Text("Are you sure you want to delete '\(template.name)'? This action cannot be undone.")
             }
         }
     }

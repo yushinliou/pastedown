@@ -171,18 +171,20 @@ struct VariableRow: View {
 // MARK: - Variable Picker Button Component
 struct VariablePickerButton: View {
     @Binding var text: String
+    @Binding var cursorPosition: Int
     let context: VariableCategory
     let settings: SettingsStore?
     let excludeFieldName: String?
     @State private var showingPicker = false
-    
-    init(text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
+
+    init(text: Binding<String>, cursorPosition: Binding<Int>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
         self._text = text
+        self._cursorPosition = cursorPosition
         self.context = context
         self.settings = settings
         self.excludeFieldName = excludeFieldName
     }
-    
+
     var body: some View {
         Button(action: {
             showingPicker = true
@@ -192,7 +194,50 @@ struct VariablePickerButton: View {
         }
         .sheet(isPresented: $showingPicker) {
             VariablePickerView(onVariableSelected: { variable in
-                // Insert variable at the end of current text
+                insertVariableAtCursor(variable)
+            }, settings: settings, excludeFieldName: excludeFieldName, context: context)
+        }
+    }
+
+    private func insertVariableAtCursor(_ variable: String) {
+        if text.isEmpty {
+            text = variable
+            cursorPosition = variable.count
+        } else {
+            let insertPosition = min(cursorPosition, text.count)
+            let beforeCursor = String(text.prefix(insertPosition))
+            let afterCursor = String(text.suffix(text.count - insertPosition))
+            text = beforeCursor + variable + afterCursor
+            cursorPosition = insertPosition + variable.count
+        }
+    }
+}
+
+// MARK: - Simple Variable Picker Button (for TextEditor)
+struct SimpleVariablePickerButton: View {
+    @Binding var text: String
+    let context: VariableCategory
+    let settings: SettingsStore?
+    let excludeFieldName: String?
+    @State private var showingPicker = false
+
+    init(text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
+        self._text = text
+        self.context = context
+        self.settings = settings
+        self.excludeFieldName = excludeFieldName
+    }
+
+    var body: some View {
+        Button(action: {
+            showingPicker = true
+        }) {
+            Image(systemName: "tag")
+                .foregroundColor(Color.accentColor)
+        }
+        .sheet(isPresented: $showingPicker) {
+            VariablePickerView(onVariableSelected: { variable in
+                // Insert variable at the end of current text (fallback for TextEditor)
                 if text.isEmpty {
                     text = variable
                 } else {
@@ -297,7 +342,8 @@ struct TextFieldWithVariablePicker: View {
     let settings: SettingsStore?
     let excludeFieldName: String?
     @State private var isEditing = false
-    
+    @State private var cursorPosition: Int = 0
+
     init(title: String, text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
         self.title = title
         self._text = text
@@ -305,36 +351,93 @@ struct TextFieldWithVariablePicker: View {
         self.settings = settings
         self.excludeFieldName = excludeFieldName
     }
-    
+
     var body: some View {
         HStack {
-            VStack(alignment: .leading) {
-                if isEditing {
-                    TextField(title, text: $text)
-                        .textFieldStyle(PlainTextFieldStyle())
-                } else {
-                    if text.isEmpty {
-                        Text(title)
-                            .foregroundColor(Color.gray)
-                    } else {
-                        SmartTextView(text: text)
-                    }
-                }
-            }
-            .contentShape(Rectangle()) // Make the entire area tappable
-            .onTapGesture {
-                isEditing = true
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
-                isEditing = false
-            }
-            
-            VariablePickerButton(text: $text, context: context, settings: settings, excludeFieldName: excludeFieldName)
+            CursorTrackingTextField(
+                placeholder: title,
+                text: $text,
+                cursorPosition: $cursorPosition,
+                isEditing: $isEditing
+            )
+
+            VariablePickerButton(text: $text, cursorPosition: $cursorPosition, context: context, settings: settings, excludeFieldName: excludeFieldName)
         }
         .padding(8)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(isEditing ? Color.blue : Color.gray.opacity(0.3), lineWidth: 1)
         )
+    }
+}
+
+// MARK: - Cursor Tracking Text Field
+struct CursorTrackingTextField: UIViewRepresentable {
+    let placeholder: String
+    @Binding var text: String
+    @Binding var cursorPosition: Int
+    @Binding var isEditing: Bool
+
+    func makeUIView(context: Context) -> UITextField {
+        let textField = UITextField()
+        textField.placeholder = placeholder
+        textField.delegate = context.coordinator
+        textField.addTarget(context.coordinator, action: #selector(Coordinator.textFieldChanged), for: .editingChanged)
+        textField.addTarget(context.coordinator, action: #selector(Coordinator.textFieldEditingEnded), for: .editingDidEnd)
+        return textField
+    }
+
+    func updateUIView(_ uiView: UITextField, context: Context) {
+        if uiView.text != text {
+            uiView.text = text
+            // Update cursor position after text change
+            DispatchQueue.main.async {
+                if let newPosition = uiView.position(from: uiView.beginningOfDocument, offset: min(cursorPosition, uiView.text?.count ?? 0)) {
+                    uiView.selectedTextRange = uiView.textRange(from: newPosition, to: newPosition)
+                }
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UITextFieldDelegate {
+        let parent: CursorTrackingTextField
+
+        init(_ parent: CursorTrackingTextField) {
+            self.parent = parent
+        }
+
+        @objc func textFieldChanged(_ textField: UITextField) {
+            parent.text = textField.text ?? ""
+            updateCursorPosition(textField)
+        }
+
+        @objc func textFieldEditingEnded(_ textField: UITextField) {
+            parent.isEditing = false
+        }
+
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder()
+            return true
+        }
+
+        func textFieldDidBeginEditing(_ textField: UITextField) {
+            parent.isEditing = true
+            updateCursorPosition(textField)
+        }
+
+        func textFieldDidChangeSelection(_ textField: UITextField) {
+            updateCursorPosition(textField)
+        }
+
+        private func updateCursorPosition(_ textField: UITextField) {
+            if let selectedRange = textField.selectedTextRange {
+                let cursorPosition = textField.offset(from: textField.beginningOfDocument, to: selectedRange.start)
+                parent.cursorPosition = cursorPosition
+            }
+        }
     }
 }

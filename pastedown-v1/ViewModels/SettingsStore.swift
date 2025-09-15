@@ -63,6 +63,7 @@ enum LLMProvider: String, CaseIterable, Identifiable {
 // MARK: - Settings Store
 class SettingsStore: ObservableObject {
     @Published var frontMatterFields: [FrontMatterField] = []
+    @Published var savedTemplates: [FrontMatterTemplate] = []
     @Published var imageHandling: ImageHandling = .ignore
     @Published var imageFolderPath: String = "./images"
     @Published var enableAutoAlt: Bool = true
@@ -81,6 +82,11 @@ class SettingsStore: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: "frontMatterFields"),
            let fields = try? JSONDecoder().decode([FrontMatterField].self, from: data) {
             frontMatterFields = fields
+        }
+
+        if let templatesData = UserDefaults.standard.data(forKey: "frontMatterTemplates"),
+           let templates = try? JSONDecoder().decode([FrontMatterTemplate].self, from: templatesData) {
+            savedTemplates = templates
         }
         
         if let imageHandlingRaw = UserDefaults.standard.string(forKey: "imageHandling"),
@@ -113,6 +119,10 @@ class SettingsStore: ObservableObject {
         if let data = try? JSONEncoder().encode(frontMatterFields) {
             UserDefaults.standard.set(data, forKey: "frontMatterFields")
         }
+
+        if let templatesData = try? JSONEncoder().encode(savedTemplates) {
+            UserDefaults.standard.set(templatesData, forKey: "frontMatterTemplates")
+        }
         
         UserDefaults.standard.set(imageHandling.rawValue, forKey: "imageHandling")
         UserDefaults.standard.set(imageFolderPath, forKey: "imageFolderPath")
@@ -142,6 +152,11 @@ class SettingsStore: ObservableObject {
         if let frontMatterData = try? JSONEncoder().encode(frontMatterFields) {
             plist["frontMatterFields"] = frontMatterData
         }
+
+        // Serialize saved templates
+        if let templatesData = try? JSONEncoder().encode(savedTemplates) {
+            plist["frontMatterTemplates"] = templatesData
+        }
         
         plist["imageHandling"] = imageHandling.rawValue
         plist["imageFolderPath"] = imageFolderPath
@@ -160,7 +175,88 @@ class SettingsStore: ObservableObject {
             print("Error saving settings to shared container: \(error)")
         }
     }
-    
+
+    // MARK: - Template Management
+    func saveCurrentAsTemplate(name: String) -> Bool {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !frontMatterFields.isEmpty else {
+            return false
+        }
+
+        // Check for duplicate names
+        if savedTemplates.contains(where: { $0.name == name }) {
+            return false
+        }
+
+        let newTemplate = FrontMatterTemplate(name: name, fields: frontMatterFields)
+        savedTemplates.append(newTemplate)
+        saveSettings()
+        return true
+    }
+
+    func applyTemplate(_ template: FrontMatterTemplate) {
+        var updatedTemplate = template
+        updatedTemplate.markAsUsed()
+
+        // Update the template in the saved list
+        if let index = savedTemplates.firstIndex(where: { $0.id == template.id }) {
+            savedTemplates[index] = updatedTemplate
+        }
+
+        // Replace current fields with template fields (with new IDs to avoid conflicts)
+        frontMatterFields = template.fields.map { field in
+            var newField = field
+            newField.id = UUID()
+            return newField
+        }
+
+        saveSettings()
+    }
+
+    func deleteTemplate(_ template: FrontMatterTemplate) {
+        savedTemplates.removeAll { $0.id == template.id }
+        saveSettings()
+    }
+
+    func duplicateTemplate(_ template: FrontMatterTemplate, newName: String) -> Bool {
+        guard !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+
+        // Check for duplicate names
+        if savedTemplates.contains(where: { $0.name == newName }) {
+            return false
+        }
+
+        let duplicatedTemplate = template.duplicate(withName: newName)
+        savedTemplates.append(duplicatedTemplate)
+        saveSettings()
+        return true
+    }
+
+    func renameTemplate(_ template: FrontMatterTemplate, newName: String) -> Bool {
+        guard !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+
+        // Check for duplicate names (excluding current template)
+        if savedTemplates.contains(where: { $0.name == newName && $0.id != template.id }) {
+            return false
+        }
+
+        if let index = savedTemplates.firstIndex(where: { $0.id == template.id }) {
+            savedTemplates[index].name = newName
+            saveSettings()
+            return true
+        }
+        return false
+    }
+
+    func isTemplateNameAvailable(_ name: String) -> Bool {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !trimmedName.isEmpty && !savedTemplates.contains(where: { $0.name == trimmedName })
+    }
+
     // MARK: - Image Path Processing
     func processImageFolderPath(imageIndex: Int = 1, contentPreview: String = "", fileExtension: String = "png") -> String {
         var processedPath = imageFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -200,12 +296,12 @@ class SettingsStore: ObservableObject {
     // MARK: - Path Validation
     func isValidImagePath() -> Bool {
         let path = imageFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        // Check if path is empty
+
+        // Allow empty paths - user may want to save to current directory
         if path.isEmpty {
-            return false
+            return true
         }
-        
+
         // Check for NULL and /0 characters
         if path.contains("\0") || path.contains("NULL") {
             return false
