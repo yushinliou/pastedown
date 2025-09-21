@@ -7,249 +7,126 @@ struct InitialViewWithSettings: View {
     @ObservedObject var settings: SettingsStore
     var pasteFromClipboard: () -> Void
 
+    @State private var showingNewTemplate = false
+    @State private var showingEditTemplate = false
+
     var body: some View {
-        Group {
-            VStack(spacing: 25) {
-                // Header section
-                VStack(spacing: 20) {
-                    
-                    VStack(spacing: 10) {
-                        Image("pastedown")
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                            .foregroundColor(.blue)
-                        
-                        Text("Paste Down")
-                            .font(.title)
-                            .fontWeight(.bold)
-                        
-                        Text("Convert clipboard rich text to Markdown")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    
-                    Button(action: pasteFromClipboard) {
-                        HStack {
-                            Image(systemName: "clipboard")
-                            Text("Paste")
-                        }
-                    }
-                    .buttonStyle(PasteButtonStyle())
-                    .disabled(isConverting)
-                    
-                    if isConverting {
-                        ProgressView("Converting...")
-                            .padding(.top, 10)
-                    }
-                }
-                
-                Divider()
-                
-                // Quick Settings Section
-                VStack(alignment: .leading, spacing: 20) {
-                    HStack {
-                        Text("Quick Settings")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                        
-                        Spacer()
-                        
-                        Button("Advanced") {
-                            showingAdvancedSettings = true
-                        }
-                        .font(.caption)
+        VStack(spacing: 30) {
+            // Header section
+            VStack(spacing: 20) {
+                VStack(spacing: 10) {
+                    Image("pastedown")
+                        .resizable()
+                        .frame(width: 60, height: 60)
                         .foregroundColor(.blue)
-                    }
-                    
-                    // Image Handling
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Image Handling")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        
-                        Picker("Image handling", selection: $settings.imageHandling) {
-                            ForEach(ImageHandling.allCases, id: \.self) { handling in
-                                Text(handling.displayName).tag(handling)
-                            }
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .onChange(of: settings.imageHandling) {  oldValue, newValue in
-                            print("\(oldValue) -> \(newValue)")
-                            settings.saveSettings()
-                        }
-                        
-                        if settings.imageHandling == .saveToFolder {
-                            VStack(alignment: .leading, spacing: 4) {
-                                TextFieldWithVariablePicker(title: "Folder path", text: $settings.imageFolderPath, context: .filename, settings: settings)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(settings.isValidImagePath() ? Color.clear : Color.red, lineWidth: 2)
-                                    )
-                                    .onChange(of: settings.imageFolderPath) { oldValue, newValue in
-                                        print("\(oldValue) -> \(newValue)")
-                                        settings.saveSettings()
-                                    }
-                                
-                                Text("Variables: {time}, {date}, {clipboard_preview}")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                
-                                // Preview
-                                if settings.isValidImagePath() {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("Preview:")
-                                            .font(.caption2)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.secondary)
-                                        Text(settings.generateImagePathPreview())
-                                            .font(.caption2)
-                                            .foregroundColor(.blue)
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 2)
-                                            .background(Color.blue.opacity(0.1))
-                                            .cornerRadius(4)
-                                    }
-                                } else {
-                                    Text("Invalid path format")
-                                        .font(.caption2)
-                                        .foregroundColor(.red)
-                                }
-                            }
-                        } else {
-                            // Preview for base64 and ignore
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Preview:")
-                                    .font(.caption2)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.secondary)
-                                Text(settings.generateImageHandlingPreview())
-                                    .font(.caption2)
-                                    .foregroundColor(.blue)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background((Color.blue).opacity(0.1))
-                                    .cornerRadius(4)
-                            }
+
+                    Text("Paste Down")
+                        .font(.title)
+                        .fontWeight(.bold)
+
+                    Text("Convert clipboard rich text to Markdown")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+
+            // Template Selection Picker
+            VStack(spacing: 8) {
+                Text("Active Template")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+
+                Picker("Select Template", selection: Binding(
+                    get: { settings.currentTemplateID ?? UUID() },
+                    set: { newID in
+                        if let template = settings.templates.first(where: { $0.id == newID }) {
+                            settings.applyTemplate(template)
                         }
                     }
-                    
-                    // Alt Text Generation
-                    VStack(alignment: .leading, spacing: 8) {
-                        if settings.imageHandling != .ignore {
-                            HStack {
-                                Text("Alt Text Generation")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                
-                                Spacer()
-                                
-                                Toggle("", isOn: $settings.enableAutoAlt)
-                                    .onChange(of: settings.enableAutoAlt) { oldValue, newValue in
-                                        print("\(oldValue) -> \(newValue)")
-                                        settings.saveSettings()
-                                    }
-                            }
-                            if settings.enableAutoAlt {
-                            Picker("Template", selection: $settings.altTextTemplate) {
-                                ForEach(AltTextTemplate.allCases, id: \.self) { template in
-                                    Text(template.displayName).tag(template)
-                                }
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                            .onChange(of: settings.altTextTemplate) {  oldValue, newValue in
-                                print("\(oldValue) -> \(newValue)")
-                                settings.saveSettings()
-                            }
-                        }
-                        }
-                    }
-                    
-                    // Output Filename
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Output Filename")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        
-                        TextFieldWithVariablePicker(title: "Filename format (without .md)", text: $settings.outputFilenameFormat, context: .filename, settings: settings)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(settings.isValidOutputFilename() ? Color.clear : Color.red, lineWidth: 2)
-                            )
-                            .onChange(of: settings.outputFilenameFormat) {  oldValue, newValue in
-                                print("\(oldValue) -> \(newValue)")
-                                settings.saveSettings()
-                            }
-                        
-                        Text("Variables: {clipboard_preview}, {date}, {time}")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        
-                        // Filename Preview
-                        if settings.isValidOutputFilename() {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Preview:")
-                                    .font(.caption2)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.secondary)
-                                Text(settings.generateOutputFilenamePreview())
-                                    .font(.caption2)
-                                    .foregroundColor(.blue)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.blue.opacity(0.1))
-                                    .cornerRadius(4)
-                            }
-                        } else {
-                            Text("Invalid filename format")
-                                .font(.caption2)
-                                .foregroundColor(.red)
-                        }
-                    }
-                    
-                    // Front Matter Preview
-                    if !settings.frontMatterFields.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Front Matter Fields")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                
-                                Spacer()
-                                
-                                Text("\(settings.frontMatterFields.count) fields")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    ForEach(settings.frontMatterFields.prefix(3)) { field in
-                                        Text(field.name.isEmpty ? "unnamed" : field.name)
-                                            .font(.caption)
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 4)
-                                            .background(Color.blue.opacity(0.1))
-                                            .foregroundColor(.blue)
-                                            .cornerRadius(4)
-                                    }
-                                    
-                                    if settings.frontMatterFields.count > 3 {
-                                        Text("+\(settings.frontMatterFields.count - 3) more")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                .padding(.horizontal, 2)
-                            }
-                        }
+                )) {
+                    ForEach(settings.templates) { template in
+                        Text(template.name).tag(template.id)
                     }
                 }
-                .padding()
-                .background(Color.gray.opacity(0.05))
-                .cornerRadius(12)
+                .pickerStyle(MenuPickerStyle())
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color.blue.opacity(0.1))
+                .cornerRadius(8)
+            }
+
+            // Four Main Buttons
+            VStack(spacing: 16) {
+                // Paste button (primary action)
+                Button(action: pasteFromClipboard) {
+                    HStack {
+                        Image(systemName: "clipboard")
+                            .font(.title2)
+                        Text("Paste Clipboard Content")
+                            .font(.headline)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                }
+                .disabled(isConverting)
+
+                // Template action buttons - only 2 now since selection is handled by picker
+                HStack(spacing: 12) {
+                    // Add new template
+                    Button(action: {
+                        showingNewTemplate = true
+                    }) {
+                        VStack(spacing: 4) {
+                            Image(systemName: "plus")
+                                .font(.title2)
+                            Text("Add Template")
+                                .font(.caption)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green.opacity(0.1))
+                        .foregroundColor(.green)
+                        .cornerRadius(8)
+                    }
+
+                    // Edit template
+                    Button(action: {
+                        showingEditTemplate = true
+                    }) {
+                        VStack(spacing: 4) {
+                            Image(systemName: "pencil")
+                                .font(.title2)
+                            Text("Edit Template")
+                                .font(.caption)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.purple.opacity(0.1))
+                        .foregroundColor(.purple)
+                        .cornerRadius(8)
+                    }
+                }
+            }
+
+            if isConverting {
+                ProgressView("Converting...")
+                    .padding(.top, 10)
+            }
+
+            Spacer()
+        }
+        .padding()
+        .sheet(isPresented: $showingNewTemplate) {
+            TemplateSettingsView(settings: settings, isPresented: $showingNewTemplate)
+        }
+        .sheet(isPresented: $showingEditTemplate) {
+            if let currentTemplate = settings.currentTemplate {
+                TemplateSettingsView(settings: settings, isPresented: $showingEditTemplate, template: currentTemplate)
             }
         }
     }

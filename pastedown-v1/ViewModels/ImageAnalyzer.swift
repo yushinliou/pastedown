@@ -11,7 +11,9 @@ import Foundation
 // MARK: - Image Analyzer
 class ImageAnalyzer: ObservableObject {
     private let settings: SettingsStore
-    
+
+    static let defaultPrompt = "Generate a concise, descriptive alt text for this image. Focus on the main content, objects, and context that would be useful for someone who cannot see the image. Keep it under 100 characters."
+
     init(settings: SettingsStore) {
         self.settings = settings
     }
@@ -77,8 +79,8 @@ private func generateAltTextWithOpenAI(_ image: UIImage) async -> String {
     }
 
     let base64Image = imageData.base64EncodedString()
-    let prompt = settings.customPrompt.isEmpty ? 
-        "Generate a concise, descriptive alt text for this image. Focus on the main content, objects, and context that would be useful for someone who cannot see the image. Keep it under 100 characters." :
+    let prompt = settings.customPrompt.isEmpty ?
+        ImageAnalyzer.defaultPrompt :
         settings.customPrompt
 
     let requestBody: [String: Any] = [
@@ -119,8 +121,8 @@ private func generateAltTextWithAnthropic(_ image: UIImage) async -> String {
     }
 
     let base64Image = imageData.base64EncodedString()
-    let prompt = settings.customPrompt.isEmpty ? 
-        "Generate a concise, descriptive alt text for this image. Focus on the main content, objects, and context that would be useful for someone who cannot see the image. Keep it under 100 characters." :
+    let prompt = settings.customPrompt.isEmpty ?
+        ImageAnalyzer.defaultPrompt :
         settings.customPrompt
 
     let requestBody: [String: Any] = [

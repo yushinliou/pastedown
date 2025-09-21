@@ -627,8 +627,12 @@ struct SmartAddNewFieldView: View {
                     .id("newField-multiline")
                     
                 default:
-                    TextFieldWithVariablePicker(title: "Value", text: $newFieldValue, context: .frontMatter, settings: settings, excludeFieldName: nil)
-                        .id("newField-\(newFieldType.rawValue)")
+                    HStack {
+                        Text("Value:")
+                        TextField("Enter value", text: $newFieldValue)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                    .id("newField-\(newFieldType.rawValue)")
                 }
             } else {
                 Text("Automatically generated at processing time")

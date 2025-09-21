@@ -8,7 +8,7 @@
 import SwiftUI
 
 // MARK: - LLM Provider
-enum LLMProvider: String, CaseIterable, Identifiable {
+enum LLMProvider: String, CaseIterable, Identifiable, Codable {
     case openai = "openai"
     case anthropic = "anthropic"
     case custom = "custom"
@@ -64,6 +64,8 @@ enum LLMProvider: String, CaseIterable, Identifiable {
 class SettingsStore: ObservableObject {
     @Published var frontMatterFields: [FrontMatterField] = []
     @Published var savedTemplates: [FrontMatterTemplate] = []
+    @Published var templates: [Template] = []
+    @Published var currentTemplateID: UUID?
     @Published var imageHandling: ImageHandling = .ignore
     @Published var imageFolderPath: String = "./images"
     @Published var enableAutoAlt: Bool = true
@@ -76,6 +78,7 @@ class SettingsStore: ObservableObject {
     
     init() {
         loadSettings()
+        ensureDefaultTemplate()
     }
     
     private func loadSettings() {
@@ -87,6 +90,16 @@ class SettingsStore: ObservableObject {
         if let templatesData = UserDefaults.standard.data(forKey: "frontMatterTemplates"),
            let templates = try? JSONDecoder().decode([FrontMatterTemplate].self, from: templatesData) {
             savedTemplates = templates
+        }
+
+        if let templatesData = UserDefaults.standard.data(forKey: "templates"),
+           let templates = try? JSONDecoder().decode([Template].self, from: templatesData) {
+            self.templates = templates
+        }
+
+        if let templateIDString = UserDefaults.standard.string(forKey: "currentTemplateID"),
+           let templateID = UUID(uuidString: templateIDString) {
+            currentTemplateID = templateID
         }
         
         if let imageHandlingRaw = UserDefaults.standard.string(forKey: "imageHandling"),
@@ -123,6 +136,16 @@ class SettingsStore: ObservableObject {
         if let templatesData = try? JSONEncoder().encode(savedTemplates) {
             UserDefaults.standard.set(templatesData, forKey: "frontMatterTemplates")
         }
+
+        if let templatesData = try? JSONEncoder().encode(templates) {
+            UserDefaults.standard.set(templatesData, forKey: "templates")
+        }
+
+        if let currentTemplateID = currentTemplateID {
+            UserDefaults.standard.set(currentTemplateID.uuidString, forKey: "currentTemplateID")
+        } else {
+            UserDefaults.standard.removeObject(forKey: "currentTemplateID")
+        }
         
         UserDefaults.standard.set(imageHandling.rawValue, forKey: "imageHandling")
         UserDefaults.standard.set(imageFolderPath, forKey: "imageFolderPath")
@@ -156,6 +179,15 @@ class SettingsStore: ObservableObject {
         // Serialize saved templates
         if let templatesData = try? JSONEncoder().encode(savedTemplates) {
             plist["frontMatterTemplates"] = templatesData
+        }
+
+        // Serialize new templates
+        if let templatesData = try? JSONEncoder().encode(templates) {
+            plist["templates"] = templatesData
+        }
+
+        if let currentTemplateID = currentTemplateID {
+            plist["currentTemplateID"] = currentTemplateID.uuidString
         }
         
         plist["imageHandling"] = imageHandling.rawValue
@@ -255,6 +287,100 @@ class SettingsStore: ObservableObject {
     func isTemplateNameAvailable(_ name: String) -> Bool {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         return !trimmedName.isEmpty && !savedTemplates.contains(where: { $0.name == trimmedName })
+    }
+
+    // MARK: - New Template Management Methods
+    private func ensureDefaultTemplate() {
+        if templates.isEmpty {
+            let defaultTemplate = Template(name: "default", settingsStore: self)
+            templates.append(defaultTemplate)
+            currentTemplateID = defaultTemplate.id
+            saveSettings()
+        }
+    }
+
+    func createTemplate(name: String) -> Bool {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+
+        if templates.contains(where: { $0.name == name }) {
+            return false
+        }
+
+        let newTemplate = Template(name: name, settingsStore: self)
+        templates.append(newTemplate)
+        saveSettings()
+        return true
+    }
+
+    func applyTemplate(_ template: Template) {
+        var updatedTemplate = template
+        updatedTemplate.markAsUsed()
+
+        if let index = templates.firstIndex(where: { $0.id == template.id }) {
+            templates[index] = updatedTemplate
+        }
+
+        updatedTemplate.applyTo(settingsStore: self)
+        currentTemplateID = template.id
+    }
+
+    func deleteTemplate(_ template: Template) {
+        guard template.name != "default" else { return }
+
+        templates.removeAll { $0.id == template.id }
+
+        if currentTemplateID == template.id {
+            currentTemplateID = templates.first(where: { $0.name == "default" })?.id
+        }
+
+        saveSettings()
+    }
+
+    func duplicateTemplate(_ template: Template, newName: String) -> Bool {
+        guard !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+
+        if templates.contains(where: { $0.name == newName }) {
+            return false
+        }
+
+        let duplicatedTemplate = template.duplicate(withName: newName)
+        templates.append(duplicatedTemplate)
+        saveSettings()
+        return true
+    }
+
+    func renameTemplate(_ template: Template, newName: String) -> Bool {
+        guard !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+
+        guard template.name != "default" else { return false }
+
+        if templates.contains(where: { $0.name == newName && $0.id != template.id }) {
+            return false
+        }
+
+        if let index = templates.firstIndex(where: { $0.id == template.id }) {
+            templates[index].name = newName
+            saveSettings()
+            return true
+        }
+        return false
+    }
+
+    func isTemplateNameValid(_ name: String) -> Bool {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !trimmedName.isEmpty && !templates.contains(where: { $0.name == trimmedName })
+    }
+
+
+    var currentTemplate: Template? {
+        guard let currentTemplateID = currentTemplateID else { return nil }
+        return templates.first(where: { $0.id == currentTemplateID })
     }
 
     // MARK: - Image Path Processing
