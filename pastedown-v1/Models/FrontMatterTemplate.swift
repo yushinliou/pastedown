@@ -78,6 +78,7 @@ struct Template: Identifiable, Codable {
 
     // All settings that can be saved in a template
     var frontMatterFields: [FrontMatterField]
+    var enableFrontMatter: Bool
     var imageHandling: ImageHandling
     var imageFolderPath: String
     var enableAutoAlt: Bool
@@ -95,6 +96,7 @@ struct Template: Identifiable, Codable {
 
         // Copy all settings from the settings store
         self.frontMatterFields = settingsStore.frontMatterFields
+        self.enableFrontMatter = settingsStore.enableFrontMatter
         self.imageHandling = settingsStore.imageHandling
         self.imageFolderPath = settingsStore.imageFolderPath
         self.enableAutoAlt = settingsStore.enableAutoAlt
@@ -135,6 +137,7 @@ struct Template: Identifiable, Codable {
             newField.id = UUID()
             return newField
         }
+        newTemplate.enableFrontMatter = self.enableFrontMatter
         newTemplate.imageHandling = self.imageHandling
         newTemplate.imageFolderPath = self.imageFolderPath
         newTemplate.enableAutoAlt = self.enableAutoAlt
@@ -159,6 +162,7 @@ struct Template: Identifiable, Codable {
             newField.id = UUID()
             return newField
         }
+        settingsStore.enableFrontMatter = self.enableFrontMatter
         settingsStore.imageHandling = self.imageHandling
         settingsStore.imageFolderPath = self.imageFolderPath
         settingsStore.enableAutoAlt = self.enableAutoAlt

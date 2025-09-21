@@ -26,6 +26,7 @@ struct TemplateSettingsView: View {
     @State private var customPrompt: String = ""
     @State private var fixedAltText: String = "alt"
     @State private var frontMatterFields: [FrontMatterField] = []
+    @State private var enableFrontMatter: Bool = true
     @State private var isEditingFields = false
 
     @State private var showingAlert = false
@@ -250,13 +251,16 @@ struct TemplateSettingsView: View {
                                                     .fontWeight(.medium)
 
                                                 ZStack(alignment: .topLeading) {
-                                                    TextEditor(text: $customPrompt)
-                                                        .frame(minHeight: 80)
-                                                        .padding(8)
-                                                        .overlay(
-                                                            RoundedRectangle(cornerRadius: 8)
-                                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                                        )
+                                                    TextEditorWithVariablePicker(
+                                                        text: $customPrompt,
+                                                        context: .frontMatter,
+                                                        settings: settings,
+                                                        minHeight: 80
+                                                    )
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                                    )
 
                                                     if customPrompt.isEmpty {
                                                         Text("Leave empty to use default: \(ImageAnalyzer.defaultPrompt)")
@@ -314,85 +318,115 @@ struct TemplateSettingsView: View {
 
                 // Section 3: Front Matter
                 Section {
-                    if frontMatterFields.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("No front matter fields configured")
-                                .foregroundColor(.secondary)
-                                .padding(.vertical, 8)
-                        }
-                    } else {
-                        if isEditingFields {
-                            // Edit mode: Show list with reordering and delete
-                            ForEach(Array(frontMatterFields.enumerated()), id: \.element.id) { index, field in
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(field.name.isEmpty ? "Unnamed Field" : field.name)
-                                            .font(.subheadline)
-                                            .fontWeight(.medium)
-
-                                        Text(field.type.displayName)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-
-                                        if !field.value.isEmpty {
-                                            Text(field.value.prefix(30) + (field.value.count > 30 ? "..." : ""))
-                                                .font(.caption2)
-                                                .foregroundColor(.blue)
-                                        }
-                                    }
-
-                                    Spacer()
-
-                                    Button {
-                                        frontMatterFields.remove(at: index)
-                                    } label: {
-                                        Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
-                                    }
-                                }
-                                .padding(.vertical, 4)
-                            }
-                            .onMove(perform: moveFields)
-                            .onDelete(perform: deleteFields)
-                        } else {
-                            // View mode: Show full editing interface
-                            ForEach(Array(frontMatterFields.enumerated()), id: \.element.id) { index, _ in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    SmartFrontMatterFieldView(
-                                        field: $frontMatterFields[index],
-                                        settings: settings,
-                                        onUpdate: {
-                                            // Update triggered when field changes
-                                        }
-                                    )
-                                }
-                                .padding(.vertical, 8)
-                            }
-                        }
-                    }
-
-                    if !isEditingFields {
-                        // Add new field section (only show when not in edit mode)
-                        VStack(alignment: .leading, spacing: 8) {
-                            Divider()
-
-                            Text("Add New Field")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-
-                            SmartAddNewFieldView(settings: settings) { newField in
-                                frontMatterFields.append(newField)
-                            }
-                        }
-                        .padding(.vertical, 8)
-                    }
-                } header: {
+                    // Front Matter toggle
                     HStack {
-                        Text("Front Matter Fields")
+                        Text("Enable Front Matter")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
 
                         Spacer()
 
-                        if !frontMatterFields.isEmpty {
+                        Toggle("", isOn: $enableFrontMatter)
+                    }
+                    .padding(.vertical, 4)
+
+                    if enableFrontMatter {
+                        if frontMatterFields.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("No front matter fields configured")
+                                    .foregroundColor(.secondary)
+                                    .padding(.vertical, 8)
+
+                                Button {
+                                    // Add a default field to get started
+                                    let defaultField = FrontMatterField(name: "title", type: .string, value: "")
+                                    frontMatterFields.append(defaultField)
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "plus.circle.fill")
+                                        Text("Add Front Matter Field")
+                                    }
+                                    .foregroundColor(.blue)
+                                }
+                            }
+                        } else {
+                            if isEditingFields {
+                                // Edit mode: Show list with reordering and delete
+                                ForEach(Array(frontMatterFields.enumerated()), id: \.element.id) { index, field in
+                                    HStack {
+                                        Image(systemName: "line.3.horizontal")
+                                            .foregroundColor(.gray)
+                                            .padding(.trailing, 8)
+
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(field.name.isEmpty ? "Unnamed Field" : field.name)
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+
+                                            Text(field.type.displayName)
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+
+                                            if !field.value.isEmpty {
+                                                Text(field.value.prefix(30) + (field.value.count > 30 ? "..." : ""))
+                                                    .font(.caption2)
+                                                    .foregroundColor(.blue)
+                                            }
+                                        }
+
+                                        Spacer()
+
+                                        Button {
+                                            frontMatterFields.remove(at: index)
+                                        } label: {
+                                            Image(systemName: "minus.circle.fill")
+                                                .foregroundColor(.red)
+                                        }
+                                    }
+                                    .padding(.vertical, 4)
+                                }
+                                .onMove(perform: moveFields)
+                                .onDelete(perform: deleteFields)
+                            } else {
+                                // View mode: Show full editing interface
+                                ForEach(Array(frontMatterFields.enumerated()), id: \.element.id) { index, _ in
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        SmartFrontMatterFieldView(
+                                            field: $frontMatterFields[index],
+                                            settings: settings,
+                                            onUpdate: {
+                                                // Update triggered when field changes
+                                            }
+                                        )
+                                    }
+                                    .padding(.vertical, 8)
+                                }
+                            }
+                        }
+
+                        if !isEditingFields {
+                            // Add new field section (only show when not in edit mode)
+                            VStack(alignment: .leading, spacing: 8) {
+                                Divider()
+
+                                Text("Add New Field")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+
+                                SmartAddNewFieldView(settings: settings) { newField in
+                                    frontMatterFields.append(newField)
+                                }
+                            }
+                            .padding(.vertical, 8)
+                        }
+                    }
+                } header: {
+                    HStack {
+                        Text("Front Matter")
+
+                        Spacer()
+
+                        if enableFrontMatter && !frontMatterFields.isEmpty {
                             Button(isEditingFields ? "Done" : "Edit") {
                                 isEditingFields.toggle()
                             }
@@ -401,10 +435,14 @@ struct TemplateSettingsView: View {
                         }
                     }
                 } footer: {
-                    if isEditingFields {
-                        Text("Tap and drag to reorder fields, or tap the minus button to remove them")
+                    if enableFrontMatter {
+                        if isEditingFields {
+                            Text("Tap and drag to reorder fields, or tap the minus button to remove them")
+                        } else {
+                            Text("Configure YAML front matter fields that will be added to your Markdown output")
+                        }
                     } else {
-                        Text("Configure YAML front matter fields that will be added to your Markdown output")
+                        Text("Front matter is disabled. Toggle on to add YAML metadata to your files")
                     }
                 }
             }
@@ -448,6 +486,7 @@ struct TemplateSettingsView: View {
             llmProvider = template.llmProvider
             customPrompt = template.customPrompt
             frontMatterFields = template.frontMatterFields
+            enableFrontMatter = template.enableFrontMatter
 
             // Set fixed alt text if using the objects template (which we use for fixed text)
             if altTextTemplate == .objects && !useExternalAPI {
@@ -465,6 +504,7 @@ struct TemplateSettingsView: View {
             llmProvider = settings.llmProvider
             customPrompt = settings.customPrompt
             frontMatterFields = settings.frontMatterFields
+            enableFrontMatter = settings.enableFrontMatter
             fixedAltText = "alt"
         }
     }
@@ -517,6 +557,7 @@ struct TemplateSettingsView: View {
             updatedTemplate.llmProvider = llmProvider
             updatedTemplate.customPrompt = customPrompt
             updatedTemplate.frontMatterFields = frontMatterFields
+            updatedTemplate.enableFrontMatter = enableFrontMatter
 
             if let index = settings.templates.firstIndex(where: { $0.id == existingTemplate.id }) {
                 settings.templates[index] = updatedTemplate
@@ -536,6 +577,7 @@ struct TemplateSettingsView: View {
             newTemplate.llmProvider = llmProvider
             newTemplate.customPrompt = customPrompt
             newTemplate.frontMatterFields = frontMatterFields
+            newTemplate.enableFrontMatter = enableFrontMatter
 
             settings.templates.append(newTemplate)
             settings.saveSettings()

@@ -248,6 +248,51 @@ struct SimpleVariablePickerButton: View {
     }
 }
 
+// MARK: - Cursor-Aware Variable Picker Button
+struct CursorAwareVariablePickerButton: View {
+    @Binding var text: String
+    @Binding var cursorPosition: Int
+    let context: VariableCategory
+    let settings: SettingsStore?
+    let excludeFieldName: String?
+    @State private var showingPicker = false
+
+    init(text: Binding<String>, cursorPosition: Binding<Int>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
+        self._text = text
+        self._cursorPosition = cursorPosition
+        self.context = context
+        self.settings = settings
+        self.excludeFieldName = excludeFieldName
+    }
+
+    var body: some View {
+        Button(action: {
+            showingPicker = true
+        }) {
+            Image(systemName: "tag")
+                .foregroundColor(Color.accentColor)
+        }
+        .sheet(isPresented: $showingPicker) {
+            VariablePickerView(onVariableSelected: { variable in
+                insertVariableAtCursor(variable)
+            }, settings: settings, excludeFieldName: excludeFieldName, context: context)
+        }
+    }
+
+    private func insertVariableAtCursor(_ variable: String) {
+        if text.isEmpty {
+            text = variable
+            cursorPosition = variable.count
+        } else {
+            let insertPosition = min(cursorPosition, text.count)
+            let beforeCursor = String(text.prefix(insertPosition))
+            let afterCursor = String(text.suffix(text.count - insertPosition))
+            text = beforeCursor + variable + afterCursor
+            cursorPosition = insertPosition + variable.count
+        }
+    }
+}
+
 // MARK: - Smart Text View with Variable Highlighting
 struct SmartTextView: View {
     let text: String
@@ -371,6 +416,67 @@ struct TextFieldWithVariablePicker: View {
     }
 }
 
+// MARK: - Cursor Tracking Text Editor
+struct CursorTrackingTextEditor: UIViewRepresentable {
+    @Binding var text: String
+    @Binding var cursorPosition: Int
+    let minHeight: CGFloat
+
+    init(text: Binding<String>, cursorPosition: Binding<Int>, minHeight: CGFloat = 80) {
+        self._text = text
+        self._cursorPosition = cursorPosition
+        self.minHeight = minHeight
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.delegate = context.coordinator
+        textView.font = UIFont.systemFont(ofSize: 17)
+        textView.backgroundColor = UIColor.clear
+        textView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        if uiView.text != text {
+            uiView.text = text
+            // Update cursor position after text change
+            DispatchQueue.main.async {
+                let newPosition = min(cursorPosition, uiView.text.count)
+                if let newRange = uiView.position(from: uiView.beginningOfDocument, offset: newPosition) {
+                    uiView.selectedTextRange = uiView.textRange(from: newRange, to: newRange)
+                }
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UITextViewDelegate {
+        let parent: CursorTrackingTextEditor
+
+        init(_ parent: CursorTrackingTextEditor) {
+            self.parent = parent
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            parent.text = textView.text
+            updateCursorPosition(textView)
+        }
+
+        func textViewDidChangeSelection(_ textView: UITextView) {
+            updateCursorPosition(textView)
+        }
+
+        private func updateCursorPosition(_ textView: UITextView) {
+            let cursorPosition = textView.offset(from: textView.beginningOfDocument, to: textView.selectedTextRange?.start ?? textView.beginningOfDocument)
+            parent.cursorPosition = cursorPosition
+        }
+    }
+}
+
 // MARK: - Cursor Tracking Text Field
 struct CursorTrackingTextField: UIViewRepresentable {
     let placeholder: String
@@ -438,6 +544,44 @@ struct CursorTrackingTextField: UIViewRepresentable {
                 let cursorPosition = textField.offset(from: textField.beginningOfDocument, to: selectedRange.start)
                 parent.cursorPosition = cursorPosition
             }
+        }
+    }
+}
+
+// MARK: - Text Editor with Variable Picker
+struct TextEditorWithVariablePicker: View {
+    @Binding var text: String
+    let context: VariableCategory
+    let settings: SettingsStore?
+    let excludeFieldName: String?
+    let minHeight: CGFloat
+    @State private var cursorPosition: Int = 0
+
+    init(text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil, minHeight: CGFloat = 80) {
+        self._text = text
+        self.context = context
+        self.settings = settings
+        self.excludeFieldName = excludeFieldName
+        self.minHeight = minHeight
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            CursorTrackingTextEditor(
+                text: $text,
+                cursorPosition: $cursorPosition,
+                minHeight: minHeight
+            )
+            .frame(minHeight: minHeight)
+
+            CursorAwareVariablePickerButton(
+                text: $text,
+                cursorPosition: $cursorPosition,
+                context: context,
+                settings: settings,
+                excludeFieldName: excludeFieldName
+            )
+            .padding(.top, 4)
         }
     }
 }

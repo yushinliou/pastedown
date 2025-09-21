@@ -63,6 +63,7 @@ enum LLMProvider: String, CaseIterable, Identifiable, Codable {
 // MARK: - Settings Store
 class SettingsStore: ObservableObject {
     @Published var frontMatterFields: [FrontMatterField] = []
+    @Published var enableFrontMatter: Bool = true
     @Published var savedTemplates: [FrontMatterTemplate] = []
     @Published var templates: [Template] = []
     @Published var currentTemplateID: UUID?
@@ -108,6 +109,7 @@ class SettingsStore: ObservableObject {
         }
         
         imageFolderPath = UserDefaults.standard.string(forKey: "imageFolderPath") ?? "./images"
+        enableFrontMatter = UserDefaults.standard.object(forKey: "enableFrontMatter") != nil ? UserDefaults.standard.bool(forKey: "enableFrontMatter") : true
         enableAutoAlt = UserDefaults.standard.bool(forKey: "enableAutoAlt")
         
         if let templateRaw = UserDefaults.standard.string(forKey: "altTextTemplate"),
@@ -149,6 +151,7 @@ class SettingsStore: ObservableObject {
         
         UserDefaults.standard.set(imageHandling.rawValue, forKey: "imageHandling")
         UserDefaults.standard.set(imageFolderPath, forKey: "imageFolderPath")
+        UserDefaults.standard.set(enableFrontMatter, forKey: "enableFrontMatter")
         UserDefaults.standard.set(enableAutoAlt, forKey: "enableAutoAlt")
         UserDefaults.standard.set(altTextTemplate.rawValue, forKey: "altTextTemplate")
         UserDefaults.standard.set(apiKey, forKey: "apiKey")
