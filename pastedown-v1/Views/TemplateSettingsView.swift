@@ -547,7 +547,12 @@ struct TemplateSettingsView: View {
 
             if let index = settings.templates.firstIndex(where: { $0.id == existingTemplate.id }) {
                 settings.templates[index] = updatedTemplate
-                settings.saveSettings()
+                // Apply the updated template to current settings if it's the active template
+                if settings.currentTemplateID == existingTemplate.id {
+                    settings.applyTemplate(updatedTemplate)
+                } else {
+                    settings.saveSettings()
+                }
                 isPresented = false
             }
         } else {
@@ -567,7 +572,8 @@ struct TemplateSettingsView: View {
             newTemplate.enableFrontMatter = enableFrontMatter
 
             settings.templates.append(newTemplate)
-            settings.saveSettings()
+            // Automatically apply the new template as the current template
+            settings.applyTemplate(newTemplate)
             isPresented = false
         }
     }
