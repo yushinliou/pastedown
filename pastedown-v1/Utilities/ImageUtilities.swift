@@ -323,23 +323,29 @@ struct ImageUtilities {
             for task in imageTasks {
                 let imageIndex = currentGlobalIndex + task.index + 1
                 group.addTask {
-                    let altText = await imageAnalyzer.generateAltText(for: task.image)
-                    let (markdown, finalFormat, imageData) = generateImageMarkdownWithData(image: task.image, altText: altText, imageIndex: imageIndex, contentPreview: contentPreview, originalFormat: task.originalFormat, settings: settings)
-                    return ImageResult(index: task.index, altText: altText, markdown: markdown, format: finalFormat, imageData: imageData)
+                    // Check if images should be ignored first to avoid unnecessary processing
+                    if settings.imageHandling == .ignore {
+                        let (markdown, finalFormat, imageData) = generateImageMarkdownWithData(image: task.image, altText: "", imageIndex: imageIndex, contentPreview: contentPreview, originalFormat: task.originalFormat, settings: settings)
+                        return ImageResult(index: task.index, altText: "", markdown: markdown, format: finalFormat, imageData: imageData)
+                    } else {
+                        let altText = await imageAnalyzer.generateAltText(for: task.image)
+                        let (markdown, finalFormat, imageData) = generateImageMarkdownWithData(image: task.image, altText: altText, imageIndex: imageIndex, contentPreview: contentPreview, originalFormat: task.originalFormat, settings: settings)
+                        return ImageResult(index: task.index, altText: altText, markdown: markdown, format: finalFormat, imageData: imageData)
+                    }
                 }
             }
-            
+
             // Collect results
             var results: [ImageResult] = []
             for await result in group {
                 results.append(result)
             }
-            
+
             // Sort by index to maintain order
             results.sort { $0.index < $1.index }
             return results
         }
-        
+
         currentGlobalIndex += imageTasks.count
         return (results, currentGlobalIndex)
     }

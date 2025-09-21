@@ -50,20 +50,16 @@ struct TemplateSettingsView: View {
                             .disableAutocorrection(true)
                             .disabled(isEditing && template?.name == "default")
 
-                        HStack {
-                            TextField("Output filename format (without .md)", text: $outputFilenameFormat)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(isValidOutputFilename() ? Color.clear : Color.red, lineWidth: 1)
-                                )
-
-                            SimpleVariablePickerButton(
-                                text: $outputFilenameFormat,
-                                context: .filename,
-                                settings: settings
-                            )
-                        }
+                        TextFieldWithVariablePicker(
+                            title: "Output filename format (without .md)",
+                            text: $outputFilenameFormat,
+                            context: .filename,
+                            settings: settings
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(isValidOutputFilename() ? Color.clear : Color.red, lineWidth: 1)
+                        )
 
                         Text("Variables: {clipboard_preview}, {date}, {time}")
                             .font(.caption2)
@@ -110,20 +106,16 @@ struct TemplateSettingsView: View {
 
                     if imageHandling == .saveToFolder {
                         VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                TextField("Image folder path", text: $imageFolderPath)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(isValidImagePath() ? Color.clear : Color.red, lineWidth: 1)
-                                    )
-
-                                SimpleVariablePickerButton(
-                                    text: $imageFolderPath,
-                                    context: .filename,
-                                    settings: settings
-                                )
-                            }
+                            TextFieldWithVariablePicker(
+                                title: "Image folder path",
+                                text: $imageFolderPath,
+                                context: .filename,
+                                settings: settings
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(isValidImagePath() ? Color.clear : Color.red, lineWidth: 1)
+                            )
 
                             Text("Variables: {time}, {date}, {clipboard_preview}")
                                 .font(.caption2)
@@ -251,16 +243,13 @@ struct TemplateSettingsView: View {
                                                     .fontWeight(.medium)
 
                                                 ZStack(alignment: .topLeading) {
-                                                    TextEditorWithVariablePicker(
-                                                        text: $customPrompt,
-                                                        context: .frontMatter,
-                                                        settings: settings,
-                                                        minHeight: 80
-                                                    )
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 8)
-                                                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                                    )
+                                                    TextEditor(text: $customPrompt)
+                                                        .frame(minHeight: 80)
+                                                        .padding(8)
+                                                        .overlay(
+                                                            RoundedRectangle(cornerRadius: 8)
+                                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                                        )
 
                                                     if customPrompt.isEmpty {
                                                         Text("Leave empty to use default: \(ImageAnalyzer.defaultPrompt)")
@@ -485,13 +474,9 @@ struct TemplateSettingsView: View {
             apiKey = template.apiKey
             llmProvider = template.llmProvider
             customPrompt = template.customPrompt
+            fixedAltText = template.fixedAltText
             frontMatterFields = template.frontMatterFields
             enableFrontMatter = template.enableFrontMatter
-
-            // Set fixed alt text if using the objects template (which we use for fixed text)
-            if altTextTemplate == .objects && !useExternalAPI {
-                fixedAltText = "alt" // Default, could be stored in template later
-            }
         } else {
             templateName = ""
             outputFilenameFormat = settings.outputFilenameFormat
@@ -503,9 +488,9 @@ struct TemplateSettingsView: View {
             apiKey = settings.apiKey
             llmProvider = settings.llmProvider
             customPrompt = settings.customPrompt
+            fixedAltText = settings.fixedAltText
             frontMatterFields = settings.frontMatterFields
             enableFrontMatter = settings.enableFrontMatter
-            fixedAltText = "alt"
         }
     }
 
@@ -556,6 +541,7 @@ struct TemplateSettingsView: View {
             updatedTemplate.apiKey = apiKey
             updatedTemplate.llmProvider = llmProvider
             updatedTemplate.customPrompt = customPrompt
+            updatedTemplate.fixedAltText = fixedAltText
             updatedTemplate.frontMatterFields = frontMatterFields
             updatedTemplate.enableFrontMatter = enableFrontMatter
 
@@ -576,6 +562,7 @@ struct TemplateSettingsView: View {
             newTemplate.apiKey = apiKey
             newTemplate.llmProvider = llmProvider
             newTemplate.customPrompt = customPrompt
+            newTemplate.fixedAltText = fixedAltText
             newTemplate.frontMatterFields = frontMatterFields
             newTemplate.enableFrontMatter = enableFrontMatter
 
@@ -625,57 +612,32 @@ struct TemplateSettingsView: View {
     }
 
     private func generateFilenamePreview() -> String {
-        var filename = outputFilenameFormat
+        // Create a temporary settings store with the current values to use existing filename processing logic
+        let tempSettings = SettingsStore()
+        tempSettings.outputFilenameFormat = outputFilenameFormat
+        tempSettings.frontMatterFields = frontMatterFields
 
-        let currentDate = Date()
-        let formatter = DateFormatter()
-
-        formatter.dateFormat = "yyyy-MM-dd"
-        filename = filename.replacingOccurrences(of: "{date}", with: formatter.string(from: currentDate))
-
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        filename = filename.replacingOccurrences(of: "{time}", with: formatter.string(from: currentDate))
-
-        filename = filename.replacingOccurrences(of: "{clipboard_preview}", with: "example-preview")
-
-        if !filename.hasSuffix(".md") {
-            filename += ".md"
-        }
-
-        return filename
+        return tempSettings.generateFinalOutputFilename(contentPreview: "example preview")
     }
 
     private func generateImagePathPreview() -> String {
-        var path = imageFolderPath
+        // Create a temporary settings store with the current values to use existing path processing logic
+        let tempSettings = SettingsStore()
+        tempSettings.imageFolderPath = imageFolderPath
 
-        let currentDate = Date()
-        let formatter = DateFormatter()
+        let processedPath = tempSettings.processImageFolderPath(imageIndex: 1, contentPreview: "example-preview", fileExtension: "png")
 
-        formatter.dateFormat = "yyyy-MM-dd"
-        path = path.replacingOccurrences(of: "{date}", with: formatter.string(from: currentDate))
-
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        path = path.replacingOccurrences(of: "{time}", with: formatter.string(from: currentDate))
-
-        path = path.replacingOccurrences(of: "{clipboard_preview}", with: "example-preview")
-
-        if !path.isEmpty && !path.hasSuffix("/") {
-            path += "/"
-        }
-
-        path += "image1.png"
-
-        return "![\(enableAutoAlt ? altTextTemplate.displayName : "alt")](\(path))"
+        return "![\(enableAutoAlt ? altTextTemplate.displayName : "alt")](\(processedPath))"
     }
 
     private func generateImageHandlingPreview() -> String {
         switch imageHandling {
         case .ignore:
-            return "Images will be ignored and not included in the markdown output"
+            return "<!-- Image ignored -->"
         case .base64:
             return "![alt text](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA...)"
         case .saveToFolder:
-            return "Images will be saved to the specified folder"
+            return "![alt](/path/to/image.png)"
         }
     }
 

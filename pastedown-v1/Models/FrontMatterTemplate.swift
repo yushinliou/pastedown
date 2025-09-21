@@ -87,6 +87,7 @@ struct Template: Identifiable, Codable {
     var useExternalAPI: Bool
     var llmProvider: LLMProvider
     var customPrompt: String
+    var fixedAltText: String
     var outputFilenameFormat: String
 
     init(name: String, settingsStore: SettingsStore) {
@@ -105,6 +106,7 @@ struct Template: Identifiable, Codable {
         self.useExternalAPI = settingsStore.useExternalAPI
         self.llmProvider = settingsStore.llmProvider
         self.customPrompt = settingsStore.customPrompt
+        self.fixedAltText = settingsStore.fixedAltText
         self.outputFilenameFormat = settingsStore.outputFilenameFormat
     }
 
@@ -146,6 +148,7 @@ struct Template: Identifiable, Codable {
         newTemplate.useExternalAPI = self.useExternalAPI
         newTemplate.llmProvider = self.llmProvider
         newTemplate.customPrompt = self.customPrompt
+        newTemplate.fixedAltText = self.fixedAltText
         newTemplate.outputFilenameFormat = self.outputFilenameFormat
         return newTemplate
     }
@@ -171,6 +174,7 @@ struct Template: Identifiable, Codable {
         settingsStore.useExternalAPI = self.useExternalAPI
         settingsStore.llmProvider = self.llmProvider
         settingsStore.customPrompt = self.customPrompt
+        settingsStore.fixedAltText = self.fixedAltText
         settingsStore.outputFilenameFormat = self.outputFilenameFormat
 
         settingsStore.saveSettings()

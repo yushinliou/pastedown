@@ -20,7 +20,12 @@ class ImageAnalyzer: ObservableObject {
     
     func generateAltText(for image: UIImage) async -> String {
         guard settings.enableAutoAlt else { return "Image" }
-        
+
+        // Check if using fixed alt text (when altTextTemplate is .objects and not using external API)
+        if settings.altTextTemplate == .objects && !settings.useExternalAPI {
+            return settings.fixedAltText
+        }
+
         if settings.useExternalAPI && !settings.apiKey.isEmpty {
             // Placeholder for external API call
             return await generateAltTextWithAPI(image)

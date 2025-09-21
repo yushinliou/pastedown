@@ -75,6 +75,7 @@ class SettingsStore: ObservableObject {
     @Published var useExternalAPI: Bool = false
     @Published var llmProvider: LLMProvider = .openai
     @Published var customPrompt: String = ""
+    @Published var fixedAltText: String = "alt"
     @Published var outputFilenameFormat: String = "note_{date}_{clipboard_preview}"
     
     init() {
@@ -126,6 +127,7 @@ class SettingsStore: ObservableObject {
         }
         
         customPrompt = UserDefaults.standard.string(forKey: "customPrompt") ?? ""
+        fixedAltText = UserDefaults.standard.string(forKey: "fixedAltText") ?? "alt"
         outputFilenameFormat = UserDefaults.standard.string(forKey: "outputFilenameFormat") ?? "note_{date}_{clipboard_preview}"
     }
     
@@ -158,6 +160,7 @@ class SettingsStore: ObservableObject {
         UserDefaults.standard.set(useExternalAPI, forKey: "useExternalAPI")
         UserDefaults.standard.set(llmProvider.rawValue, forKey: "llmProvider")
         UserDefaults.standard.set(customPrompt, forKey: "customPrompt")
+        UserDefaults.standard.set(fixedAltText, forKey: "fixedAltText")
         UserDefaults.standard.set(outputFilenameFormat, forKey: "outputFilenameFormat")
         
         // Also save to shared container for Share Extension
