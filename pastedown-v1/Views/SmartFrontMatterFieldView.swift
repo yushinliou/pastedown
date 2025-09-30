@@ -697,3 +697,22 @@ struct SmartAddNewFieldView: View {
         }
     }
 }
+
+
+// 添加到 SmartFrontMatterFieldView.swift 檔案末尾
+
+#Preview("String Field") {
+    @State var field = FrontMatterField(name: "publish", type: .string, value: "Sample Title")
+    @StateObject var settings = SettingsStore()
+    
+    NavigationView {
+        Form {
+            SmartFrontMatterFieldView(
+                field: $field,
+                settings: settings,
+                onUpdate: {}
+            )
+        }
+    }
+}
+

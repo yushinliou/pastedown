@@ -13,6 +13,7 @@ class RichTextProcessor: ObservableObject {
     }
     
     func processAttributedStringWithImages(_ attributedString: NSAttributedString, rawRTF: String? = nil, plainTextReference: String? = nil, contentPreview: String? = nil) async -> String {
+        print("processAttributedStringWithImages")
         var markdown = ""
         
         // Add front matter if configured
@@ -23,6 +24,7 @@ class RichTextProcessor: ObservableObject {
         
         // NEW: Use placeholder-based table detection with raw RTF
         let tableDetectionResult = TableUtilities.detectTablesWithDirectInsertion(in: attributedString, rawRTF: rawRTF)
+        print("Detected tables:", tableDetectionResult.tables)
         let detectedTables = tableDetectionResult.tables
         let attributedStringWithTables = tableDetectionResult.attributedStringWithTables
 
@@ -36,17 +38,21 @@ class RichTextProcessor: ObservableObject {
     }
     
     func processAttributedStringWithFileSaving(_ attributedString: NSAttributedString, rawRTF: String? = nil, plainTextReference: String? = nil, contentPreview: String? = nil) async -> ImageUtilities.ProcessingResult {
+        print("processAttributedStringWithFileSaving")
         var markdown = ""
         var allImageResults: [ImageUtilities.ImageResult] = []
-        
+        print("add font matter")
         // Add front matter if configured
         if !settings.frontMatterFields.isEmpty {
             let frontMatter = MarkdownUtilities.generateFrontMatter(settings: settings)
             markdown = frontMatter + "\n"
         }
-        
+        print("attribute string:", attributedString)
+        print("detect tables")
         // NEW: Use placeholder-based table detection with raw RTF
         let tableDetectionResult = TableUtilities.detectTablesWithDirectInsertion(in: attributedString, rawRTF: rawRTF)
+        print("Raw RTF:", rawRTF ?? "nil")
+        // print("Detected tables:", tableDetectionResult.tables)
         let detectedTables = tableDetectionResult.tables
         let attributedStringWithTables = tableDetectionResult.attributedStringWithTables
 
@@ -64,6 +70,7 @@ class RichTextProcessor: ObservableObject {
     
     // MARK: - Helper Methods
     private func processContentLineByLine(_ attributedString: NSAttributedString, plainTextReference: String? = nil, contentPreview: String? = nil) async -> String {
+        print("Processing content line by line...")
         var markdown = ""
         var globalImageIndex = 0
         
@@ -175,6 +182,7 @@ class RichTextProcessor: ObservableObject {
     }
     
     private func processContentLineByLineWithImages(_ attributedString: NSAttributedString, plainTextReference: String? = nil, contentPreview: String? = nil) async -> (String, [ImageUtilities.ImageResult]) {
+        print("Processing content line by line with image handling...")
         var markdown = ""
         var globalImageIndex = 0
         var allImageResults: [ImageUtilities.ImageResult] = []

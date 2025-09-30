@@ -70,6 +70,7 @@
 				Utilities/ListUtilities.swift,
 				Utilities/MarkdownUtilities.swift,
 				Utilities/TableUtilities.swift,
+				ViewModels/ClipboardService.swift,
 				ViewModels/ImageAnalyzer.swift,
 				ViewModels/RichTextProcessor.swift,
 				ViewModels/SettingsStore.swift,

@@ -1,3 +1,4 @@
+// Starting page
 //
 //  ContentView.swift
 //  pastedown-v1
@@ -24,6 +25,8 @@ struct ContentView: View {
     @State private var isConverting = false
     @State private var showingAdvancedSettings = false
     @State private var currentContentPreview: String = ""
+    @State private var showingTemplateManagement = false
+    @State private var showingAppSettings = false
     
     init() {
         let settings = SettingsStore()
@@ -77,10 +80,36 @@ struct ContentView: View {
                             showingShareSheet = true
                         }
                     }
+                } else {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Menu {
+                            Button(action: {
+                                showingTemplateManagement = true
+                            }) {
+                                Label("Manage Templates", systemImage: "folder.badge.gearshape")
+                            }
+
+                            Button(action: {
+                                showingAppSettings = true
+                            }) {
+                                Label("Settings", systemImage: "gearshape")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.title2)
+                                .foregroundColor(.primary)
+                        }
+                    }
                 }
             }
             .sheet(isPresented: $showingAdvancedSettings) {
                 AdvancedSettingsView(settings: settings)
+            }
+            .sheet(isPresented: $showingTemplateManagement) {
+                TemplateManagementListView(settings: settings, isPresented: $showingTemplateManagement)
+            }
+            .sheet(isPresented: $showingAppSettings) {
+                AppSettingsView(isPresented: $showingAppSettings)
             }
             .sheet(isPresented: $showingShareSheet) {
                 if let result = processingResult,

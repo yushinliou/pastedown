@@ -188,12 +188,48 @@ struct RenameTemplateDialog: View {
             Form {
                 Section {
                     TextField("Template name", text: $newName)
-                        .textInputAutocapitalization(.words)
+                        .textInputAutocapitalization(.none)
                         .autocorrectionDisabled()
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(isValidRenameName() ? Color.clear : Color.red, lineWidth: 2)
+                        )
                 } header: {
                     Text("Rename Template")
                 } footer: {
-                    Text("Enter a new name for '\(template.name)'")
+                    let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if trimmedName.isEmpty {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text("Please enter a template name")
+                                .foregroundColor(.red)
+                                .fontWeight(.medium)
+                        }
+                    } else if trimmedName != template.name && !settings.isTemplateNameValid(trimmedName) {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text("Template name '\(trimmedName)' already exists")
+                                .foregroundColor(.red)
+                                .fontWeight(.medium)
+                        }
+                    } else if trimmedName == template.name {
+                        HStack {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.blue)
+                            Text("Name unchanged")
+                                .foregroundColor(.secondary)
+                        }
+                    } else {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text("Ready to rename '\(template.name)' to '\(trimmedName)'")
+                                .foregroundColor(.primary)
+                        }
+                    }
                 }
             }
             .navigationTitle("Rename")
@@ -209,7 +245,7 @@ struct RenameTemplateDialog: View {
                     Button("Save") {
                         renameTemplate()
                     }
-                    .disabled(newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(!isValidRenameName())
                 }
             }
         }
@@ -242,6 +278,17 @@ struct RenameTemplateDialog: View {
             showingError = true
         }
     }
+
+    private func isValidRenameName() -> Bool {
+        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedName.isEmpty {
+            return false
+        }
+        if trimmedName == template.name {
+            return true // Same name is valid
+        }
+        return settings.isTemplateNameValid(trimmedName)
+    }
 }
 
 // MARK: - Duplicate Template Dialog
@@ -260,12 +307,41 @@ struct DuplicateTemplateDialog: View {
             Form {
                 Section {
                     TextField("Template name", text: $duplicateName)
-                        .textInputAutocapitalization(.words)
+                        .textInputAutocapitalization(.none)
                         .autocorrectionDisabled()
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(isValidDuplicateName() ? Color.clear : Color.red, lineWidth: 2)
+                        )
                 } header: {
                     Text("Duplicate Template")
                 } footer: {
-                    Text("This will create a copy of '\(template.name)' with \(template.fieldCount) fields")
+                    let trimmedName = duplicateName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if trimmedName.isEmpty {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text("Please enter a template name")
+                                .foregroundColor(.red)
+                                .fontWeight(.medium)
+                        }
+                    } else if !settings.isTemplateNameValid(trimmedName) {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text("Template name '\(trimmedName)' already exists")
+                                .foregroundColor(.red)
+                                .fontWeight(.medium)
+                        }
+                    } else {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text("Ready to create copy of '\(template.name)' with \(template.fieldCount) fields")
+                                .foregroundColor(.primary)
+                        }
+                    }
                 }
             }
             .navigationTitle("Duplicate")
@@ -281,7 +357,7 @@ struct DuplicateTemplateDialog: View {
                     Button("Create") {
                         duplicateTemplate()
                     }
-                    .disabled(duplicateName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(!isValidDuplicateName())
                 }
             }
         }
@@ -295,7 +371,7 @@ struct DuplicateTemplateDialog: View {
     private func duplicateTemplate() {
         let trimmedName = duplicateName.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if !settings.isTemplateNameAvailable(trimmedName) {
+        if !settings.isTemplateNameValid(trimmedName) {
             errorMessage = "A template with this name already exists"
             showingError = true
             return
@@ -308,5 +384,10 @@ struct DuplicateTemplateDialog: View {
             errorMessage = "Failed to duplicate template"
             showingError = true
         }
+    }
+
+    private func isValidDuplicateName() -> Bool {
+        let trimmedName = duplicateName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !trimmedName.isEmpty && settings.isTemplateNameValid(trimmedName)
     }
 }

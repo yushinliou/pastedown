@@ -54,12 +54,14 @@ class ClipboardService: ObservableObject {
             attributedString = try? NSAttributedString(data: rtfdData, options: [.documentType: NSAttributedString.DocumentType.rtfd], documentAttributes: nil)
             // Extract RTF string from RTFD
             rawRTFString = extractRTFFromRTFD(rtfdData)
+            print("Extracted raw RTF string from com.apple.flat-rtfd")
         }
         // Try RTF next
         else if let rtfData = pasteboard.data(forPasteboardType: "public.rtf") {
             attributedString = try? NSAttributedString(data: rtfData, options: [.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
             // Extract RTF string directly
             rawRTFString = String(data: rtfData, encoding: .ascii) ?? String(data: rtfData, encoding: .utf8)
+            print("Extracted raw RTF string from public.rtf")
         }
         // Try HTML
         else if let htmlData = pasteboard.data(forPasteboardType: "public.html") {
@@ -72,6 +74,8 @@ class ClipboardService: ObservableObject {
             let contentPreviewString = String(contentPreview)
             
             // Process attributed string with inline images using new RTF-based table detection
+            print("give rawRTF sting:", rawRTFString ?? "nil")
+            print("------------------------------")
             let processingResult = await richTextProcessor.processAttributedStringWithFileSaving(attributedString, rawRTF: rawRTFString, plainTextReference: plainTextReference, contentPreview: contentPreviewString)
             return .success(processingResult)
             
@@ -98,31 +102,55 @@ class ClipboardService: ObservableObject {
         return .failure(.emptyClipboard)
     }
     
-    // MARK: - RTF Extraction Helper
     private func extractRTFFromRTFD(_ rtfdData: Data) -> String? {
-        // try to extract RTF from RTFD 
         guard let rtfdFileWrapper = FileWrapper(serializedRepresentation: rtfdData),
             let fileWrappers = rtfdFileWrapper.fileWrappers else {
             return nil
         }
-        // try to find TXT.rtf
+        
         var rtfFileWrapper = fileWrappers["TXT.rtf"]
-        // if not found, try to find any .rtf file
+        
         if rtfFileWrapper == nil {
             rtfFileWrapper = fileWrappers.first { key, _ in
                 key.lowercased().hasSuffix(".rtf")
             }?.value
         }
-        // if not found, return nil
+        
         guard let rtfData = rtfFileWrapper?.regularFileContents else {
             return nil
         }
-        // try to decode to original RTF string
-        let rtfString = String(data: rtfData, encoding: .ascii)
-            ?? String(data: rtfData, encoding: .utf8)
-        return rtfString
+        
+        // try multiple encodings to decode RTF data
+        let encodings: [(String.Encoding, String)] = [
+            (.ascii, "ASCII"),
+            (.utf8, "UTF-8"),
+            (.windowsCP1252, "Windows-1252"),
+            (.macOSRoman, "Mac OS Roman"),
+            (.isoLatin1, "ISO Latin 1")
+        ]
+        
+        for (encoding, name) in encodings {
+            // Use lossy conversion to allow un-decodable characters to be replaced
+            let decoded = String(data: rtfData, encoding: encoding)
+            
+            if let decoded = decoded, !decoded.isEmpty {
+                print("✅ Decoded RTF with \(name): \(decoded.count) characters")
+                
+                // Basic validation: check for RTF header
+                if decoded.hasPrefix("{\\rtf") || decoded.contains("{\\rtf") {
+                    print("✅ Valid RTF format detected")
+                    return decoded
+                } else {
+                    print("⚠️ Decoded but doesn't look like valid RTF")
+                }
+            }
+        }
+        
+        print("❌ Failed to decode RTF with any encoding")
+        return nil
     }
-    
+
+
     // MARK: - Image-Only Processing
     private func processImageOnlyClipboard() async -> Result<ImageUtilities.ProcessingResult, ClipboardError> {
         let pasteboard = UIPasteboard.general
@@ -165,6 +193,7 @@ class ClipboardService: ObservableObject {
         
         // Process using existing logic
         let contentPreview = "clipboard-images"
+        print("give nil rawRTF")
         let processingResult = await richTextProcessor.processAttributedStringWithFileSaving(mutableAttributedString, rawRTF: nil, plainTextReference: nil, contentPreview: contentPreview)
         return .success(processingResult)
     }

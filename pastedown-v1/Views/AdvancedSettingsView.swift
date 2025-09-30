@@ -242,4 +242,6 @@ struct AdvancedSettingsView: View {
     }
 }
 
-
+#Preview {
+    AdvancedSettingsView(settings: SettingsStore())
+}

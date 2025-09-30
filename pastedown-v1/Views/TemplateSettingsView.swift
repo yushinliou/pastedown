@@ -2,7 +2,7 @@
 //  TemplateSettingsView.swift
 //  pastedown-v1
 //
-//  Created by Claude Code on 2025/9/21.
+//  Last modify by Yu Shin on 2025/09/22
 //
 
 import SwiftUI
@@ -49,6 +49,11 @@ struct TemplateSettingsView: View {
                             .autocapitalization(.words)
                             .disableAutocorrection(true)
                             .disabled(isEditing && template?.name == "default")
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(isValidTemplateName() ? Color.clear : Color.red, lineWidth: 2)
+                            )
 
                         TextFieldWithVariablePicker(
                             title: "Output filename format (without .md)",
@@ -90,6 +95,15 @@ struct TemplateSettingsView: View {
                 } footer: {
                     if isEditing && template?.name == "default" {
                         Text("The default template name cannot be changed. Configure the output filename format for this template.")
+                    } else if !isValidTemplateName() {
+                        let trimmedName = templateName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if trimmedName.isEmpty {
+                            Text("Please enter a template name")
+                                .foregroundColor(.red)
+                        } else {
+                            Text("A template with this name already exists")
+                                .foregroundColor(.red)
+                        }
                     } else {
                         Text("Enter a name for this template and configure the output filename format")
                     }
@@ -478,7 +492,7 @@ struct TemplateSettingsView: View {
             frontMatterFields = template.frontMatterFields
             enableFrontMatter = template.enableFrontMatter
         } else {
-            templateName = ""
+            templateName = generateUniqueTemplateName()
             outputFilenameFormat = settings.outputFilenameFormat
             imageHandling = settings.imageHandling
             imageFolderPath = settings.imageFolderPath
@@ -495,9 +509,26 @@ struct TemplateSettingsView: View {
     }
 
     private func canSave() -> Bool {
-        if !isEditing && templateName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        let trimmedName = templateName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Check if template name is empty for new templates
+        if !isEditing && trimmedName.isEmpty {
             return false
         }
+
+        // Check for duplicate names when creating new template
+        if !isEditing && !settings.isTemplateNameValid(trimmedName) {
+            return false
+        }
+
+        // Check for duplicate names when editing template name
+        if isEditing, let existingTemplate = template,
+           existingTemplate.name != "default" && trimmedName != existingTemplate.name {
+            if !settings.isTemplateNameValid(trimmedName) {
+                return false
+            }
+        }
+
         return isValidOutputFilename() && isValidImagePath()
     }
 
@@ -653,5 +684,46 @@ struct TemplateSettingsView: View {
 
     private func deleteFields(offsets: IndexSet) {
         frontMatterFields.remove(atOffsets: offsets)
+    }
+
+    private func isValidTemplateName() -> Bool {
+        let trimmedName = templateName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Empty name is invalid for new templates
+        if !isEditing && trimmedName.isEmpty {
+            return false
+        }
+
+        // Check for duplicate names when creating new template
+        if !isEditing {
+            return settings.isTemplateNameValid(trimmedName)
+        }
+
+        // For editing, only validate if name changed and not default template
+        if let existingTemplate = template {
+            if existingTemplate.name == "default" || trimmedName == existingTemplate.name {
+                return true
+            }
+            return settings.isTemplateNameValid(trimmedName)
+        }
+
+        return true
+    }
+
+    private func generateUniqueTemplateName() -> String {
+        var baseName = "New Template"
+        var counter = 1
+
+        // If "New Template" is available, use it
+        if settings.isTemplateNameValid(baseName) {
+            return baseName
+        }
+
+        // Otherwise, find "New Template 2", "New Template 3", etc.
+        while !settings.isTemplateNameValid("\(baseName) \(counter)") {
+            counter += 1
+        }
+
+        return "\(baseName) \(counter)"
     }
 }

@@ -96,3 +96,49 @@ struct ResultView: View {
     }
 }
 
+struct ResultView_Previews: PreviewProvider {
+    struct PreviewWrapper: View {
+        @State private var convertedMarkdown = """
+        # Example Markdown
+        This is a preview of converted text.
+
+        - Item 1
+        - Item 2
+        """
+        @State private var showingAlert = false
+        @State private var alertMessage = ""
+        @State private var showingAdvancedSettings = false
+        @StateObject private var settings = SettingsStore()
+
+        var body: some View {
+            ResultView(
+                convertedMarkdown: $convertedMarkdown,
+                showingAlert: $showingAlert,
+                alertMessage: $alertMessage,
+                showingAdvancedSettings: $showingAdvancedSettings,
+                settings: settings,
+                processingResult: mockProcessingResult
+            )
+        }
+
+        /// 模擬一個假的檔案結果（可以看到上面的 file status bar）
+        private var mockProcessingResult: ImageUtilities.ProcessingResult {
+            let dummyURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("example.md")
+            return ImageUtilities.ProcessingResult(
+                markdown: """
+                # Example Markdown from ProcessingResult
+                This is the markdown that would normally come from processing.
+                """,
+                fileURL: dummyURL,
+                fileType: .markdown,
+
+            )
+        }
+    }
+
+    static var previews: some View {
+        PreviewWrapper()
+            .previewDisplayName("Result View (Preview)")
+    }
+}

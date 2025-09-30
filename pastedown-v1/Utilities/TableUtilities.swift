@@ -349,10 +349,12 @@ struct TableUtilities {
         if let rawRTF = rawRTF {
             // Extract structure from RTF, content from NSAttributedString
             detectedTables = detectTablesWithSeparatedApproach(rawRTF: rawRTF, attributedString: attributedString)
+            print("Detected tables with separated approach:", detectedTables)
         }
         
         // Insert markdown tables directly into the attributed string
         insertMarkdownTablesDirectly(for: detectedTables, in: mutableAttributedString)
+        print("Inserted markdown tables directly into attributed string.")
         
         return TableDetectionResult(tables: detectedTables, attributedStringWithTables: mutableAttributedString)
     }

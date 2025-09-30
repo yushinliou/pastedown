@@ -1,3 +1,5 @@
+// Starting page
+// InitialViewWithSetting.swift
 import SwiftUI
 
 
@@ -9,6 +11,8 @@ struct InitialViewWithSettings: View {
 
     @State private var showingNewTemplate = false
     @State private var showingEditTemplate = false
+    @State private var showingTemplateManagement = false
+    @State private var showingAppSettings = false
 
     var body: some View {
         VStack(spacing: 30) {
@@ -129,5 +133,36 @@ struct InitialViewWithSettings: View {
                 TemplateSettingsView(settings: settings, isPresented: $showingEditTemplate, template: currentTemplate)
             }
         }
+        .sheet(isPresented: $showingTemplateManagement) {
+            TemplateManagementListView(settings: settings, isPresented: $showingTemplateManagement)
+        }
+        .sheet(isPresented: $showingAppSettings) {
+            AppSettingsView(isPresented: $showingAppSettings)
+        }
+    }
+}
+
+
+struct InitialViewWithSettings_Previews: PreviewProvider {
+    struct PreviewWrapper: View {
+        @State private var isConverting = false
+        @State private var showingAdvancedSettings = false
+        @StateObject private var settings = SettingsStore() // 測試用假資料
+
+        var body: some View {
+            InitialViewWithSettings(
+                isConverting: $isConverting,
+                showingAdvancedSettings: $showingAdvancedSettings,
+                settings: settings,
+                pasteFromClipboard: {
+                    print("Pretend to paste from clipboard")
+                }
+            )
+        }
+    }
+
+    static var previews: some View {
+        PreviewWrapper()
+            .previewDisplayName("Initial View With Settings")
     }
 }

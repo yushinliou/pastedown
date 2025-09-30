@@ -383,6 +383,21 @@ class SettingsStore: ObservableObject {
         return !trimmedName.isEmpty && !templates.contains(where: { $0.name == trimmedName })
     }
 
+    func moveTemplate(from source: IndexSet, to destination: Int) {
+        templates.move(fromOffsets: source, toOffset: destination)
+        saveSettings()
+    }
+
+    func deleteTemplates(at offsets: IndexSet) {
+        let templatesToDelete = offsets.map { templates[$0] }
+
+        for template in templatesToDelete {
+            if template.name != "default" {
+                deleteTemplate(template)
+            }
+        }
+    }
+
 
     var currentTemplate: Template? {
         guard let currentTemplateID = currentTemplateID else { return nil }
