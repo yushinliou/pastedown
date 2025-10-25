@@ -116,7 +116,7 @@ struct SaveTemplateDialog: View {
             Form {
                 Section {
                     TextField("Template name", text: $templateName)
-                        .textInputAutocapitalization(.words)
+                        .textInputAutocapitalization(.none)
                         .autocorrectionDisabled()
                 } header: {
                     Text("Save Current Front Matter as Template")

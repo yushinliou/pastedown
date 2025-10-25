@@ -46,7 +46,7 @@ struct TemplateSettingsView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         TextField("Template name", text: $templateName)
-                            .autocapitalization(.words)
+                            .autocapitalization(.none)
                             .disableAutocorrection(true)
                             .disabled(isEditing && template?.name == "default")
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -249,6 +249,10 @@ struct TemplateSettingsView: View {
 
                                                 SecureField("Enter API key", text: $apiKey)
                                                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                                                        .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(isValidAPIKey() ? Color.clear : Color.red, lineWidth: 1)
+                                                    )
                                             }
 
                                             VStack(alignment: .leading, spacing: 8) {
@@ -520,7 +524,7 @@ struct TemplateSettingsView: View {
         if !isEditing && !settings.isTemplateNameValid(trimmedName) {
             return false
         }
-
+        
         // Check for duplicate names when editing template name
         if isEditing, let existingTemplate = template,
            existingTemplate.name != "default" && trimmedName != existingTemplate.name {
@@ -529,6 +533,11 @@ struct TemplateSettingsView: View {
             }
         }
 
+        // Validate API key if using external API
+        if useExternalAPI && !isValidAPIKey() {
+            return false
+        }
+        
         return isValidOutputFilename() && isValidImagePath()
     }
 
@@ -707,6 +716,13 @@ struct TemplateSettingsView: View {
             return settings.isTemplateNameValid(trimmedName)
         }
 
+        return true
+    }
+
+    private func isValidAPIKey() -> Bool {
+        if useExternalAPI {
+            return !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
         return true
     }
 

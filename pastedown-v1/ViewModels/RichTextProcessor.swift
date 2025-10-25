@@ -17,7 +17,9 @@ class RichTextProcessor: ObservableObject {
         var markdown = ""
         
         // Add front matter if configured
-        if !settings.frontMatterFields.isEmpty {
+
+        if !settings.frontMatterFields.isEmpty && settings.enableFrontMatter {
+            print("add front matter")
             let frontMatter = MarkdownUtilities.generateFrontMatter(settings: settings)
             markdown = frontMatter + "\n"
         }
@@ -43,7 +45,7 @@ class RichTextProcessor: ObservableObject {
         var allImageResults: [ImageUtilities.ImageResult] = []
         print("add font matter")
         // Add front matter if configured
-        if !settings.frontMatterFields.isEmpty {
+        if !settings.frontMatterFields.isEmpty && settings.enableFrontMatter {
             let frontMatter = MarkdownUtilities.generateFrontMatter(settings: settings)
             markdown = frontMatter + "\n"
         }

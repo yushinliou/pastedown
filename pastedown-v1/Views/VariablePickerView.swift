@@ -34,7 +34,7 @@ enum VariableCategory: String, CaseIterable {
                     baseVariables.append(
                         TemplateVariable(
                             name: "{\(field.name)}", 
-                            displayName: field.name.capitalized, 
+                            displayName: field.name, // no change
                             description: "From front matter field '\(field.name)'", 
                             category: .filename
                         )
@@ -405,8 +405,16 @@ struct TextFieldWithVariablePicker: View {
                 cursorPosition: $cursorPosition,
                 isEditing: $isEditing
             )
+            .frame(maxWidth: .infinity)
 
-            VariablePickerButton(text: $text, cursorPosition: $cursorPosition, context: context, settings: settings, excludeFieldName: excludeFieldName)
+            VariablePickerButton(
+                text: $text,
+                cursorPosition: $cursorPosition,
+                context: context,
+                settings: settings,
+                excludeFieldName: excludeFieldName
+            )
+            .fixedSize()
         }
         .padding(8)
         .overlay(
@@ -490,6 +498,12 @@ struct CursorTrackingTextField: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.addTarget(context.coordinator, action: #selector(Coordinator.textFieldChanged), for: .editingChanged)
         textField.addTarget(context.coordinator, action: #selector(Coordinator.textFieldEditingEnded), for: .editingDidEnd)
+
+        textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        textField.autocapitalizationType = .none 
+        textField.autocorrectionType = .no 
+
         return textField
     }
 

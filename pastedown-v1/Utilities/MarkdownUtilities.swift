@@ -173,7 +173,7 @@ struct MarkdownUtilities {
                 frontMatter += "\(field.name): >-\n"
                 let lines = processedValue.components(separatedBy: .newlines)
                 for line in lines {
-                    frontMatter += "  \(line)\n"
+                    frontMatter += "    \(line)\n"
                 }
             case .current_date:
                 let dateFormatter = DateFormatter()

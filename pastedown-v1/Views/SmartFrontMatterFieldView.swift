@@ -141,6 +141,7 @@ struct SmartFrontMatterFieldView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             TextField("Tags (separate with commas: tag1, tag2, tag3)", text: $tagText)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .textInputAutocapitalization(.never)
                                 .onChange(of: tagText) { _, newValue in
                                     // Parse comma-separated tags and update field value
                                     let tags = newValue.components(separatedBy: ",")
@@ -210,6 +211,7 @@ struct SmartFrontMatterFieldView: View {
                         HStack {
                             TextField("Add list item", text: $newListText)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .textInputAutocapitalization(.never)
                             
                             Button("Add") {
                                 if !newListText.isEmpty {
