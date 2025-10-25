@@ -1,0 +1,18 @@
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/ImageAnalyzer.swift":
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/ImageAnalyzer.dia"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/ImageAnalyzer.swiftdeps"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/ImageAnalyzer.d"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/ImageAnalyzer.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/ImageAnalyzer.swiftconstvalues"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/RichTextProcessor.swift":
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/RichTextProcessor.o"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/RichTextProcessor.d"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/RichTextProcessor.swiftdeps"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/RichTextProcessor.swiftconstvalues"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/RichTextProcessor.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/FrontMatterType.swift":
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/FrontMatterType.swiftconstvalues"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/FrontMatterType.d"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/FrontMatterType.o"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/FrontMatterType.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/x86_64/FrontMatterType.dia"

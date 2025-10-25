@@ -2,7 +2,7 @@
 //  SmartFrontMatterFieldView.swift
 //  pastedown-v1
 //
-//  Created by Claude Code on 2025/9/2.
+//  Modified by Yu Shin on 2025/10/25.
 //
 
 import SwiftUI
@@ -241,24 +241,22 @@ struct SmartFrontMatterFieldView: View {
                     
                 case .multiline:
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Value:")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            
-                            Spacer()
-                            
-                            SimpleVariablePickerButton(text: $field.value, context: .frontMatter, settings: settings, excludeFieldName: field.name)
-                        }
-                        
-                        TextEditor(text: $field.value)
-                            .frame(minHeight: 100)
-                            .padding(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
-                            .onChange(of: field.value) { _, _ in onUpdate() }
+                        Text("Value:")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+
+                        TextEditorWithVariablePicker(
+                            text: $field.value,
+                            context: .frontMatter,
+                            settings: settings,
+                            excludeFieldName: field.name,
+                            minHeight: 100
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                        .onChange(of: field.value) { _, _ in onUpdate() }
                         
                         Text("Supports multiple lines of text")
                             .font(.caption)
@@ -604,23 +602,21 @@ struct SmartAddNewFieldView: View {
                     
                 case .multiline:
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Value:")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            
-                            Spacer()
-                            
-                            SimpleVariablePickerButton(text: $newFieldValue, context: .frontMatter, settings: settings, excludeFieldName: nil)
-                        }
-                        
-                        TextEditor(text: $newFieldValue)
-                            .frame(minHeight: 100)
-                            .padding(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
+                        Text("Value:")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+
+                        TextEditorWithVariablePicker(
+                            text: $newFieldValue,
+                            context: .frontMatter,
+                            settings: settings,
+                            excludeFieldName: nil,
+                            minHeight: 100
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
                         
                         Text("Supports multiple lines of text")
                             .font(.caption)
@@ -701,7 +697,7 @@ struct SmartAddNewFieldView: View {
 }
 
 
-// 添加到 SmartFrontMatterFieldView.swift 檔案末尾
+// preview
 
 #Preview("String Field") {
     @State var field = FrontMatterField(name: "publish", type: .string, value: "Sample Title")

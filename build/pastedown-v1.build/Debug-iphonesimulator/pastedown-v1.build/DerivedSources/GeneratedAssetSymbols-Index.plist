@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>colors</key>
+	<array>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameBackgroundColour</string>
+			<key>relativePath</key>
+			<string>./backgroundColour.colorset</string>
+			<key>swiftSymbol</key>
+			<string>backgroundColour</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNamePrimaryColour</string>
+			<key>relativePath</key>
+			<string>./primaryColour.colorset</string>
+			<key>swiftSymbol</key>
+			<string>primaryColour</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameSecondaryColour</string>
+			<key>relativePath</key>
+			<string>./secondaryColour.colorset</string>
+			<key>swiftSymbol</key>
+			<string>secondaryColour</string>
+		</dict>
+	</array>
+	<key>images</key>
+	<array>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNamePastedown</string>
+			<key>relativePath</key>
+			<string>./pastedown.imageset</string>
+			<key>swiftSymbol</key>
+			<string>pastedown</string>
+		</dict>
+	</array>
+	<key>symbols</key>
+	<array/>
+</dict>
+</plist>

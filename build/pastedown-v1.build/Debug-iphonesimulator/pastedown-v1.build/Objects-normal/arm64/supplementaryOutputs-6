@@ -1,0 +1,18 @@
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/ShareSheet.swift":
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ShareSheet.o"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ShareSheet.swiftdeps"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ShareSheet.d"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ShareSheet.swiftconstvalues"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ShareSheet.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/SmartFrontMatterFieldView.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/SmartFrontMatterFieldView.d"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/SmartFrontMatterFieldView.swiftconstvalues"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/SmartFrontMatterFieldView.o"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/SmartFrontMatterFieldView.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/SmartFrontMatterFieldView.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/ListUtilities.swift":
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ListUtilities.swiftconstvalues"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ListUtilities.dia"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ListUtilities.o"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ListUtilities.swiftdeps"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/ListUtilities.d"

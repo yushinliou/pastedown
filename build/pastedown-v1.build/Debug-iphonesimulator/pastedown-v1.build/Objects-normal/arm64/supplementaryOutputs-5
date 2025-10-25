@@ -1,0 +1,18 @@
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/TableUtilities.swift":
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TableUtilities.swiftconstvalues"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TableUtilities.o"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TableUtilities.d"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TableUtilities.dia"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TableUtilities.swiftdeps"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateManagementListView.swift":
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TemplateManagementListView.dia"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TemplateManagementListView.o"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TemplateManagementListView.d"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TemplateManagementListView.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/TemplateManagementListView.swiftdeps"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/MarkdownUtilities.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/MarkdownUtilities.d"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/MarkdownUtilities.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/MarkdownUtilities.dia"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/MarkdownUtilities.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphonesimulator/pastedown-v1.build/Objects-normal/arm64/MarkdownUtilities.swiftconstvalues"

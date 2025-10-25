@@ -34,7 +34,7 @@ enum VariableCategory: String, CaseIterable {
                     baseVariables.append(
                         TemplateVariable(
                             name: "{\(field.name)}", 
-                            displayName: field.name, // no change
+                            displayName: field.name, // no .capitalized
                             description: "From front matter field '\(field.name)'", 
                             category: .filename
                         )
@@ -58,7 +58,7 @@ enum VariableCategory: String, CaseIterable {
                         baseVariables.append(
                             TemplateVariable(
                                 name: "{\(field.name)}", 
-                                displayName: field.name.capitalized, 
+                                displayName: field.name, // no .capitalized
                                 description: "Reference to '\(field.name)' field", 
                                 category: .frontMatter
                             )
@@ -187,13 +187,16 @@ struct VariablePickerButton: View {
         }) {
             Image(systemName: "tag")
                 .foregroundColor(Color.accentColor)
+
         }
         .sheet(isPresented: $showingPicker) {
             VariablePickerView(onVariableSelected: { variable in
                 insertVariableAtCursor(variable)
             }, settings: settings, excludeFieldName: excludeFieldName, context: context)
         }
+        .buttonStyle(.plain) // prevent button from expanding make the whole area clickable
     }
+    
 
     private func insertVariableAtCursor(_ variable: String) {
         if text.isEmpty {
@@ -241,6 +244,7 @@ struct SimpleVariablePickerButton: View {
                 }
             }, settings: settings, excludeFieldName: excludeFieldName, context: context)
         }
+        .buttonStyle(.plain) // prevent button from expanding make the whole area clickable
     }
 }
 
@@ -280,7 +284,6 @@ struct TextFieldWithVariablePicker: View {
                 settings: settings,
                 excludeFieldName: excludeFieldName
             )
-            .fixedSize()
         }
         .padding(8)
         .overlay(
@@ -347,6 +350,44 @@ struct CursorTrackingTextEditor: UIViewRepresentable {
         private func updateCursorPosition(_ textView: UITextView) {
             let cursorPosition = textView.offset(from: textView.beginningOfDocument, to: textView.selectedTextRange?.start ?? textView.beginningOfDocument)
             parent.cursorPosition = cursorPosition
+        }
+    }
+}
+
+// MARK: - Text Editor with Variable Picker
+struct TextEditorWithVariablePicker: View {
+    @Binding var text: String
+    let context: VariableCategory
+    let settings: SettingsStore?
+    let excludeFieldName: String?
+    let minHeight: CGFloat
+    @State private var cursorPosition: Int = 0
+
+    init(text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil, minHeight: CGFloat = 80) {
+        self._text = text
+        self.context = context
+        self.settings = settings
+        self.excludeFieldName = excludeFieldName
+        self.minHeight = minHeight
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            CursorTrackingTextEditor(
+                text: $text,
+                cursorPosition: $cursorPosition,
+                minHeight: minHeight
+            )
+            .frame(minHeight: minHeight)
+
+            VariablePickerButton(
+                text: $text,
+                cursorPosition: $cursorPosition,
+                context: context,
+                settings: settings,
+                excludeFieldName: excludeFieldName
+            )
+            .padding(.top, 4)
         }
     }
 }

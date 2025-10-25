@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'pastedown-v1' in project 'pastedown-v1'
+➜ Explicit dependency on target 'PastedownShareExtension' in project 'pastedown-v1'
+Target 'PastedownShareExtension' in project 'pastedown-v1' (no dependencies)
