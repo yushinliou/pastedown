@@ -2,7 +2,7 @@
 //  VariablePickerView.swift
 //  pastedown-v1
 //
-//  Created by Claude Code on 2025/9/2.
+//  Modified by Yu Shin on 2025/10/25.
 //
 
 import SwiftUI
@@ -248,129 +248,7 @@ struct SimpleVariablePickerButton: View {
     }
 }
 
-// MARK: - Cursor-Aware Variable Picker Button
-struct CursorAwareVariablePickerButton: View {
-    @Binding var text: String
-    @Binding var cursorPosition: Int
-    let context: VariableCategory
-    let settings: SettingsStore?
-    let excludeFieldName: String?
-    @State private var showingPicker = false
 
-    init(text: Binding<String>, cursorPosition: Binding<Int>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
-        self._text = text
-        self._cursorPosition = cursorPosition
-        self.context = context
-        self.settings = settings
-        self.excludeFieldName = excludeFieldName
-    }
-
-    var body: some View {
-        Button(action: {
-            showingPicker = true
-        }) {
-            Image(systemName: "tag")
-                .foregroundColor(Color.accentColor)
-        }
-        .sheet(isPresented: $showingPicker) {
-            VariablePickerView(onVariableSelected: { variable in
-                insertVariableAtCursor(variable)
-            }, settings: settings, excludeFieldName: excludeFieldName, context: context)
-        }
-    }
-
-    private func insertVariableAtCursor(_ variable: String) {
-        if text.isEmpty {
-            text = variable
-            cursorPosition = variable.count
-        } else {
-            let insertPosition = min(cursorPosition, text.count)
-            let beforeCursor = String(text.prefix(insertPosition))
-            let afterCursor = String(text.suffix(text.count - insertPosition))
-            text = beforeCursor + variable + afterCursor
-            cursorPosition = insertPosition + variable.count
-        }
-    }
-}
-
-// MARK: - Smart Text View with Variable Highlighting
-struct SmartTextView: View {
-    let text: String
-    
-    var body: some View {
-        HStack(alignment: .center, spacing: 2) {
-            ForEach(parseTextComponents(), id: \.id) { component in
-                if component.isVariable {
-                    Text(component.text)
-                        .font(.caption.monospaced())
-                        .foregroundColor(Color.white)
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(Color.blue)
-                        .cornerRadius(3)
-                } else {
-                    Text(component.text)
-                        .foregroundColor(Color.primary)
-                }
-            }
-            Spacer()
-        }
-    }
-    
-    private func parseTextComponents() -> [TextComponent] {
-        var components: [TextComponent] = []
-        let pattern = "\\{[^}]+\\}"
-        
-        do {
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let matches = regex.matches(in: text, options: [], range: NSRange(location: 0, length: text.count))
-            
-            var lastEnd = 0
-            
-            for match in matches {
-                // Add text before variable
-                if match.range.location > lastEnd {
-                    let beforeRange = NSRange(location: lastEnd, length: match.range.location - lastEnd)
-                    if let beforeText = text.substring(with: beforeRange), !beforeText.isEmpty {
-                        components.append(TextComponent(text: beforeText, isVariable: false))
-                    }
-                }
-                
-                // Add variable
-                if let variableText = text.substring(with: match.range) {
-                    components.append(TextComponent(text: variableText, isVariable: true))
-                }
-                
-                lastEnd = match.range.location + match.range.length
-            }
-            
-            // Add remaining text
-            if lastEnd < text.count {
-                let remainingRange = NSRange(location: lastEnd, length: text.count - lastEnd)
-                if let remainingText = text.substring(with: remainingRange), !remainingText.isEmpty {
-                    components.append(TextComponent(text: remainingText, isVariable: false))
-                }
-            }
-            
-        } catch {
-            // If regex fails, just return the whole text as non-variable
-            components.append(TextComponent(text: text, isVariable: false))
-        }
-        
-        // If no variables found and text is not empty, add as regular text
-        if components.isEmpty && !text.isEmpty {
-            components.append(TextComponent(text: text, isVariable: false))
-        }
-        
-        return components
-    }
-}
-
-struct TextComponent {
-    let id = UUID()
-    let text: String
-    let isVariable: Bool
-}
 
 extension String {
     func substring(with range: NSRange) -> String? {
@@ -558,44 +436,6 @@ struct CursorTrackingTextField: UIViewRepresentable {
                 let cursorPosition = textField.offset(from: textField.beginningOfDocument, to: selectedRange.start)
                 parent.cursorPosition = cursorPosition
             }
-        }
-    }
-}
-
-// MARK: - Text Editor with Variable Picker
-struct TextEditorWithVariablePicker: View {
-    @Binding var text: String
-    let context: VariableCategory
-    let settings: SettingsStore?
-    let excludeFieldName: String?
-    let minHeight: CGFloat
-    @State private var cursorPosition: Int = 0
-
-    init(text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil, minHeight: CGFloat = 80) {
-        self._text = text
-        self.context = context
-        self.settings = settings
-        self.excludeFieldName = excludeFieldName
-        self.minHeight = minHeight
-    }
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            CursorTrackingTextEditor(
-                text: $text,
-                cursorPosition: $cursorPosition,
-                minHeight: minHeight
-            )
-            .frame(minHeight: minHeight)
-
-            CursorAwareVariablePickerButton(
-                text: $text,
-                cursorPosition: $cursorPosition,
-                context: context,
-                settings: settings,
-                excludeFieldName: excludeFieldName
-            )
-            .padding(.top, 4)
         }
     }
 }
