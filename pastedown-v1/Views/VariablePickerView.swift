@@ -71,10 +71,6 @@ enum VariableCategory: String, CaseIterable {
         }
     }
     
-    // Legacy method for backward compatibility
-    var variables: [TemplateVariable] {
-        return variables(settings: nil, excludeFieldName: nil)
-    }
 }
 
 // MARK: - Variable Picker View
@@ -248,14 +244,6 @@ struct SimpleVariablePickerButton: View {
     }
 }
 
-
-
-extension String {
-    func substring(with range: NSRange) -> String? {
-        guard let stringRange = Range(range, in: self) else { return nil }
-        return String(self[stringRange])
-    }
-}
 
 // MARK: - Enhanced Text Field with Variable Picker
 struct TextFieldWithVariablePicker: View {
