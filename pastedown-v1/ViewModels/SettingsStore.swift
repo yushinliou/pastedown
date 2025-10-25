@@ -64,7 +64,6 @@ enum LLMProvider: String, CaseIterable, Identifiable, Codable {
 class SettingsStore: ObservableObject {
     @Published var frontMatterFields: [FrontMatterField] = []
     @Published var enableFrontMatter: Bool = true
-    @Published var savedTemplates: [FrontMatterTemplate] = []
     @Published var templates: [Template] = []
     @Published var currentTemplateID: UUID?
     @Published var imageHandling: ImageHandling = .ignore
@@ -87,11 +86,6 @@ class SettingsStore: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: "frontMatterFields"),
            let fields = try? JSONDecoder().decode([FrontMatterField].self, from: data) {
             frontMatterFields = fields
-        }
-
-        if let templatesData = UserDefaults.standard.data(forKey: "frontMatterTemplates"),
-           let templates = try? JSONDecoder().decode([FrontMatterTemplate].self, from: templatesData) {
-            savedTemplates = templates
         }
 
         if let templatesData = UserDefaults.standard.data(forKey: "templates"),
@@ -137,10 +131,6 @@ class SettingsStore: ObservableObject {
             UserDefaults.standard.set(data, forKey: "frontMatterFields")
         }
 
-        if let templatesData = try? JSONEncoder().encode(savedTemplates) {
-            UserDefaults.standard.set(templatesData, forKey: "frontMatterTemplates")
-        }
-
         if let templatesData = try? JSONEncoder().encode(templates) {
             UserDefaults.standard.set(templatesData, forKey: "templates")
         }
@@ -182,12 +172,7 @@ class SettingsStore: ObservableObject {
             plist["frontMatterFields"] = frontMatterData
         }
 
-        // Serialize saved templates
-        if let templatesData = try? JSONEncoder().encode(savedTemplates) {
-            plist["frontMatterTemplates"] = templatesData
-        }
-
-        // Serialize new templates
+        // Serialize templates
         if let templatesData = try? JSONEncoder().encode(templates) {
             plist["templates"] = templatesData
         }
@@ -214,88 +199,7 @@ class SettingsStore: ObservableObject {
         }
     }
 
-    // MARK: - Template Management
-    func saveCurrentAsTemplate(name: String) -> Bool {
-        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-              !frontMatterFields.isEmpty else {
-            return false
-        }
-
-        // Check for duplicate names
-        if savedTemplates.contains(where: { $0.name == name }) {
-            return false
-        }
-
-        let newTemplate = FrontMatterTemplate(name: name, fields: frontMatterFields)
-        savedTemplates.append(newTemplate)
-        saveSettings()
-        return true
-    }
-
-    func applyTemplate(_ template: FrontMatterTemplate) {
-        var updatedTemplate = template
-        updatedTemplate.markAsUsed()
-
-        // Update the template in the saved list
-        if let index = savedTemplates.firstIndex(where: { $0.id == template.id }) {
-            savedTemplates[index] = updatedTemplate
-        }
-
-        // Replace current fields with template fields (with new IDs to avoid conflicts)
-        frontMatterFields = template.fields.map { field in
-            var newField = field
-            newField.id = UUID()
-            return newField
-        }
-
-        saveSettings()
-    }
-
-    func deleteTemplate(_ template: FrontMatterTemplate) {
-        savedTemplates.removeAll { $0.id == template.id }
-        saveSettings()
-    }
-
-    func duplicateTemplate(_ template: FrontMatterTemplate, newName: String) -> Bool {
-        guard !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return false
-        }
-
-        // Check for duplicate names
-        if savedTemplates.contains(where: { $0.name == newName }) {
-            return false
-        }
-
-        let duplicatedTemplate = template.duplicate(withName: newName)
-        savedTemplates.append(duplicatedTemplate)
-        saveSettings()
-        return true
-    }
-
-    func renameTemplate(_ template: FrontMatterTemplate, newName: String) -> Bool {
-        guard !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return false
-        }
-
-        // Check for duplicate names (excluding current template)
-        if savedTemplates.contains(where: { $0.name == newName && $0.id != template.id }) {
-            return false
-        }
-
-        if let index = savedTemplates.firstIndex(where: { $0.id == template.id }) {
-            savedTemplates[index].name = newName
-            saveSettings()
-            return true
-        }
-        return false
-    }
-
-    func isTemplateNameAvailable(_ name: String) -> Bool {
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        return !trimmedName.isEmpty && !savedTemplates.contains(where: { $0.name == trimmedName })
-    }
-
-    // MARK: - New Template Management Methods
+    // MARK: - Template Management Methods
     private func ensureDefaultTemplate() {
         if templates.isEmpty {
             let defaultTemplate = Template(name: "default", settingsStore: self)

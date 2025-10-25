@@ -23,7 +23,6 @@ struct ContentView: View {
     @State private var showingAlert = false
     @State private var alertMessage = ""
     @State private var isConverting = false
-    @State private var showingAdvancedSettings = false
     @State private var currentContentPreview: String = ""
     @State private var showingTemplateManagement = false
     @State private var showingAppSettings = false
@@ -47,7 +46,7 @@ struct ContentView: View {
                         ScrollView {
                             InitialViewWithSettings(
                                 isConverting: $isConverting,
-                                showingAdvancedSettings: $showingAdvancedSettings,
+                                showingAdvancedSettings: .constant(false),
                                 settings: settings,
                                 pasteFromClipboard: pasteFromClipboard
                             )
@@ -57,7 +56,7 @@ struct ContentView: View {
                              convertedMarkdown: $convertedMarkdown,
                             showingAlert: $showingAlert,
                             alertMessage: $alertMessage,
-                            showingAdvancedSettings: $showingAdvancedSettings,
+                            showingAdvancedSettings: .constant(false),
                             settings: settings,
                             processingResult: processingResult
                         )
@@ -101,9 +100,6 @@ struct ContentView: View {
                         }
                     }
                 }
-            }
-            .sheet(isPresented: $showingAdvancedSettings) {
-                AdvancedSettingsView(settings: settings)
             }
             .sheet(isPresented: $showingTemplateManagement) {
                 TemplateManagementListView(settings: settings, isPresented: $showingTemplateManagement)

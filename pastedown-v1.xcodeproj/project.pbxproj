@@ -62,9 +62,9 @@
 			membershipExceptions = (
 				Models/AltTextTemplate.swift,
 				Models/FrontMatterField.swift,
-				Models/FrontMatterTemplate.swift,
 				Models/FrontMatterType.swift,
 				Models/ImageHandling.swift,
+				Models/Template.swift,
 				"Utilities/FileManager+Extensions.swift",
 				Utilities/ImageUtilities.swift,
 				Utilities/ListUtilities.swift,
