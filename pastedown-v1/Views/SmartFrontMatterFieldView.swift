@@ -625,11 +625,14 @@ struct SmartAddNewFieldView: View {
                     .id("newField-multiline")
                     
                 default:
-                    HStack {
-                        Text("Value:")
-                        TextField("Enter value", text: $newFieldValue)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                    }
+                    // String - use the enhanced text field with variables
+                    TextFieldWithVariablePicker(
+                        title: "Value",
+                        text: $newFieldValue,
+                        context: .frontMatter,
+                        settings: settings,
+                        excludeFieldName: nil
+                    )
                     .id("newField-\(newFieldType.rawValue)")
                 }
             } else {
@@ -642,7 +645,7 @@ struct SmartAddNewFieldView: View {
             Button("Add Field") {
                 let newField = FrontMatterField(name: newFieldName, type: newFieldType, value: newFieldValue)
                 onAddField(newField)
-                
+
                 // Reset form with a small delay to avoid UI conflicts
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     newFieldName = ""
@@ -657,7 +660,7 @@ struct SmartAddNewFieldView: View {
                     addListText = ""
                 }
             }
-            .disabled(newFieldName.isEmpty || (newFieldType.needsUserInput && !isValidFieldValue()))
+            .disabled(newFieldType.needsUserInput && !isValidFieldValue())
         }
     }
     
