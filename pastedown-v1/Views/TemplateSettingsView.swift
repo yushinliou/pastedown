@@ -59,7 +59,7 @@ struct TemplateSettingsView: View {
                             title: "Output filename format (without .md)",
                             text: $outputFilenameFormat,
                             context: .filename,
-                            settings: settings
+                            settings: currentSettings
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -124,7 +124,7 @@ struct TemplateSettingsView: View {
                                 title: "Image folder path",
                                 text: $imageFolderPath,
                                 context: .filename,
-                                settings: settings
+                                settings: currentSettings
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
@@ -400,7 +400,7 @@ struct TemplateSettingsView: View {
                                     VStack(alignment: .leading, spacing: 8) {
                                         SmartFrontMatterFieldView(
                                             field: $frontMatterFields[index],
-                                            settings: settings,
+                                            settings: currentSettings,
                                             onUpdate: {
                                                 // Update triggered when field changes
                                             }
@@ -420,7 +420,7 @@ struct TemplateSettingsView: View {
                                     .font(.subheadline)
                                     .fontWeight(.medium)
 
-                                SmartAddNewFieldView(settings: settings) { newField in
+                                SmartAddNewFieldView(settings: currentSettings) { newField in
                                     frontMatterFields.append(newField)
                                 }
                             }
@@ -741,5 +741,13 @@ struct TemplateSettingsView: View {
         }
 
         return "\(baseName) \(counter)"
+    }
+
+    // Computed property to provide a temporary SettingsStore with current front matter fields
+    // This ensures variable pickers see the latest fields even before saving
+    private var currentSettings: SettingsStore {
+        let tempSettings = SettingsStore()
+        tempSettings.frontMatterFields = frontMatterFields
+        return tempSettings
     }
 }

@@ -1,0 +1,408 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/SmartFrontMatterFieldView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Please enter a valid number",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "Automatically generated at processing time",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 288
+        }
+      },
+      {
+        "comment": "",
+        "key": "Field name",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 27
+        }
+      },
+      {
+        "comment": "",
+        "key": "Type",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 32
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 82
+        }
+      },
+      {
+        "comment": "",
+        "key": "True",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "False",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 94
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter number",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 95
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 117
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 118
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 129
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 130
+        }
+      },
+      {
+        "comment": "",
+        "key": "Preview:",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 166
+        }
+      },
+      {
+        "comment": "",
+        "key": "Use commas to separate tags: tag1, tag2, tag3",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 159
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tags (separate with commas: tag1, tag2, tag3)",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 142
+        }
+      },
+      {
+        "comment": "",
+        "key": "List Items:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 182
+        }
+      },
+      {
+        "comment": "",
+        "key": "Preview:",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 228
+        }
+      },
+      {
+        "comment": "",
+        "key": "•",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 190
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add list item",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 212
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 216
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 244
+        }
+      },
+      {
+        "comment": "",
+        "key": "Supports multiple lines of text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 261
+        }
+      },
+      {
+        "comment": "",
+        "key": "Preview:",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 267
+        }
+      },
+      {
+        "comment": "",
+        "key": "Please enter a valid number",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 509
+        }
+      },
+      {
+        "comment": "",
+        "key": "Automatically generated at processing time",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 636
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Field",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 642
+        }
+      },
+      {
+        "comment": "",
+        "key": "Field name",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 433
+        }
+      },
+      {
+        "comment": "",
+        "key": "Type",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 437
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 482
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 483
+        }
+      },
+      {
+        "comment": "",
+        "key": "True",
+        "location": {
+          "startingColumn": 45,
+          "startingLine": 487
+        }
+      },
+      {
+        "comment": "",
+        "key": "False",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 487
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 494
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter number",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 495
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 516
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 517
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 527
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 528
+        }
+      },
+      {
+        "comment": "",
+        "key": "Use commas to separate tags: tag1, tag2, tag3",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 551
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tags (separate with commas: tag1, tag2, tag3)",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 539
+        }
+      },
+      {
+        "comment": "",
+        "key": "List Items:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 559
+        }
+      },
+      {
+        "comment": "",
+        "key": "•",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 567
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add list item",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 589
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 592
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 605
+        }
+      },
+      {
+        "comment": "",
+        "key": "Supports multiple lines of text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 621
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 629
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter value",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 630
+        }
+      }
+    ]
+  },
+  "version": 1
+}

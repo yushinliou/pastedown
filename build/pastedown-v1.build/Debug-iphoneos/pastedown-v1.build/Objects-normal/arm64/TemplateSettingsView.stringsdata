@@ -1,0 +1,440 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettingsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 476
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit Template",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 456
+        }
+      },
+      {
+        "comment": "",
+        "key": "New Template",
+        "location": {
+          "startingColumn": 60,
+          "startingLine": 456
+        }
+      },
+      {
+        "comment": "",
+        "key": "Variables: {clipboard_preview}, {date}, {time}",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invalid filename format",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 88
+        }
+      },
+      {
+        "comment": "",
+        "key": "Template name",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "Preview:",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "Template Settings",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 94
+        }
+      },
+      {
+        "comment": "",
+        "key": "New Template",
+        "location": {
+          "startingColumn": 60,
+          "startingLine": 94
+        }
+      },
+      {
+        "comment": "",
+        "key": "The default template name cannot be changed. Configure the output filename format for this template.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 97
+        }
+      },
+      {
+        "comment": "",
+        "key": "Please enter a template name",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "A template with this name already exists",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 104
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter a name for this template and configure the output filename format",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 108
+        }
+      },
+      {
+        "comment": "",
+        "key": "Image handling",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 114
+        }
+      },
+      {
+        "comment": "",
+        "key": "Variables: {time}, {date}, {clipboard_preview}",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 134
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invalid path format",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "Preview:",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Preview:",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 161
+        }
+      },
+      {
+        "comment": "",
+        "key": "Alt Text Generation",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 178
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 184
+        }
+      },
+      {
+        "comment": "",
+        "key": "Alt Text Method",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 191
+        }
+      },
+      {
+        "comment": "",
+        "key": "Alt Text Method",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 196
+        }
+      },
+      {
+        "comment": "",
+        "key": "Apple Vision",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 221
+        }
+      },
+      {
+        "comment": "",
+        "key": "External LLM",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 222
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fixed",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 223
+        }
+      },
+      {
+        "comment": "",
+        "key": "LLM Provider",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 233
+        }
+      },
+      {
+        "comment": "",
+        "key": "LLM Provider",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 237
+        }
+      },
+      {
+        "comment": "",
+        "key": "API Key",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 246
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter API key",
+        "location": {
+          "startingColumn": 61,
+          "startingLine": 250
+        }
+      },
+      {
+        "comment": "",
+        "key": "Custom Prompt (Optional)",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 259
+        }
+      },
+      {
+        "comment": "",
+        "key": "Leave empty to use default: %@",
+        "location": {
+          "startingColumn": 62,
+          "startingLine": 273
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fixed Alt Text",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 286
+        }
+      },
+      {
+        "comment": "",
+        "key": "This text will be used for all images",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 293
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter fixed alt text",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 290
+        }
+      },
+      {
+        "comment": "",
+        "key": "Apple Vision Generated",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 300
+        }
+      },
+      {
+        "comment": "",
+        "key": "Uses Apple Vision to detect objects and text in images",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 311
+        }
+      },
+      {
+        "comment": "",
+        "key": "Template",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 304
+        }
+      },
+      {
+        "comment": "",
+        "key": "Image Handling",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 321
+        }
+      },
+      {
+        "comment": "",
+        "key": "Configure how images in your clipboard are processed and where they are saved",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 323
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enable Front Matter",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 330
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 336
+        }
+      },
+      {
+        "comment": "",
+        "key": "No front matter fields configured",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 343
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Front Matter Field",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 354
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add New Field",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 419
+        }
+      },
+      {
+        "comment": "",
+        "key": "Front Matter",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 432
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 437
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit",
+        "location": {
+          "startingColumn": 63,
+          "startingLine": 437
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap and drag to reorder fields, or tap the minus button to remove them",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 447
+        }
+      },
+      {
+        "comment": "",
+        "key": "Configure YAML front matter fields that will be added to your Markdown output",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 449
+        }
+      },
+      {
+        "comment": "",
+        "key": "Front matter is disabled. Toggle on to add YAML metadata to your files",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 452
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 460
+        }
+      },
+      {
+        "comment": "",
+        "key": "Update",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 466
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 466
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 477
+        }
+      }
+    ]
+  },
+  "version": 1
+}
