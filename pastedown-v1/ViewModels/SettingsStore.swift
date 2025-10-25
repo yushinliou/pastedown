@@ -11,40 +11,33 @@ import SwiftUI
 enum LLMProvider: String, CaseIterable, Identifiable, Codable {
     case openai = "openai"
     case anthropic = "anthropic"
-    case custom = "custom"
-    
+
     var id: String { rawValue }
-    
+
     var displayName: String {
         switch self {
         case .openai:
             return "OpenAI (GPT-4o)"
         case .anthropic:
             return "Anthropic (Claude)"
-        case .custom:
-            return "Custom API"
         }
     }
-    
+
     var apiEndpoint: String {
         switch self {
         case .openai:
             return "https://api.openai.com/v1/chat/completions"
         case .anthropic:
             return "https://api.anthropic.com/v1/messages"
-        case .custom:
-            return "" // User-provided
         }
     }
-    
+
     var supportedModels: [String] {
         switch self {
         case .openai:
             return ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"]
         case .anthropic:
             return ["claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
-        case .custom:
-            return []
         }
     }
     
@@ -54,8 +47,6 @@ enum LLMProvider: String, CaseIterable, Identifiable, Codable {
             return "gpt-4o"
         case .anthropic:
             return "claude-3-5-sonnet-20240620"
-        case .custom:
-            return ""
         }
     }
 }

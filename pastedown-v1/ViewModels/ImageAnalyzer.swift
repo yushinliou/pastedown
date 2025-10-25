@@ -12,10 +12,19 @@ import Foundation
 class ImageAnalyzer: ObservableObject {
     private let settings: SettingsStore
 
+    @Published var errorMessage: String?
+    @Published var showError: Bool = false
+
     static let defaultPrompt = "Generate a concise, descriptive alt text for this image. Focus on the main content, objects, and context that would be useful for someone who cannot see the image. Keep it under 100 characters."
 
     init(settings: SettingsStore) {
         self.settings = settings
+    }
+
+    @MainActor
+    private func setError(_ message: String) {
+        self.errorMessage = message
+        self.showError = true
     }
     
     func generateAltText(for image: UIImage) async -> String {
@@ -72,14 +81,13 @@ private func generateAltTextWithAPI(_ image: UIImage) async -> String {
         return await generateAltTextWithOpenAI(image)
     case .anthropic:
         return await generateAltTextWithAnthropic(image)
-    case .custom:
-        return await generateAltTextWithCustomAPI(image)
     }
 }
 
 private func generateAltTextWithOpenAI(_ image: UIImage) async -> String {
     guard let imageData = image.jpegData(compressionQuality: 0.8) else {
         print("Failed to convert image to JPEG data")
+        await setError("Failed to convert image to JPEG format. Using Apple Vision instead.")
         return await generateAltTextWithVision(image)
     }
 
@@ -122,6 +130,7 @@ private func generateAltTextWithOpenAI(_ image: UIImage) async -> String {
 private func generateAltTextWithAnthropic(_ image: UIImage) async -> String {
     guard let imageData = image.jpegData(compressionQuality: 0.8) else {
         print("Failed to convert image to JPEG data")
+        await setError("Failed to convert image to JPEG format. Using Apple Vision instead.")
         return await generateAltTextWithVision(image)
     }
 
@@ -165,11 +174,6 @@ private func generateAltTextWithAnthropic(_ image: UIImage) async -> String {
     )
 }
 
-private func generateAltTextWithCustomAPI(_ image: UIImage) async -> String {
-    // For custom API, fallback to Vision since we don't have endpoint configuration yet
-    print("Custom API not yet implemented, falling back to Vision")
-    return await generateAltTextWithVision(image)
-}
 
 private func makeAPIRequest(
     url: String,
@@ -179,6 +183,7 @@ private func makeAPIRequest(
 ) async -> String {
     guard let requestURL = URL(string: url) else {
         print("Invalid API URL: \(url)")
+        await setError("Invalid API URL configuration. Using Apple Vision instead.")
         return await generateAltTextWithVision(UIImage())
     }
 
@@ -198,27 +203,38 @@ private func makeAPIRequest(
         if let httpResponse = response as? HTTPURLResponse {
             print("API Response Status: \(httpResponse.statusCode)")
             if httpResponse.statusCode != 200 {
+                var errorMsg = "API request failed with status \(httpResponse.statusCode)"
                 if let errorData = String(data: data, encoding: .utf8) {
                     print("API Error Response: \(errorData)")
+                    // Extract error message if available
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let error = json["error"] as? [String: Any],
+                       let message = error["message"] as? String {
+                        errorMsg = "API Error: \(message)"
+                    }
                 }
+                await setError("\(errorMsg). Using Apple Vision instead.")
                 return await generateAltTextWithVision(UIImage())
             }
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             print("Failed to parse JSON response")
+            await setError("Failed to parse API response. Using Apple Vision instead.")
             return await generateAltTextWithVision(UIImage())
         }
-        
+
         if let content = responseParser(json) {
             return content.trimmingCharacters(in: .whitespacesAndNewlines)
         } else {
             print("Failed to extract content from API response")
+            await setError("Failed to extract content from API response. Using Apple Vision instead.")
             return await generateAltTextWithVision(UIImage())
         }
 
     } catch {
         print("API request failed: \(error.localizedDescription)")
+        await setError("Network error: \(error.localizedDescription). Using Apple Vision instead.")
         return await generateAltTextWithVision(UIImage())
     }
 }

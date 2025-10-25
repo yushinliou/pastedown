@@ -124,6 +124,13 @@ struct ContentView: View {
             } message: {
                 Text(alertMessage)
             }
+            .alert("API Error", isPresented: $imageAnalyzer.showError) {
+                Button("OK") {
+                    imageAnalyzer.showError = false
+                }
+            } message: {
+                Text(imageAnalyzer.errorMessage ?? "An error occurred with the external API")
+            }
         }
     }
     
