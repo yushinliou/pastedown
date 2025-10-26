@@ -175,57 +175,35 @@ struct SmartFrontMatterFieldView: View {
                     
                 case .list:
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("List Items:")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        
-                        // Display existing list items
-                        if !listItems.isEmpty {
-                            ForEach(listItems.indices, id: \.self) { index in
-                                HStack {
-                                    Text("•")
-                                        .foregroundColor(Color.blue)
-                                    Text(listItems[index])
-                                        .font(.body)
-                                    
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        listItems.remove(at: index)
-                                        updateListValue()
-                                    }) {
-                                        Image(systemName: "trash")
-                                            .foregroundColor(Color.red)
-                                            .font(.caption)
-                                    }
-                                }
-                                .padding(.vertical, 2)
-                            }
-                        }
-                        
-                        // Add new list item
-                        HStack {
-                            TextField("Add list item", text: $newListText)
+                        VStack(alignment: .leading, spacing: 4) {
+                            TextField("List items (separate with commas: item1, item2, item3)", text: $newListText)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .textInputAutocapitalization(.never)
-                            
-                            Button("Add") {
-                                if !newListText.isEmpty {
-                                    listItems.append(newListText)
-                                    newListText = ""
-                                    updateListValue()
+                                .onChange(of: newListText) { _, newValue in
+                                    // Parse comma-separated list items and update field value
+                                    let items = newValue.components(separatedBy: ",")
+                                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                                        .filter { !$0.isEmpty }
+
+                                    if let jsonData = try? JSONEncoder().encode(items),
+                                       let jsonString = String(data: jsonData, encoding: .utf8) {
+                                        field.value = jsonString
+                                        listItems = items
+                                    }
                                 }
-                            }
-                            .disabled(newListText.isEmpty)
+
+                            Text("Use commas to separate list items: item1, item2, item3")
+                                .font(.caption)
+                                .foregroundColor(Color.secondary)
                         }
-                        
+
                         // Preview
                         if !listItems.isEmpty {
                             Text("Preview:")
                                 .font(.caption)
                                 .fontWeight(.medium)
                                 .foregroundColor(Color.secondary)
-                            
+
                             Text(generateListPreview())
                                 .font(.caption.monospaced())
                                 .foregroundColor(Color.blue)
