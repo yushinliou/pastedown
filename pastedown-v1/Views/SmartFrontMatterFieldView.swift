@@ -67,6 +67,7 @@ struct SmartFrontMatterFieldView: View {
                         case .list:
                             listItems = []
                             field.value = "[]"
+
                         default:
                             field.value = ""
                         }
@@ -279,6 +280,7 @@ struct SmartFrontMatterFieldView: View {
                 tagText = tagItems.joined(separator: ", ")
             case .list:
                 listItems = parseListFromValue(field.value)
+                newListText = listItems.joined(separator: ", ")
             default:
                 break
             }
@@ -529,48 +531,66 @@ struct SmartAddNewFieldView: View {
                     
                 case .list:
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("List Items:")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        
-                        // Display existing list items
-                        if !newListItems.isEmpty {
-                            ForEach(newListItems.indices, id: \.self) { index in
-                                HStack {
-                                    Text("•")
-                                        .foregroundColor(Color.blue)
-                                    Text(newListItems[index])
-                                        .font(.caption)
-                                    
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        newListItems.remove(at: index)
-                                        updateNewListValue()
-                                    }) {
-                                        Image(systemName: "trash")
-                                            .foregroundColor(Color.red)
-                                            .font(.caption2)
-                                    }
-                                }
-                                .padding(.vertical, 1)
-                            }
-                        }
-                        
-                        // Add new list item
-                        HStack {
-                            TextField("Add list item", text: $addListText)
+                        VStack(alignment: .leading, spacing: 4) {
+                            TextField("List items (separate with commas: item1, item2, item3)", text: $addListText)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                            
-                            Button("Add") {
-                                if !addListText.isEmpty {
-                                    newListItems.append(addListText)
-                                    addListText = ""
+                                .onChange(of: addListText) { _, newValue in
+                                    // Parse comma-separated list items and update field value
+                                    let items = newValue.components(separatedBy: ",")
+                                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                                        .filter { !$0.isEmpty }
+                                    
+                                    newListItems = items
                                     updateNewListValue()
                                 }
-                            }
-                            .disabled(addListText.isEmpty)
+
+                            Text("Use commas to separate list items: item1, item2, item3")
+                                .font(.caption)
+                                .foregroundColor(Color.secondary)
                         }
+
+                        // Text("List Items:")
+                        //     .font(.subheadline)
+                        //     .fontWeight(.medium)
+                        
+                        // // Display existing list items
+                        // if !newListItems.isEmpty {
+                        //     ForEach(newListItems.indices, id: \.self) { index in
+                        //         HStack {
+                        //             Text("•")
+                        //                 .foregroundColor(Color.blue)
+                        //             Text(newListItems[index])
+                        //                 .font(.caption)
+                                    
+                        //             Spacer()
+                                    
+                        //             Button(action: {
+                        //                 newListItems.remove(at: index)
+                        //                 updateNewListValue()
+                        //             }) {
+                        //                 Image(systemName: "trash")
+                        //                     .foregroundColor(Color.red)
+                        //                     .font(.caption2)
+                        //             }
+                        //         }
+                        //         .padding(.vertical, 1)
+                        //     }
+                        // }
+                        
+                        // // Add new list item
+                        // HStack {
+                        //     TextField("Add list item", text: $addListText)
+                        //         .textFieldStyle(RoundedBorderTextFieldStyle())
+                            
+                        //     Button("Add") {
+                        //         if !addListText.isEmpty {
+                        //             newListItems.append(addListText)
+                        //             addListText = ""
+                        //             updateNewListValue()
+                        //         }
+                        //     }
+                        //     .disabled(addListText.isEmpty)
+                        // }
                     }
                     
                 case .multiline:

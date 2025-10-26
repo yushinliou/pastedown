@@ -466,9 +466,9 @@ struct TemplateSettingsView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Divider()
 
-                                Text("Add New Field")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
+                                // Text("Add New Field")
+                                //     .font(.subheadline)
+                                //     .fontWeight(.medium)
 
                                 SmartAddNewFieldView(settings: currentSettings) { newField in
                                     frontMatterFields.append(newField)
