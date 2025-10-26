@@ -8,7 +8,7 @@
 import SwiftUI
 
 // MARK: - Models
-struct FrontMatterField: Identifiable, Codable {
+struct FrontMatterField: Identifiable, Codable, Equatable {
     var id = UUID()
     var name: String = ""
     var type: FrontMatterType = .string

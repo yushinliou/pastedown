@@ -12,6 +12,14 @@
       },
       {
         "comment": "",
+        "key": "API Error",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 127
+        }
+      },
+      {
+        "comment": "",
         "key": "Save",
         "location": {
           "startingColumn": 32,
@@ -40,6 +48,14 @@
         "location": {
           "startingColumn": 24,
           "startingLine": 123
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 128
         }
       }
     ]

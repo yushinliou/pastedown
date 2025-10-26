@@ -32,6 +32,9 @@ struct TemplateSettingsView: View {
     @State private var showingAlert = false
     @State private var alertMessage = ""
 
+    // Track changes
+    @State private var needsUpdate = false
+
     init(settings: SettingsStore, isPresented: Binding<Bool>, template: Template? = nil) {
         self.settings = settings
         self._isPresented = isPresented
@@ -42,8 +45,51 @@ struct TemplateSettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                // Section 1: File Name Settings
-                Section {
+                fileNameSection
+                imageHandlingSection
+                frontMatterSection
+            }
+            .navigationTitle(isEditing ? "Edit Template" : "New Template")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(isEditing ? "Update" : "Save") {
+                        saveTemplate()
+                    }
+                    .disabled(!canSave())
+                }
+            }
+            .onAppear {
+                loadTemplateData()
+                // Initialize cached settings: Using Task to avoid SwiftUI state update warnings
+                Task { @MainActor in
+                    cachedSettings.frontMatterFields = frontMatterFields
+                }
+            }
+            .onChange(of: frontMatterFields) { _, newFields in
+                // Update cached settings when front matter fields change
+                // Defer to avoid "modifying state during view update" warning
+                Task { @MainActor in
+                    cachedSettings.frontMatterFields = newFields
+                }
+            }
+        }
+        .alert("Error", isPresented: $showingAlert) {
+            Button("OK") { }
+        } message: {
+            Text(alertMessage)
+        }
+    }
+
+    // MARK: - File Name Section
+    private var fileNameSection: some View {
+        Section {
                     VStack(alignment: .leading, spacing: 8) {
                         TextField("Template name", text: $templateName)
                             .autocapitalization(.none)
@@ -108,9 +154,11 @@ struct TemplateSettingsView: View {
                         Text("Enter a name for this template and configure the output filename format")
                     }
                 }
+    }
 
-                // Section 2: Image Handling
-                Section {
+    // MARK: - Image Handling Section
+    private var imageHandlingSection: some View {
+        Section {
                     Picker("Image handling", selection: $imageHandling) {
                         ForEach(ImageHandling.allCases, id: \.self) { handling in
                             Text(handling.displayName).tag(handling)
@@ -322,9 +370,11 @@ struct TemplateSettingsView: View {
                 } footer: {
                     Text("Configure how images in your clipboard are processed and where they are saved")
                 }
+    }
 
-                // Section 3: Front Matter
-                Section {
+    // MARK: - Front Matter Section
+    private var frontMatterSection: some View {
+        Section {
                     // Front Matter toggle
                     HStack {
                         Text("Enable Front Matter")
@@ -452,32 +502,6 @@ struct TemplateSettingsView: View {
                         Text("Front matter is disabled. Toggle on to add YAML metadata to your files")
                     }
                 }
-            }
-            .navigationTitle(isEditing ? "Edit Template" : "New Template")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        isPresented = false
-                    }
-                }
-
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isEditing ? "Update" : "Save") {
-                        saveTemplate()
-                    }
-                    .disabled(!canSave())
-                }
-            }
-            .onAppear {
-                loadTemplateData()
-            }
-        }
-        .alert("Error", isPresented: $showingAlert) {
-            Button("OK") { }
-        } message: {
-            Text(alertMessage)
-        }
     }
 
     private func loadTemplateData() {
@@ -743,11 +767,11 @@ struct TemplateSettingsView: View {
         return "\(baseName) \(counter)"
     }
 
-    // Computed property to provide a temporary SettingsStore with current front matter fields
-    // This ensures variable pickers see the latest fields even before saving
+    // Cached settings store that updates when frontMatterFields changes
+    @State private var cachedSettings = SettingsStore()
+
+    // Computed property to provide settings with current front matter fields
     private var currentSettings: SettingsStore {
-        let tempSettings = SettingsStore()
-        tempSettings.frontMatterFields = frontMatterFields
-        return tempSettings
+        return cachedSettings
     }
 }

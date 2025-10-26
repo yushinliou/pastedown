@@ -7,7 +7,7 @@
         "key": "Please enter a valid number",
         "location": {
           "startingColumn": 30,
-          "startingLine": 110
+          "startingLine": 106
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "Automatically generated at processing time",
         "location": {
           "startingColumn": 22,
-          "startingLine": 288
+          "startingLine": 279
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "Type",
         "location": {
           "startingColumn": 24,
-          "startingLine": 32
+          "startingLine": 31
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 81
+          "startingLine": 79
         }
       },
       {
@@ -47,7 +47,7 @@
         "key": "",
         "location": {
           "startingColumn": 32,
-          "startingLine": 82
+          "startingLine": 80
         }
       },
       {
@@ -55,7 +55,7 @@
         "key": "True",
         "location": {
           "startingColumn": 42,
-          "startingLine": 87
+          "startingLine": 84
         }
       },
       {
@@ -63,7 +63,7 @@
         "key": "False",
         "location": {
           "startingColumn": 51,
-          "startingLine": 87
+          "startingLine": 84
         }
       },
       {
@@ -71,7 +71,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 94
+          "startingLine": 91
         }
       },
       {
@@ -79,7 +79,7 @@
         "key": "Enter number",
         "location": {
           "startingColumn": 35,
-          "startingLine": 95
+          "startingLine": 92
         }
       },
       {
@@ -87,7 +87,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 117
+          "startingLine": 113
         }
       },
       {
@@ -95,7 +95,7 @@
         "key": "",
         "location": {
           "startingColumn": 36,
-          "startingLine": 118
+          "startingLine": 114
         }
       },
       {
@@ -103,7 +103,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 129
+          "startingLine": 124
         }
       },
       {
@@ -111,20 +111,12 @@
         "key": "",
         "location": {
           "startingColumn": 36,
-          "startingLine": 130
+          "startingLine": 125
         }
       },
       {
         "comment": "",
         "key": "Preview:",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 166
-        }
-      },
-      {
-        "comment": "",
-        "key": "Use commas to separate tags: tag1, tag2, tag3",
         "location": {
           "startingColumn": 34,
           "startingLine": 159
@@ -132,10 +124,18 @@
       },
       {
         "comment": "",
+        "key": "Use commas to separate tags: tag1, tag2, tag3",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 152
+        }
+      },
+      {
+        "comment": "",
         "key": "Tags (separate with commas: tag1, tag2, tag3)",
         "location": {
           "startingColumn": 39,
-          "startingLine": 142
+          "startingLine": 136
         }
       },
       {
@@ -143,7 +143,7 @@
         "key": "List Items:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 182
+          "startingLine": 175
         }
       },
       {
@@ -151,7 +151,7 @@
         "key": "Preview:",
         "location": {
           "startingColumn": 34,
-          "startingLine": 228
+          "startingLine": 221
         }
       },
       {
@@ -159,7 +159,7 @@
         "key": "•",
         "location": {
           "startingColumn": 42,
-          "startingLine": 190
+          "startingLine": 183
         }
       },
       {
@@ -167,7 +167,7 @@
         "key": "Add list item",
         "location": {
           "startingColumn": 39,
-          "startingLine": 212
+          "startingLine": 205
         }
       },
       {
@@ -175,7 +175,7 @@
         "key": "Add",
         "location": {
           "startingColumn": 36,
-          "startingLine": 216
+          "startingLine": 209
         }
       },
       {
@@ -183,7 +183,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 244
+          "startingLine": 237
         }
       },
       {
@@ -191,7 +191,7 @@
         "key": "Supports multiple lines of text",
         "location": {
           "startingColumn": 30,
-          "startingLine": 261
+          "startingLine": 253
         }
       },
       {
@@ -199,7 +199,7 @@
         "key": "Preview:",
         "location": {
           "startingColumn": 34,
-          "startingLine": 267
+          "startingLine": 259
         }
       },
       {
@@ -207,7 +207,7 @@
         "key": "Please enter a valid number",
         "location": {
           "startingColumn": 30,
-          "startingLine": 509
+          "startingLine": 498
         }
       },
       {
@@ -215,7 +215,7 @@
         "key": "Automatically generated at processing time",
         "location": {
           "startingColumn": 22,
-          "startingLine": 636
+          "startingLine": 628
         }
       },
       {
@@ -223,7 +223,7 @@
         "key": "Add Field",
         "location": {
           "startingColumn": 20,
-          "startingLine": 642
+          "startingLine": 634
         }
       },
       {
@@ -231,7 +231,7 @@
         "key": "Field name",
         "location": {
           "startingColumn": 27,
-          "startingLine": 433
+          "startingLine": 422
         }
       },
       {
@@ -239,7 +239,7 @@
         "key": "Type",
         "location": {
           "startingColumn": 24,
-          "startingLine": 437
+          "startingLine": 426
         }
       },
       {
@@ -247,7 +247,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 482
+          "startingLine": 471
         }
       },
       {
@@ -255,7 +255,7 @@
         "key": "",
         "location": {
           "startingColumn": 32,
-          "startingLine": 483
+          "startingLine": 472
         }
       },
       {
@@ -263,7 +263,7 @@
         "key": "True",
         "location": {
           "startingColumn": 45,
-          "startingLine": 487
+          "startingLine": 476
         }
       },
       {
@@ -271,7 +271,7 @@
         "key": "False",
         "location": {
           "startingColumn": 54,
-          "startingLine": 487
+          "startingLine": 476
         }
       },
       {
@@ -279,7 +279,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 494
+          "startingLine": 483
         }
       },
       {
@@ -287,7 +287,23 @@
         "key": "Enter number",
         "location": {
           "startingColumn": 35,
-          "startingLine": 495
+          "startingLine": 484
+        }
+      },
+      {
+        "comment": "",
+        "key": "Value:",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 505
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 506
         }
       },
       {
@@ -308,26 +324,10 @@
       },
       {
         "comment": "",
-        "key": "Value:",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 527
-        }
-      },
-      {
-        "comment": "",
-        "key": "",
-        "location": {
-          "startingColumn": 36,
-          "startingLine": 528
-        }
-      },
-      {
-        "comment": "",
         "key": "Use commas to separate tags: tag1, tag2, tag3",
         "location": {
           "startingColumn": 34,
-          "startingLine": 551
+          "startingLine": 540
         }
       },
       {
@@ -335,7 +335,7 @@
         "key": "Tags (separate with commas: tag1, tag2, tag3)",
         "location": {
           "startingColumn": 39,
-          "startingLine": 539
+          "startingLine": 528
         }
       },
       {
@@ -343,7 +343,7 @@
         "key": "List Items:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 559
+          "startingLine": 548
         }
       },
       {
@@ -351,7 +351,7 @@
         "key": "•",
         "location": {
           "startingColumn": 42,
-          "startingLine": 567
+          "startingLine": 556
         }
       },
       {
@@ -359,7 +359,7 @@
         "key": "Add list item",
         "location": {
           "startingColumn": 39,
-          "startingLine": 589
+          "startingLine": 578
         }
       },
       {
@@ -367,7 +367,7 @@
         "key": "Add",
         "location": {
           "startingColumn": 36,
-          "startingLine": 592
+          "startingLine": 581
         }
       },
       {
@@ -375,7 +375,7 @@
         "key": "Value:",
         "location": {
           "startingColumn": 30,
-          "startingLine": 605
+          "startingLine": 594
         }
       },
       {
@@ -383,23 +383,7 @@
         "key": "Supports multiple lines of text",
         "location": {
           "startingColumn": 30,
-          "startingLine": 621
-        }
-      },
-      {
-        "comment": "",
-        "key": "Value:",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 629
-        }
-      },
-      {
-        "comment": "",
-        "key": "Enter value",
-        "location": {
-          "startingColumn": 35,
-          "startingLine": 630
+          "startingLine": 610
         }
       }
     ]

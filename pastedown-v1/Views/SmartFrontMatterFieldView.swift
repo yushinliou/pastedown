@@ -27,7 +27,6 @@ struct SmartFrontMatterFieldView: View {
                 TextField("Field name", text: $field.name)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                    .onChange(of: field.name) { _, _ in onUpdate() }
                 
                 Picker("Type", selection: $field.type) {
                     ForEach(FrontMatterType.allCases, id: \.self) { type in
@@ -38,38 +37,40 @@ struct SmartFrontMatterFieldView: View {
                 .onChange(of: field.type) { oldValue, newValue in
                     // Only reset value when type actually changes to avoid clearing existing data
                     guard oldValue != newValue else { return }
-                    
-                    // Reset value when type changes
-                    switch newValue {
-                    case .boolean:
-                        field.value = "false"
-                        boolValue = false
-                    case .number:
-                        field.value = "0"
-                        numberText = "0"
-                    case .date:
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "yyyy-MM-dd"
-                        field.value = formatter.string(from: Date())
-                        dateValue = Date()
-                    case .datetime:
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-                        field.value = formatter.string(from: Date())
-                        dateValue = Date()
-                    case .current_date, .current_datetime:
-                        field.value = "" // No user input needed
-                    case .tag:
-                        tagItems = []
-                        tagText = ""
-                        field.value = "[]"
-                    case .list:
-                        listItems = []
-                        field.value = "[]"
-                    default:
-                        field.value = ""
+
+                    // Defer state modification to avoid "modifying state during view update" warning
+                    Task { @MainActor in
+                        // Reset value when type changes
+                        switch newValue {
+                        case .boolean:
+                            field.value = "false"
+                            boolValue = false
+                        case .number:
+                            field.value = "0"
+                            numberText = "0"
+                        case .date:
+                            let formatter = DateFormatter()
+                            formatter.dateFormat = "yyyy-MM-dd"
+                            field.value = formatter.string(from: Date())
+                            dateValue = Date()
+                        case .datetime:
+                            let formatter = DateFormatter()
+                            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                            field.value = formatter.string(from: Date())
+                            dateValue = Date()
+                        case .current_date, .current_datetime:
+                            field.value = "" // No user input needed
+                        case .tag:
+                            tagItems = []
+                            tagText = ""
+                            field.value = "[]"
+                        case .list:
+                            listItems = []
+                            field.value = "[]"
+                        default:
+                            field.value = ""
+                        }
                     }
-                    onUpdate()
                 }
             }
             
@@ -82,7 +83,6 @@ struct SmartFrontMatterFieldView: View {
                         Toggle("", isOn: $boolValue)
                             .onChange(of: boolValue) { _, newValue in
                                 field.value = newValue ? "true" : "false"
-                                onUpdate()
                             }
                         Text(boolValue ? "True" : "False")
                             .foregroundColor(Color.secondary)
@@ -102,7 +102,6 @@ struct SmartFrontMatterFieldView: View {
                             .onChange(of: numberText) { _, newValue in
                                 if isValidNumber(newValue) {
                                     field.value = newValue
-                                    onUpdate()
                                 }
                             }
                     }
@@ -120,10 +119,9 @@ struct SmartFrontMatterFieldView: View {
                                 let formatter = DateFormatter()
                                 formatter.dateFormat = "yyyy-MM-dd"
                                 field.value = formatter.string(from: newValue)
-                                onUpdate()
                             }
                     }
-                    
+
                 case .datetime:
                     HStack {
                         Text("Value:")
@@ -132,7 +130,6 @@ struct SmartFrontMatterFieldView: View {
                                 let formatter = DateFormatter()
                                 formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                                 field.value = formatter.string(from: newValue)
-                                onUpdate()
                             }
                     }
                     
@@ -147,12 +144,11 @@ struct SmartFrontMatterFieldView: View {
                                     let tags = newValue.components(separatedBy: ",")
                                         .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                                         .filter { !$0.isEmpty }
-                                    
+
                                     if let jsonData = try? JSONEncoder().encode(tags),
                                        let jsonString = String(data: jsonData, encoding: .utf8) {
                                         field.value = jsonString
                                         tagItems = tags
-                                        onUpdate()
                                     }
                                 }
                             
@@ -256,8 +252,7 @@ struct SmartFrontMatterFieldView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                         )
-                        .onChange(of: field.value) { _, _ in onUpdate() }
-                        
+
                         Text("Supports multiple lines of text")
                             .font(.caption)
                             .foregroundColor(Color.secondary)
@@ -281,7 +276,6 @@ struct SmartFrontMatterFieldView: View {
                 default:
                     // String - use the enhanced text field with variables
                     TextFieldWithVariablePicker(title: "Value", text: $field.value, context: .frontMatter, settings: settings, excludeFieldName: field.name)
-                        .onChange(of: field.value) { _, _ in onUpdate() }
                 }
             } else {
                 // For current_date and current_datetime, show info text
@@ -336,7 +330,6 @@ struct SmartFrontMatterFieldView: View {
         if let jsonData = try? JSONEncoder().encode(tagItems),
            let jsonString = String(data: jsonData, encoding: .utf8) {
             field.value = jsonString
-            onUpdate()
         }
     }
     
@@ -371,7 +364,6 @@ struct SmartFrontMatterFieldView: View {
         if let jsonData = try? JSONEncoder().encode(listItems),
            let jsonString = String(data: jsonData, encoding: .utf8) {
             field.value = jsonString
-            onUpdate()
         }
     }
     
@@ -441,35 +433,38 @@ struct SmartAddNewFieldView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
                 .onChange(of: newFieldType) { oldValue, newValue in
-                    // Reset value when type changes (this is for new fields, so always reset)
-                    switch newValue {
-                    case .boolean:
-                        newFieldValue = "false"
-                        newBoolValue = false
-                    case .number:
-                        newFieldValue = "0"
-                        newNumberText = "0"
-                    case .date:
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "yyyy-MM-dd"
-                        newFieldValue = formatter.string(from: Date())
-                        newDateValue = Date()
-                    case .datetime:
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-                        newFieldValue = formatter.string(from: Date())
-                        newDateValue = Date()
-                    case .current_date, .current_datetime:
-                        newFieldValue = ""
-                    case .tag:
-                        newTagItems = []
-                        newTagText = ""
-                        newFieldValue = "[]"
-                    case .list:
-                        newListItems = []
-                        newFieldValue = "[]"
-                    default:
-                        newFieldValue = ""
+                    // Defer state modification to avoid "modifying state during view update" warning
+                    Task { @MainActor in
+                        // Reset value when type changes (this is for new fields, so always reset)
+                        switch newValue {
+                        case .boolean:
+                            newFieldValue = "false"
+                            newBoolValue = false
+                        case .number:
+                            newFieldValue = "0"
+                            newNumberText = "0"
+                        case .date:
+                            let formatter = DateFormatter()
+                            formatter.dateFormat = "yyyy-MM-dd"
+                            newFieldValue = formatter.string(from: Date())
+                            newDateValue = Date()
+                        case .datetime:
+                            let formatter = DateFormatter()
+                            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                            newFieldValue = formatter.string(from: Date())
+                            newDateValue = Date()
+                        case .current_date, .current_datetime:
+                            newFieldValue = ""
+                        case .tag:
+                            newTagItems = []
+                            newTagText = ""
+                            newFieldValue = "[]"
+                        case .list:
+                            newListItems = []
+                            newFieldValue = "[]"
+                        default:
+                            newFieldValue = ""
+                        }
                     }
                 }
             }
@@ -644,20 +639,24 @@ struct SmartAddNewFieldView: View {
             
             Button("Add Field") {
                 let newField = FrontMatterField(name: newFieldName, type: newFieldType, value: newFieldValue)
-                onAddField(newField)
 
-                // Reset form with a small delay to avoid UI conflicts
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    newFieldName = ""
-                    newFieldType = .string
-                    newFieldValue = ""
-                    newDateValue = Date()
-                    newBoolValue = false
-                    newNumberText = ""
-                    newTagItems = []
-                    newListItems = []
-                    newTagText = ""
-                    addListText = ""
+                // Defer state modification to avoid "modifying state during view update" warning
+                Task {
+                    onAddField(newField)
+
+                    // Reset form
+                    await MainActor.run {
+                        newFieldName = ""
+                        newFieldType = .string
+                        newFieldValue = ""
+                        newDateValue = Date()
+                        newBoolValue = false
+                        newNumberText = ""
+                        newTagItems = []
+                        newListItems = []
+                        newTagText = ""
+                        addListText = ""
+                    }
                 }
             }
             .disabled(newFieldType.needsUserInput && !isValidFieldValue())

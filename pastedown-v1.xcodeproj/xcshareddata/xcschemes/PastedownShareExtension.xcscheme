@@ -60,7 +60,7 @@
       <RemoteRunnable
          runnableDebuggingMode = "1"
          BundleIdentifier = "Yu-shin.pastedown-v1"
-         RemotePath = "/Users/liuyuxin/Library/Developer/CoreSimulator/Devices/38568276-145C-477E-8DEB-025A3D6C5D74/data/Containers/Bundle/Application/B5381F31-62DF-44C2-B11A-54B32818752C/pastedown-v1.app">
+         RemotePath = "/Users/liuyuxin/Library/Developer/CoreSimulator/Devices/38568276-145C-477E-8DEB-025A3D6C5D74/data/Containers/Bundle/Application/ECE89110-B36E-425A-A6EA-9A2A926AEA96/pastedown-v1.app">
       </RemoteRunnable>
       <MacroExpansion>
          <BuildableReference
@@ -71,6 +71,13 @@
             ReferencedContainer = "container:pastedown-v1.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "CG_NUMERICS_SHOW_BACKTRACE"
+            value = "1"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

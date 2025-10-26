@@ -317,11 +317,11 @@ struct CursorTrackingTextEditor: UIViewRepresentable {
     func updateUIView(_ uiView: UITextView, context: Context) {
         if uiView.text != text {
             uiView.text = text
-            // Update cursor position after text change
-            DispatchQueue.main.async {
-                let newPosition = min(cursorPosition, uiView.text.count)
-                if let newRange = uiView.position(from: uiView.beginningOfDocument, offset: newPosition) {
-                    uiView.selectedTextRange = uiView.textRange(from: newRange, to: newRange)
+            // Update cursor position after text change            
+            if !context.coordinator.isUpdating && !uiView.isFirstResponder {
+                let safePosition = min(cursorPosition, text.count)
+                if let newPosition = uiView.position(from: uiView.beginningOfDocument, offset: safePosition) {
+                    uiView.selectedTextRange = uiView.textRange(from: newPosition, to: newPosition)
                 }
             }
         }
@@ -333,23 +333,35 @@ struct CursorTrackingTextEditor: UIViewRepresentable {
 
     class Coordinator: NSObject, UITextViewDelegate {
         let parent: CursorTrackingTextEditor
+        var isUpdating = false // To prevent recursive updates
 
         init(_ parent: CursorTrackingTextEditor) {
             self.parent = parent
         }
 
         func textViewDidChange(_ textView: UITextView) {
-            parent.text = textView.text
+            isUpdating = true
+            let newText = textView.text ?? ""
+            // Defer state update to avoid "modifying state during view update" warning
+            Task { @MainActor in
+                self.parent.text = newText
+            }
             updateCursorPosition(textView)
+            isUpdating = false
         }
 
         func textViewDidChangeSelection(_ textView: UITextView) {
-            updateCursorPosition(textView)
+            if textView.isFirstResponder {
+                updateCursorPosition(textView)
+            }
         }
 
         private func updateCursorPosition(_ textView: UITextView) {
             let cursorPosition = textView.offset(from: textView.beginningOfDocument, to: textView.selectedTextRange?.start ?? textView.beginningOfDocument)
-            parent.cursorPosition = cursorPosition
+            // Defer state update to avoid "modifying state during view update" warning
+            Task { @MainActor in
+                self.parent.cursorPosition = cursorPosition
+            }
         }
     }
 }
@@ -418,7 +430,7 @@ struct CursorTrackingTextField: UIViewRepresentable {
         if uiView.text != text {
             uiView.text = text
             // Update cursor position after text change
-            DispatchQueue.main.async {
+            if !context.coordinator.isUpdating && !uiView.isFirstResponder {
                 if let newPosition = uiView.position(from: uiView.beginningOfDocument, offset: min(cursorPosition, uiView.text?.count ?? 0)) {
                     uiView.selectedTextRange = uiView.textRange(from: newPosition, to: newPosition)
                 }
@@ -432,18 +444,27 @@ struct CursorTrackingTextField: UIViewRepresentable {
 
     class Coordinator: NSObject, UITextFieldDelegate {
         let parent: CursorTrackingTextField
+        var isUpdating = false // To prevent recursive updates
 
         init(_ parent: CursorTrackingTextField) {
             self.parent = parent
         }
 
         @objc func textFieldChanged(_ textField: UITextField) {
-            parent.text = textField.text ?? ""
+            isUpdating = true
+            let newText = textField.text ?? ""
+            // Defer state update to avoid "modifying state during view update" warning
+            Task { @MainActor in
+                self.parent.text = newText
+            }
             updateCursorPosition(textField)
+            isUpdating = false
         }
 
         @objc func textFieldEditingEnded(_ textField: UITextField) {
-            parent.isEditing = false
+            Task { @MainActor in
+                self.parent.isEditing = false
+            }
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -452,18 +473,25 @@ struct CursorTrackingTextField: UIViewRepresentable {
         }
 
         func textFieldDidBeginEditing(_ textField: UITextField) {
-            parent.isEditing = true
+            Task { @MainActor in
+                self.parent.isEditing = true
+            }
             updateCursorPosition(textField)
         }
 
         func textFieldDidChangeSelection(_ textField: UITextField) {
-            updateCursorPosition(textField)
+            if textField.isFirstResponder {
+                updateCursorPosition(textField)
+            }
         }
 
         private func updateCursorPosition(_ textField: UITextField) {
             if let selectedRange = textField.selectedTextRange {
                 let cursorPosition = textField.offset(from: textField.beginningOfDocument, to: selectedRange.start)
-                parent.cursorPosition = cursorPosition
+                // Defer state update to avoid "modifying state during view update" warning
+                Task { @MainActor in
+                    self.parent.cursorPosition = cursorPosition
+                }
             }
         }
     }
