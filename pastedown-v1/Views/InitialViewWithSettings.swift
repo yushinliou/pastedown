@@ -15,32 +15,31 @@ struct InitialViewWithSettings: View {
     @State private var showingAppSettings = false
 
     var body: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: AppSpacing.xl) {
             // Header section
-            VStack(spacing: 20) {
-                VStack(spacing: 10) {
+            VStack(spacing: AppSpacing.lg) {
+                VStack(spacing: AppSpacing.sm) {
                     Image("pastedown")
                         .resizable()
                         .frame(width: 60, height: 60)
-                        .foregroundColor(.blue)
+                        .foregroundColor(.theme.info)
 
                     Text("Paste Down")
-                        .font(.title)
-                        .fontWeight(.bold)
+                        .font(.app.display)
+                        .foregroundColor(.theme.textPrimary)
 
                     Text("Convert clipboard rich text to Markdown")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .font(.app.callout)
+                        .foregroundColor(.theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
             }
 
             // Template Selection Picker
-            VStack(spacing: 8) {
+            VStack(spacing: AppSpacing.xs) {
                 Text("Active Template")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+                    .font(.app.calloutSemibold)
+                    .foregroundColor(.theme.textSecondary)
 
                 Picker("Select Template", selection: Binding(
                     get: { settings.currentTemplateID ?? UUID() },
@@ -55,76 +54,69 @@ struct InitialViewWithSettings: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.blue.opacity(0.1))
-                .cornerRadius(8)
+                .padding(.horizontal, AppSpacing.md)
+                .padding(.vertical, AppSpacing.xs)
+                .background(Color.theme.infoBackground)
+                .cornerRadius(AppRadius.md)
             }
 
             // Four Main Buttons
-            VStack(spacing: 16) {
+            VStack(spacing: AppSpacing.md) {
                 // Paste button (primary action)
                 Button(action: pasteFromClipboard) {
-                    HStack {
+                    HStack(spacing: AppSpacing.sm) {
                         Image(systemName: "clipboard")
-                            .font(.title2)
+                            .font(.app.title)
                         Text("Paste Clipboard Content")
-                            .font(.headline)
+                            .font(.app.bodyMedium)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
                 }
+                .buttonStyle(.primary(fullWidth: true))
                 .disabled(isConverting)
+                .opacity(isConverting ? 0.6 : 1.0)
 
                 // Template action buttons - only 2 now since selection is handled by picker
-                HStack(spacing: 12) {
+                HStack(spacing: AppSpacing.sm) {
                     // Add new template
                     Button(action: {
                         showingNewTemplate = true
                     }) {
-                        VStack(spacing: 4) {
+                        VStack(spacing: AppSpacing.xxs) {
                             Image(systemName: "plus")
-                                .font(.title2)
+                                .font(.app.title)
                             Text("Add Template")
-                                .font(.caption)
+                                .font(.app.caption)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green.opacity(0.1))
-                        .foregroundColor(.green)
-                        .cornerRadius(8)
                     }
+                    .buttonStyle(.secondary)
 
                     // Edit template
                     Button(action: {
                         showingEditTemplate = true
                     }) {
-                        VStack(spacing: 4) {
+                        VStack(spacing: AppSpacing.xxs) {
                             Image(systemName: "pencil")
-                                .font(.title2)
+                                .font(.app.title)
                             Text("Edit Template")
-                                .font(.caption)
+                                .font(.app.caption)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.purple.opacity(0.1))
-                        .foregroundColor(.purple)
-                        .cornerRadius(8)
                     }
+                    .buttonStyle(.secondary)
                 }
             }
 
             if isConverting {
                 ProgressView("Converting...")
-                    .padding(.top, 10)
+                    .font(.app.callout)
+                    .foregroundColor(.theme.textSecondary)
+                    .padding(.top, AppSpacing.sm)
             }
 
             Spacer()
         }
-        .padding()
+        .padding(AppSpacing.lg)
         .sheet(isPresented: $showingNewTemplate) {
             TemplateSettingsView(settings: settings, isPresented: $showingNewTemplate)
         }

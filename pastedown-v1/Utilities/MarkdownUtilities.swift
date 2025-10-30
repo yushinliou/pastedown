@@ -145,49 +145,55 @@ struct MarkdownUtilities {
     // MARK: - Front Matter Generation
     static func generateFrontMatter(settings: SettingsStore) -> String {
         guard !settings.frontMatterFields.isEmpty else { return "" }
-        
+
         var frontMatter = "---\n"
-        
+
         for field in settings.frontMatterFields {
             let processedValue = processFieldValueWithContext(field, allFields: settings.frontMatterFields)
-            
+
+            // Calculate indentation (2 spaces per level)
+            let indent = String(repeating: "  ", count: field.indentLevel)
+
+            // Add comment prefix if commented
+            let commentPrefix = field.isCommented ? "# " : ""
+
             switch field.type {
             case .string:
-                frontMatter += "\(field.name): \"\(processedValue)\"\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): \"\(processedValue)\"\n"
             case .number:
-                frontMatter += "\(field.name): \(processedValue)\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): \(processedValue)\n"
             case .boolean:
-                frontMatter += "\(field.name): \(processedValue.lowercased() == "true" ? "true" : "false")\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): \(processedValue.lowercased() == "true" ? "true" : "false")\n"
             case .date, .datetime:
-                frontMatter += "\(field.name): \(processedValue)\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): \(processedValue)\n"
             case .list:
                 let items = parseArrayField(processedValue)
-                frontMatter += "\(field.name): [\(items.map { "\"\($0)\"" }.joined(separator: ", "))]\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): [\(items.map { "\"\($0)\"" }.joined(separator: ", "))]\n"
             case .tag:
                 let items = parseArrayField(processedValue)
-                frontMatter += "\(field.name):\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name):\n"
                 for item in items {
-                    frontMatter += "    - \"\(item)\"\n"
+                    frontMatter += "\(indent)\(commentPrefix)    - \"\(item)\"\n"
                 }
             case .multiline:
-                frontMatter += "\(field.name): >-\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): >-\n"
                 let lines = processedValue.components(separatedBy: .newlines)
                 for line in lines {
-                    frontMatter += "    \(line)\n"
+                    frontMatter += "\(indent)\(commentPrefix)    \(line)\n"
                 }
             case .current_date:
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd"
                 let currentDate = dateFormatter.string(from: Date())
-                frontMatter += "\(field.name): \(currentDate)\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): \(currentDate)\n"
             case .current_datetime:
                 let dateTimeFormatter = DateFormatter()
                 dateTimeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                 let currentDateTime = dateTimeFormatter.string(from: Date())
-                frontMatter += "\(field.name): \(currentDateTime)\n"
+                frontMatter += "\(indent)\(commentPrefix)\(field.name): \(currentDateTime)\n"
             }
         }
-        
+
         frontMatter += "---"
         return frontMatter
     }

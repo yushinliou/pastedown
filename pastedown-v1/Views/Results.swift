@@ -10,67 +10,62 @@ struct ResultView: View {
 
     var body: some View {
         ZStack {
-            // 背景（確保整頁）
-            Color(.systemBackground).ignoresSafeArea()
+            // Background
+            Color.theme.background.ignoresSafeArea()
 
-            // 內容層：讓卡片吃滿
-            VStack(spacing: 16) {
+            // Content layer
+            VStack(spacing: AppSpacing.md) {
                 // File Status Indicator (if file was created)
                 if let result = processingResult,
                    let fileURL = result.fileURL {
-                    HStack {
-                        Image(systemName: result.fileType == .zip ? "archivebox" : "doc.text")
-                            .foregroundColor(.blue)
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("File created: \(fileURL.lastPathComponent)")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                            Text("Size: \(FileManagerUtilities.getFileSize(url: fileURL))")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
+                    InfoCard(icon: result.fileType == .zip ? "archivebox" : "doc.text") {
+                        HStack {
+                            VStack(alignment: .leading, spacing: AppSpacing.xxs) {
+                                Text("File created: \(fileURL.lastPathComponent)")
+                                    .font(.app.captionMedium)
+                                    .foregroundColor(.theme.textPrimary)
+                                Text("Size: \(FileManagerUtilities.getFileSize(url: fileURL))")
+                                    .font(.app.caption)
+                                    .foregroundColor(.theme.textSecondary)
+                            }
+
+                            Spacer()
+
+                            Text(result.fileType == .zip ? "ZIP" : "MD")
+                                .font(.app.captionSemibold)
+                                .padding(.horizontal, AppSpacing.xs)
+                                .padding(.vertical, AppSpacing.xxs)
+                                .background(Color.theme.infoBackground)
+                                .foregroundColor(.theme.info)
+                                .cornerRadius(AppRadius.xs)
                         }
-                        
-                        Spacer()
-                        
-                        Text(result.fileType == .zip ? "ZIP" : "MD")
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.blue.opacity(0.1))
-                            .foregroundColor(.blue)
-                            .cornerRadius(4)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.blue.opacity(0.05))
-                    .cornerRadius(8)
                 }
                 
-                // 卡片：包住 TextEditor，背景/圓角在卡片上，別直接加在 TextEditor 身上
+                // Card with TextEditor
                 VStack(spacing: 0) {
                     TextEditor(text: $convertedMarkdown)
-                        .font(.system(.body, design: .monospaced))
+                        .font(.app.monoBody)
+                        .foregroundColor(.theme.textPrimary)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .padding(12)
+                        .padding(AppSpacing.sm)
                 }
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.gray.opacity(0.06))
+                    RoundedRectangle(cornerRadius: AppRadius.lg)
+                        .fill(Color.theme.surfaceCard.opacity(0.6))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(.quaternary, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: AppRadius.lg)
+                        .stroke(Color.theme.surfaceBorder, lineWidth: 1)
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
-            .ignoresSafeArea(.keyboard) // 鍵盤彈出時不要亂擠版
+            .padding(.horizontal, AppSpacing.md)
+            .padding(.top, AppSpacing.md)
+            .padding(.bottom, AppSpacing.md)
+            .ignoresSafeArea(.keyboard)
 
-            // 懸浮：右下角 Copy
+            // Floating copy button (bottom right)
             VStack {
                 Spacer()
                 HStack {
@@ -81,17 +76,17 @@ struct ResultView: View {
                         showingAlert = true
                     } label: {
                         Image(systemName: "doc.on.doc")
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.app.title)
                             .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(Color("primaryColour"))
+                            .frame(width: 56, height: 56)
+                            .background(Color.theme.primary)
                             .clipShape(Circle())
-                            .shadow(radius: 4)
+                            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
                     }
                 }
             }
-            .padding(.trailing, 20)
-            .padding(.bottom, 30)
+            .padding(.trailing, AppSpacing.lg)
+            .padding(.bottom, AppSpacing.xl)
         }
     }
 }

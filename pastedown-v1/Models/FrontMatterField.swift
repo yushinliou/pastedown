@@ -13,4 +13,6 @@ struct FrontMatterField: Identifiable, Codable, Equatable {
     var name: String = ""
     var type: FrontMatterType = .string
     var value: String = ""
+    var isCommented: Bool = false
+    var indentLevel: Int = 0 // 0-3
 }

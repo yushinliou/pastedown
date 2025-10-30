@@ -2,7 +2,7 @@
 //  SmartFrontMatterFieldView.swift
 //  pastedown-v1
 //
-//  Modified by Yu Shin on 2025/10/25.
+//  Modified by Yu Shin on 2025/10/26.
 //
 
 import SwiftUI
@@ -22,18 +22,57 @@ struct SmartFrontMatterFieldView: View {
     @State private var newListText = ""
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: AppSpacing.xs) {
+            // Comment toggle and indentation indicator
+            HStack {
+                Toggle(isOn: $field.isCommented) {
+                    HStack(spacing: AppSpacing.xxs) {
+                        Image(systemName: field.isCommented ? "number" : "number.slash")
+                            .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
+                        Text(field.isCommented ? "Commented" : "Active")
+                            .font(.app.caption)
+                            .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
+                    }
+                }
+                .toggleStyle(SwitchToggleStyle(tint: .theme.warning))
+
+                Spacer()
+
+                // Indentation indicator
+                HStack(spacing: AppSpacing.xxs) {
+                    Text("Indent: \(field.indentLevel)")
+                        .font(.app.caption)
+                        .foregroundColor(.theme.textSecondary)
+                    ForEach(0..<3, id: \.self) { level in
+                        Circle()
+                            .fill(level < field.indentLevel ? Color.theme.info : Color.theme.surfaceBorder)
+                            .frame(width: 8, height: 8)
+                    }
+                }
+                .padding(.horizontal, AppSpacing.xs)
+                .padding(.vertical, AppSpacing.xxs)
+                .background(Color.theme.surfaceCard)
+                .cornerRadius(AppRadius.sm)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppRadius.sm)
+                        .stroke(Color.theme.surfaceBorder, lineWidth: 1)
+                )
+            }
+
             HStack {
                 TextField("Field name", text: $field.name)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                
+                    .opacity(field.isCommented ? 0.5 : 1.0)
+
                 Picker("Type", selection: $field.type) {
                     ForEach(FrontMatterType.allCases, id: \.self) { type in
                         Text(type.displayName).tag(type)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
+                .disabled(field.isCommented)
+                .opacity(field.isCommented ? 0.5 : 1.0)
                 .onChange(of: field.type) { oldValue, newValue in
                     // Only reset value when type actually changes to avoid clearing existing data
                     guard oldValue != newValue else { return }
@@ -77,16 +116,20 @@ struct SmartFrontMatterFieldView: View {
             
             // Conditional value input based on type
             if field.type.needsUserInput {
+                Group {
                 switch field.type {
                 case .boolean:
-                    HStack {
+                    HStack(spacing: AppSpacing.sm) {
                         Text("Value:")
+                            .font(.app.callout)
+                            .foregroundColor(.theme.textPrimary)
                         Toggle("", isOn: $boolValue)
                             .onChange(of: boolValue) { _, newValue in
                                 field.value = newValue ? "true" : "false"
                             }
                         Text(boolValue ? "True" : "False")
-                            .foregroundColor(Color.secondary)
+                            .font(.app.callout)
+                            .foregroundColor(.theme.textSecondary)
                         Spacer()
                     }
                     
@@ -107,9 +150,13 @@ struct SmartFrontMatterFieldView: View {
                             }
                     }
                     if !isValidNumber(numberText) && !numberText.isEmpty {
-                        Text("Please enter a valid number")
-                            .font(.caption)
-                            .foregroundColor(Color.red)
+                        HStack(spacing: AppSpacing.xxs) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.app.caption)
+                            Text("Please enter a valid number")
+                                .font(.app.caption)
+                        }
+                        .foregroundColor(.theme.error)
                     }
                     
                 case .date:
@@ -154,23 +201,22 @@ struct SmartFrontMatterFieldView: View {
                                 }
                             
                             Text("Use commas to separate tags: tag1, tag2, tag3")
-                                .font(.caption)
-                                .foregroundColor(Color.secondary)
+                                .font(.app.caption)
+                                .foregroundColor(.theme.textSecondary)
                         }
                         
                         // Preview
                         if !tagItems.isEmpty {
                             Text("Preview:")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(Color.secondary)
-                            
+                                .font(.app.captionMedium)
+                                .foregroundColor(.theme.textSecondary)
+
                             Text(generateTagPreview())
-                                .font(.caption.monospaced())
-                                .foregroundColor(Color.blue)
-                                .padding(8)
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(4)
+                                .font(.app.monoCaption)
+                                .foregroundColor(.theme.info)
+                                .padding(AppSpacing.xs)
+                                .background(Color.theme.infoBackground)
+                                .cornerRadius(AppRadius.xs)
                         }
                     }
                     
@@ -194,23 +240,22 @@ struct SmartFrontMatterFieldView: View {
                                 }
 
                             Text("Use commas to separate list items: item1, item2, item3")
-                                .font(.caption)
-                                .foregroundColor(Color.secondary)
+                                .font(.app.caption)
+                                .foregroundColor(.theme.textSecondary)
                         }
 
                         // Preview
                         if !listItems.isEmpty {
                             Text("Preview:")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(Color.secondary)
+                                .font(.app.captionMedium)
+                                .foregroundColor(.theme.textSecondary)
 
                             Text(generateListPreview())
-                                .font(.caption.monospaced())
-                                .foregroundColor(Color.blue)
-                                .padding(8)
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(4)
+                                .font(.app.monoCaption)
+                                .foregroundColor(.theme.info)
+                                .padding(AppSpacing.xs)
+                                .background(Color.theme.infoBackground)
+                                .cornerRadius(AppRadius.xs)
                         }
                     }
                     
@@ -233,22 +278,21 @@ struct SmartFrontMatterFieldView: View {
                         )
 
                         Text("Supports multiple lines of text")
-                            .font(.caption)
-                            .foregroundColor(Color.secondary)
+                            .font(.app.caption)
+                            .foregroundColor(.theme.textSecondary)
                         
                         // Preview
                         if !field.value.isEmpty {
                             Text("Preview:")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(Color.secondary)
-                            
+                                .font(.app.captionMedium)
+                                .foregroundColor(.theme.textSecondary)
+
                             Text(generateMultilinePreview())
-                                .font(.caption.monospaced())
-                                .foregroundColor(Color.blue)
-                                .padding(8)
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(4)
+                                .font(.app.monoCaption)
+                                .foregroundColor(.theme.info)
+                                .padding(AppSpacing.xs)
+                                .background(Color.theme.infoBackground)
+                                .cornerRadius(AppRadius.xs)
                         }
                     }
                     
@@ -256,11 +300,14 @@ struct SmartFrontMatterFieldView: View {
                     // String - use the enhanced text field with variables
                     TextFieldWithVariablePicker(title: "Value", text: $field.value, context: .frontMatter, settings: settings, excludeFieldName: field.name)
                 }
+                }
+                .disabled(field.isCommented)
+                .opacity(field.isCommented ? 0.5 : 1.0)
             } else {
                 // For current_date and current_datetime, show info text
                 Text("Automatically generated at processing time")
-                    .font(.caption)
-                    .foregroundColor(Color.secondary)
+                    .font(.app.caption)
+                    .foregroundColor(.theme.textSecondary)
                     .italic()
             }
         }
@@ -285,6 +332,30 @@ struct SmartFrontMatterFieldView: View {
                 break
             }
         }
+        .gesture(
+            DragGesture(minimumDistance: 50, coordinateSpace: .local)
+                .onEnded { value in
+                    let horizontalDistance = value.translation.width
+                    let verticalDistance = abs(value.translation.height)
+
+                    // Only respond to mostly horizontal swipes
+                    if abs(horizontalDistance) > verticalDistance {
+                        if horizontalDistance > 0 {
+                            // Swipe right: add indent (max 3)
+                            if field.indentLevel < 3 {
+                                field.indentLevel += 1
+                                onUpdate()
+                            }
+                        } else {
+                            // Swipe left: remove indent (min 0)
+                            if field.indentLevel > 0 {
+                                field.indentLevel -= 1
+                                onUpdate()
+                            }
+                        }
+                    }
+                }
+        )
     }
     
     private func isValidNumber(_ text: String) -> Bool {
@@ -524,8 +595,8 @@ struct SmartAddNewFieldView: View {
                                 }
                             
                             Text("Use commas to separate tags: tag1, tag2, tag3")
-                                .font(.caption)
-                                .foregroundColor(Color.secondary)
+                                .font(.app.caption)
+                                .foregroundColor(.theme.textSecondary)
                         }
                     }
                     
@@ -545,8 +616,8 @@ struct SmartAddNewFieldView: View {
                                 }
 
                             Text("Use commas to separate list items: item1, item2, item3")
-                                .font(.caption)
-                                .foregroundColor(Color.secondary)
+                                .font(.app.caption)
+                                .foregroundColor(.theme.textSecondary)
                         }
 
                         // Text("List Items:")
@@ -612,8 +683,8 @@ struct SmartAddNewFieldView: View {
                         )
                         
                         Text("Supports multiple lines of text")
-                            .font(.caption)
-                            .foregroundColor(Color.secondary)
+                            .font(.app.caption)
+                            .foregroundColor(.theme.textSecondary)
                     }
                     .id("newField-multiline")
                     
@@ -630,8 +701,8 @@ struct SmartAddNewFieldView: View {
                 }
             } else {
                 Text("Automatically generated at processing time")
-                    .font(.caption)
-                    .foregroundColor(Color.secondary)
+                    .font(.app.caption)
+                    .foregroundColor(.theme.textSecondary)
                     .italic()
             }
             
