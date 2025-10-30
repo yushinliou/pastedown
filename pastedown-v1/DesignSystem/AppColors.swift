@@ -18,8 +18,8 @@ extension Color {
 struct AppThemeColors {
 
     // MARK: - Brand Colors
-    /// Primary brand color
-    /// Light: Dark brown (#0A2363), Dark: White (#FFFCF9)
+    /// Primary brand color (consistent across light and dark modes)
+    /// Both modes: Dark blue (#0A2363)
     let primary = Color("primaryColour")
 
     /// Secondary brand color
@@ -43,8 +43,8 @@ struct AppThemeColors {
     /// Light: #FF3B38, Dark: #FF5252
     let error = Color("errorColor")
 
-    /// Informational color (blue)
-    /// Light: #0095FF, Dark: #0AAAFF
+    /// Informational color (black)
+    /// Both modes: #000000
     let info = Color("infoColor")
 
     // MARK: - Text Colors
@@ -68,6 +68,15 @@ struct AppThemeColors {
     /// Border color for UI elements
     /// Light: Black 20%, Dark: White 30%
     let surfaceBorder = Color("surfaceBorder")
+    
+    // MARK: - Neutral Colors (for UI elements, buttons, etc.)
+    /// Universal black and white colors
+    /// Use these for button backgrounds, icons, or neutral UI areas
+    let neutralBlack = Color.black
+    let neutralWhite = Color.white
+
+    /// Optional mid-gray for disabled states or dividers
+    let neutralGray = Color.gray.opacity(0.6)
 
     // MARK: - Semantic Background Colors with Opacity
     /// Success background (for alerts, badges, etc.)
@@ -109,7 +118,10 @@ extension AppThemeColors {
             ("Text Secondary", theme.textSecondary),
             ("Text Tertiary", theme.textTertiary),
             ("Surface Card", theme.surfaceCard),
-            ("Surface Border", theme.surfaceBorder)
+            ("Surface Border", theme.surfaceBorder),
+            ("Neutral Black", theme.neutralBlack),
+            ("Neutral White", theme.neutralWhite),
+            ("Neutral Gray", theme.neutralGray)
         ]
     }
 }
@@ -142,11 +154,61 @@ struct AppColors_Previews: PreviewProvider {
                     ColorRow(name: "Surface Card", color: .theme.surfaceCard)
                     ColorRow(name: "Surface Border", color: .theme.surfaceBorder)
                 }
+                
+                Section("Neutral Colors") {
+                    ColorRow(name: "Neutral Black", color: .theme.neutralBlack)
+                    ColorRow(name: "Neutral White", color: .theme.neutralWhite)
+                    ColorRow(name: "Neutral Gray", color: .theme.neutralGray)
+                }
             }
             .navigationTitle("Color System")
         }
+        .environment(\.colorScheme, .light)
+        .previewDisplayName("Light Mode")
+
+
+        NavigationView {
+            List {
+                
+                Section("Brand Colors (Dark Mode)") {
+                    ColorRow(name: "Primary", color: .theme.primary)
+                    ColorRow(name: "Secondary", color: .theme.secondary)
+                    ColorRow(name: "Background", color: .theme.background)
+                }
+
+                Section("Semantic Colors (Dark Mode)") {
+                    ColorRow(name: "Success", color: .theme.success)
+                    ColorRow(name: "Warning", color: .theme.warning)
+                    ColorRow(name: "Error", color: .theme.error)
+                    ColorRow(name: "Info", color: .theme.info)
+                }
+
+                Section("Text Colors (Dark Mode)") {
+                    ColorRow(name: "Text Primary", color: .theme.textPrimary)
+                    ColorRow(name: "Text Secondary", color: .theme.textSecondary)
+                    ColorRow(name: "Text Tertiary", color: .theme.textTertiary)
+                }
+
+                Section("Surface Colors (Dark Mode)") {
+                    ColorRow(name: "Surface Card", color: .theme.surfaceCard)
+                    ColorRow(name: "Surface Border", color: .theme.surfaceBorder)
+                }
+                
+                Section("Neutral Colors (Dark Mode)") {
+                    ColorRow(name: "Neutral Black", color: .theme.neutralBlack)
+                    ColorRow(name: "Neutral White", color: .theme.neutralWhite)
+                    ColorRow(name: "Neutral Gray", color: .theme.neutralGray)
+                }
+            }
+            .navigationTitle("Color System - Dark")
+        }
+        .environment(\.colorScheme, .dark)
+        .previewDisplayName("Dark Mode")
+        
     }
 
+    
+    
     struct ColorRow: View {
         let name: String
         let color: Color

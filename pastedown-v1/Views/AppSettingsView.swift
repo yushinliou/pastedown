@@ -61,27 +61,6 @@ struct AppSettingsView: View {
                     Text("Choose how the app appears on your device")
                 }
 
-//                Section {
-//                    Picker("Language", selection: $selectedLanguage) {
-//                        ForEach(languages, id: \.0) { language in
-//                            HStack {
-//                                Text(language.1)
-//                                Spacer()
-//                                if language.0 == selectedLanguage {
-//                                    Image(systemName: "checkmark")
-//                                        .foregroundColor(.blue)
-//                                }
-//                            }
-//                            .tag(language.0)
-//                        }
-//                    }
-//                    .pickerStyle(NavigationLinkPickerStyle())
-//                } header: {
-//                    Text("Language")
-//                } footer: {
-//                    Text("Select your preferred language for the app interface")
-//                }
-
                 Section {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {

@@ -26,6 +26,7 @@ struct ContentView: View {
     @State private var currentContentPreview: String = ""
     @State private var showingTemplateManagement = false
     @State private var showingAppSettings = false
+    @State private var showingNewTemplate = false
     
     init() {
         let settings = SettingsStore()
@@ -80,6 +81,16 @@ struct ContentView: View {
                         }
                     }
                 } else {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            showingNewTemplate = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.title2)
+                                .foregroundColor(.primary)
+                        }
+                    }
+
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
                             Button(action: {
@@ -100,6 +111,9 @@ struct ContentView: View {
                         }
                     }
                 }
+            }
+            .sheet(isPresented: $showingNewTemplate) {
+                TemplateSettingsView(settings: settings, isPresented: $showingNewTemplate)
             }
             .sheet(isPresented: $showingTemplateManagement) {
                 TemplateManagementListView(settings: settings, isPresented: $showingTemplateManagement)

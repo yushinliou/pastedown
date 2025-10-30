@@ -9,7 +9,6 @@ struct InitialViewWithSettings: View {
     @ObservedObject var settings: SettingsStore
     var pasteFromClipboard: () -> Void
 
-    @State private var showingNewTemplate = false
     @State private var showingEditTemplate = false
     @State private var showingTemplateManagement = false
     @State private var showingAppSettings = false
@@ -35,12 +34,8 @@ struct InitialViewWithSettings: View {
                 }
             }
 
-            // Template Selection Picker
-            VStack(spacing: AppSpacing.xs) {
-                Text("Active Template")
-                    .font(.app.calloutSemibold)
-                    .foregroundColor(.theme.textSecondary)
-
+            // Template Selection and Actions
+            HStack(spacing: AppSpacing.sm) {
                 Picker("Select Template", selection: Binding(
                     get: { settings.currentTemplateID ?? UUID() },
                     set: { newID in
@@ -54,58 +49,30 @@ struct InitialViewWithSettings: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-                .padding(.horizontal, AppSpacing.md)
-                .padding(.vertical, AppSpacing.xs)
-                .background(Color.theme.infoBackground)
-                .cornerRadius(AppRadius.md)
+                .secondaryPickerStyle()
+
+                // Edit template
+                Button(action: {
+                    showingEditTemplate = true
+                }) {
+                    Image(systemName: "pencil")
+                        .font(.app.title)
+                }
+                .buttonStyle(.tertiary)
             }
 
-            // Four Main Buttons
-            VStack(spacing: AppSpacing.md) {
-                // Paste button (primary action)
-                Button(action: pasteFromClipboard) {
-                    HStack(spacing: AppSpacing.sm) {
-                        Image(systemName: "clipboard")
-                            .font(.app.title)
-                        Text("Paste Clipboard Content")
-                            .font(.app.bodyMedium)
-                    }
-                }
-                .buttonStyle(.primary(fullWidth: true))
-                .disabled(isConverting)
-                .opacity(isConverting ? 0.6 : 1.0)
-
-                // Template action buttons - only 2 now since selection is handled by picker
+            // Main Action Button
+            Button(action: pasteFromClipboard) {
                 HStack(spacing: AppSpacing.sm) {
-                    // Add new template
-                    Button(action: {
-                        showingNewTemplate = true
-                    }) {
-                        VStack(spacing: AppSpacing.xxs) {
-                            Image(systemName: "plus")
-                                .font(.app.title)
-                            Text("Add Template")
-                                .font(.app.caption)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.secondary)
-
-                    // Edit template
-                    Button(action: {
-                        showingEditTemplate = true
-                    }) {
-                        VStack(spacing: AppSpacing.xxs) {
-                            Image(systemName: "pencil")
-                                .font(.app.title)
-                            Text("Edit Template")
-                                .font(.app.caption)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.secondary)
+                    Image(systemName: "clipboard")
+                        .font(.app.title)
+                    Text("Paste Clipboard Content")
+                        .font(.app.bodyMedium)
                 }
             }
+            .buttonStyle(.secondary(fullWidth: true))
+            .disabled(isConverting)
+            .opacity(isConverting ? 0.6 : 1.0)
 
             if isConverting {
                 ProgressView("Converting...")
@@ -113,13 +80,8 @@ struct InitialViewWithSettings: View {
                     .foregroundColor(.theme.textSecondary)
                     .padding(.top, AppSpacing.sm)
             }
-
-            Spacer()
         }
         .padding(AppSpacing.lg)
-        .sheet(isPresented: $showingNewTemplate) {
-            TemplateSettingsView(settings: settings, isPresented: $showingNewTemplate)
-        }
         .sheet(isPresented: $showingEditTemplate) {
             if let currentTemplate = settings.currentTemplate {
                 TemplateSettingsView(settings: settings, isPresented: $showingEditTemplate, template: currentTemplate)
@@ -131,6 +93,8 @@ struct InitialViewWithSettings: View {
         .sheet(isPresented: $showingAppSettings) {
             AppSettingsView(isPresented: $showingAppSettings)
         }
+        .frame(maxHeight: .infinity) // make VStack take full height
+        .padding(AppSpacing.lg)
     }
 }
 

@@ -161,6 +161,71 @@ struct FormField<Content: View>: View {
     }
 }
 
+// MARK: - Custom Menu Picker Style
+/// Menu picker styled to match secondary button appearance
+//struct SecondaryMenuPickerStyle: ViewModifier {
+//    @Environment(\.colorScheme) var colorScheme
+//
+//    func body(content: Content) -> some View {
+//        content
+//            .tint(Color.theme.neutralBlack)
+//            .font(.app.bodyMedium)
+//            .foregroundColor(Color.theme.neutralWhite)
+//            .background(
+//                RoundedRectangle(cornerRadius: AppRadius.lg)
+//                    .fill( Color.theme.neutralWhite.opacity(colorScheme == .dark ? 0.2 : 0.8))
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: AppRadius.lg)
+//                            .stroke(Color.theme.neutralBlack, lineWidth: 1)
+//                    )
+//            )
+//    }
+//}
+
+            // .shadow(
+            //     color: shadowColor1,
+            //     radius: configuration.isPressed ? 2 : 1,
+            //     x: 0,
+            //     y: configuration.isPressed ? 4 : 1
+            // )
+
+struct SecondaryMenuPickerStyle: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    @State private var isPressed = false
+
+    func body(content: Content) -> some View {
+        content
+            .tint(Color.theme.neutralBlack)
+            .font(.app.bodyMedium)
+            .foregroundColor(Color.theme.neutralBlack)
+            .padding(.horizontal, AppSpacing.sm)
+            .padding(.vertical, AppSpacing.xs)
+            .background(
+                RoundedRectangle(cornerRadius: AppRadius.lg)
+                    .fill(Color.theme.neutralWhite)
+                    .shadow(color: .black.opacity(isPressed ? 0.1 : 0.15),
+                            radius: isPressed ? 2 : 4,
+                            x: isPressed ? -1 : 4,
+                            y: isPressed ? -1 : 4)
+            )
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isPressed)
+            .onLongPressGesture(minimumDuration: 0.01, pressing: { pressing in
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    isPressed = pressing
+                }
+            }, perform: {})
+    }
+}
+
+
+extension View {
+    /// Apply secondary menu picker style to match button appearance
+    func secondaryPickerStyle() -> some View {
+        self.modifier(SecondaryMenuPickerStyle())
+    }
+}
+
 // MARK: - Search Field Component
 struct SearchField: View {
     @Binding var text: String

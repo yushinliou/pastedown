@@ -22,7 +22,7 @@ struct PrimaryButtonStyle: ButtonStyle {
             .padding(.horizontal, AppSpacing.lg)
             .frame(maxWidth: isFullWidth ? .infinity : nil)
             .background(
-                RoundedRectangle(cornerRadius: AppRadius.md)
+                RoundedRectangle(cornerRadius: AppRadius.lg)
                     .fill(Color.theme.primary)
             )
             .shadow(
@@ -38,24 +38,21 @@ struct PrimaryButtonStyle: ButtonStyle {
 
 // MARK: - Secondary Button Style
 /// Alternative action buttons
-/// Outlined style with secondary color
+/// Light mode: Black bg, white text | Dark mode: White bg, black text
 struct SecondaryButtonStyle: ButtonStyle {
     var isFullWidth: Bool = false
+    @Environment(\.colorScheme) var colorScheme
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.app.bodyMedium)
-            .foregroundColor(Color.theme.secondary)
+            .foregroundColor(colorScheme == .dark ? Color.theme.neutralBlack : Color.theme.neutralWhite)
             .padding(.vertical, AppSpacing.sm)
             .padding(.horizontal, AppSpacing.lg)
             .frame(maxWidth: isFullWidth ? .infinity : nil)
             .background(
-                RoundedRectangle(cornerRadius: AppRadius.md)
-                    .fill(Color.theme.secondary.opacity(configuration.isPressed ? 0.2 : 0.1))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: AppRadius.md)
-                    .stroke(Color.theme.secondary, lineWidth: 2)
+                RoundedRectangle(cornerRadius: AppRadius.lg)
+                    .fill(colorScheme == .dark ? Color.theme.neutralWhite : Color.theme.neutralBlack)
             )
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
@@ -63,28 +60,56 @@ struct SecondaryButtonStyle: ButtonStyle {
 }
 
 // MARK: - Tertiary Button Style
-/// Subtle action buttons
-/// Minimal background, text-focused
+/// Material Design-inspired elevated buttons
+/// Light mode: White bg with shadows | Dark mode: Dark gray bg with subtle shadows
 struct TertiaryButtonStyle: ButtonStyle {
     var isFullWidth: Bool = false
+    @Environment(\.colorScheme) var colorScheme
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.app.callout)
-            .foregroundColor(Color.theme.textPrimary)
-            .padding(.vertical, AppSpacing.xs)
-            .padding(.horizontal, AppSpacing.md)
+            .foregroundColor(colorScheme == .dark ? Color.theme.neutralWhite : Color.theme.neutralBlack)
+            .padding(.vertical, AppSpacing.md)
+            .padding(.horizontal, AppSpacing.lg)
             .frame(maxWidth: isFullWidth ? .infinity : nil)
             .background(
-                RoundedRectangle(cornerRadius: AppRadius.sm)
-                    .fill(Color.theme.surfaceCard.opacity(configuration.isPressed ? 0.8 : 1.0))
+                RoundedRectangle(cornerRadius: AppRadius.lg)
+                    .fill(backgroundColor)
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: AppRadius.sm)
-                    .stroke(Color.theme.surfaceBorder, lineWidth: 1)
+            .shadow(
+                color: shadowColor1,
+                radius: configuration.isPressed ? 2 : 4,
+                x: 0,
+                y: configuration.isPressed ? 2 : 4
             )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
+
+    }
+
+    private var backgroundColor: Color {
+        if colorScheme == .dark {
+            return Color(white: 0.2) // Dark gray for dark mode
+        } else {
+            return Color.theme.neutralWhite
+        }
+    }
+
+    private var shadowColor1: Color {
+        if colorScheme == .dark {
+            return Color.black.opacity(0.4)
+        } else {
+            return Color.black.opacity(0.2)
+        }
+    }
+
+    private var shadowColor2: Color {
+        if colorScheme == .dark {
+            return Color.black.opacity(0.3)
+        } else {
+            return Color.black.opacity(0.14)
+        }
     }
 }
 
@@ -102,7 +127,7 @@ struct DestructiveButtonStyle: ButtonStyle {
             .padding(.horizontal, AppSpacing.lg)
             .frame(maxWidth: isFullWidth ? .infinity : nil)
             .background(
-                RoundedRectangle(cornerRadius: AppRadius.md)
+                RoundedRectangle(cornerRadius: AppRadius.lg)
                     .fill(Color.theme.error)
             )
             .shadow(
@@ -194,6 +219,21 @@ extension ButtonStyle where Self == GhostButtonStyle {
 #if DEBUG
 struct AppButtonStyles_Previews: PreviewProvider {
     static var previews: some View {
+        Group {
+            // Light Mode
+            buttonStylesContent
+                .preferredColorScheme(.light)
+                .previewDisplayName("Light Mode")
+
+            // Dark Mode
+            buttonStylesContent
+                .preferredColorScheme(.dark)
+                .previewDisplayName("Dark Mode")
+        }
+    }
+
+    @ViewBuilder
+    static var buttonStylesContent: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: AppSpacing.xl) {
