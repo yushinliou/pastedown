@@ -1,0 +1,48 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppSpacing.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Spacing System",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 198
+        }
+      },
+      {
+        "comment": "",
+        "key": "Spacing Scale",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 165
+        }
+      },
+      {
+        "comment": "",
+        "key": "Corner Radius",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 183
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lldpt",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 212
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 235
+        }
+      }
+    ]
+  },
+  "version": 1
+}

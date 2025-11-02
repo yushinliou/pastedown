@@ -7,23 +7,23 @@
         "key": "Error",
         "location": {
           "startingColumn": 16,
-          "startingLine": 75
+          "startingLine": 66
         }
       },
       {
         "comment": "",
         "key": "Edit Template",
         "location": {
-          "startingColumn": 42,
-          "startingLine": 49
+          "startingColumn": 52,
+          "startingLine": 33
         }
       },
       {
         "comment": "",
         "key": "New Template",
         "location": {
-          "startingColumn": 60,
-          "startingLine": 49
+          "startingColumn": 70,
+          "startingLine": 33
         }
       },
       {
@@ -31,23 +31,23 @@
         "key": "Cancel",
         "location": {
           "startingColumn": 28,
-          "startingLine": 53
+          "startingLine": 37
         }
       },
       {
         "comment": "",
         "key": "Update",
         "location": {
-          "startingColumn": 40,
-          "startingLine": 59
+          "startingColumn": 50,
+          "startingLine": 43
         }
       },
       {
         "comment": "",
         "key": "Save",
         "location": {
-          "startingColumn": 51,
-          "startingLine": 59
+          "startingColumn": 61,
+          "startingLine": 43
         }
       },
       {
@@ -55,383 +55,7 @@
         "key": "OK",
         "location": {
           "startingColumn": 20,
-          "startingLine": 76
-        }
-      },
-      {
-        "comment": "",
-        "key": "Variables: {clipboard_preview}, {date}, {time}",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 107
-        }
-      },
-      {
-        "comment": "",
-        "key": "Invalid filename format",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 126
-        }
-      },
-      {
-        "comment": "",
-        "key": "Template name",
-        "location": {
-          "startingColumn": 35,
-          "startingLine": 86
-        }
-      },
-      {
-        "comment": "",
-        "key": "Preview:",
-        "location": {
-          "startingColumn": 38,
-          "startingLine": 113
-        }
-      },
-      {
-        "comment": "",
-        "key": "Template Settings",
-        "location": {
-          "startingColumn": 38,
-          "startingLine": 132
-        }
-      },
-      {
-        "comment": "",
-        "key": "New Template",
-        "location": {
-          "startingColumn": 60,
-          "startingLine": 132
-        }
-      },
-      {
-        "comment": "",
-        "key": "The default template name cannot be changed. Configure the output filename format for this template.",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 135
-        }
-      },
-      {
-        "comment": "",
-        "key": "Please enter a template name",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 139
-        }
-      },
-      {
-        "comment": "",
-        "key": "A template with this name already exists",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 142
-        }
-      },
-      {
-        "comment": "",
-        "key": "Enter a name for this template and configure the output filename format",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 146
-        }
-      },
-      {
-        "comment": "",
-        "key": "Image handling",
-        "location": {
-          "startingColumn": 28,
-          "startingLine": 154
-        }
-      },
-      {
-        "comment": "",
-        "key": "Variables: {time}, {date}, {clipboard_preview}",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 174
-        }
-      },
-      {
-        "comment": "",
-        "key": "Invalid path format",
-        "location": {
-          "startingColumn": 38,
-          "startingLine": 193
-        }
-      },
-      {
-        "comment": "",
-        "key": "Preview:",
-        "location": {
-          "startingColumn": 42,
-          "startingLine": 180
-        }
-      },
-      {
-        "comment": "",
-        "key": "Preview:",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 201
-        }
-      },
-      {
-        "comment": "",
-        "key": "Alt Text Generation",
-        "location": {
-          "startingColumn": 38,
-          "startingLine": 218
-        }
-      },
-      {
-        "comment": "",
-        "key": "",
-        "location": {
-          "startingColumn": 40,
-          "startingLine": 224
-        }
-      },
-      {
-        "comment": "",
-        "key": "Alt Text Method",
-        "location": {
-          "startingColumn": 46,
-          "startingLine": 231
-        }
-      },
-      {
-        "comment": "",
-        "key": "Alt Text Method",
-        "location": {
-          "startingColumn": 48,
-          "startingLine": 236
-        }
-      },
-      {
-        "comment": "",
-        "key": "Apple Vision",
-        "location": {
-          "startingColumn": 50,
-          "startingLine": 261
-        }
-      },
-      {
-        "comment": "",
-        "key": "External LLM",
-        "location": {
-          "startingColumn": 50,
-          "startingLine": 262
-        }
-      },
-      {
-        "comment": "",
-        "key": "Fixed",
-        "location": {
-          "startingColumn": 50,
-          "startingLine": 263
-        }
-      },
-      {
-        "comment": "",
-        "key": "LLM Provider",
-        "location": {
-          "startingColumn": 54,
-          "startingLine": 273
-        }
-      },
-      {
-        "comment": "",
-        "key": "LLM Provider",
-        "location": {
-          "startingColumn": 56,
-          "startingLine": 277
-        }
-      },
-      {
-        "comment": "",
-        "key": "API Key",
-        "location": {
-          "startingColumn": 54,
-          "startingLine": 286
-        }
-      },
-      {
-        "comment": "",
-        "key": "Enter API key",
-        "location": {
-          "startingColumn": 61,
-          "startingLine": 290
-        }
-      },
-      {
-        "comment": "",
-        "key": "Custom Prompt (Optional)",
-        "location": {
-          "startingColumn": 54,
-          "startingLine": 299
-        }
-      },
-      {
-        "comment": "",
-        "key": "Leave empty to use default: %@",
-        "location": {
-          "startingColumn": 62,
-          "startingLine": 313
-        }
-      },
-      {
-        "comment": "",
-        "key": "Fixed Alt Text",
-        "location": {
-          "startingColumn": 50,
-          "startingLine": 326
-        }
-      },
-      {
-        "comment": "",
-        "key": "This text will be used for all images",
-        "location": {
-          "startingColumn": 50,
-          "startingLine": 333
-        }
-      },
-      {
-        "comment": "",
-        "key": "Enter fixed alt text",
-        "location": {
-          "startingColumn": 55,
-          "startingLine": 330
-        }
-      },
-      {
-        "comment": "",
-        "key": "Apple Vision Generated",
-        "location": {
-          "startingColumn": 50,
-          "startingLine": 340
-        }
-      },
-      {
-        "comment": "",
-        "key": "Uses Apple Vision to detect objects and text in images",
-        "location": {
-          "startingColumn": 50,
-          "startingLine": 351
-        }
-      },
-      {
-        "comment": "",
-        "key": "Template",
-        "location": {
-          "startingColumn": 52,
-          "startingLine": 344
-        }
-      },
-      {
-        "comment": "",
-        "key": "Image Handling",
-        "location": {
-          "startingColumn": 26,
-          "startingLine": 361
-        }
-      },
-      {
-        "comment": "",
-        "key": "Configure how images in your clipboard are processed and where they are saved",
-        "location": {
-          "startingColumn": 26,
-          "startingLine": 363
-        }
-      },
-      {
-        "comment": "",
-        "key": "Enable Front Matter",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 372
-        }
-      },
-      {
-        "comment": "",
-        "key": "",
-        "location": {
-          "startingColumn": 32,
-          "startingLine": 378
-        }
-      },
-      {
-        "comment": "",
-        "key": "No front matter fields configured",
-        "location": {
-          "startingColumn": 38,
-          "startingLine": 385
-        }
-      },
-      {
-        "comment": "",
-        "key": "Add Front Matter Field",
-        "location": {
-          "startingColumn": 46,
-          "startingLine": 396
-        }
-      },
-      {
-        "comment": "",
-        "key": "Add New Field",
-        "location": {
-          "startingColumn": 38,
-          "startingLine": 461
-        }
-      },
-      {
-        "comment": "",
-        "key": "Front Matter",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 474
-        }
-      },
-      {
-        "comment": "",
-        "key": "Done",
-        "location": {
-          "startingColumn": 54,
-          "startingLine": 479
-        }
-      },
-      {
-        "comment": "",
-        "key": "Edit",
-        "location": {
-          "startingColumn": 63,
-          "startingLine": 479
-        }
-      },
-      {
-        "comment": "",
-        "key": "Tap and drag to reorder fields, or tap the minus button to remove them",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 489
-        }
-      },
-      {
-        "comment": "",
-        "key": "Configure YAML front matter fields that will be added to your Markdown output",
-        "location": {
-          "startingColumn": 34,
-          "startingLine": 491
-        }
-      },
-      {
-        "comment": "",
-        "key": "Front matter is disabled. Toggle on to add YAML metadata to your files",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 494
+          "startingLine": 67
         }
       }
     ]

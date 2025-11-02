@@ -1,0 +1,56 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettings/ImageHandlingSection.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Pasted Image",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 16
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Alt Text Generation",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 40
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 46
+        }
+      },
+      {
+        "comment": "",
+        "key": "Variables: {time}, {date}, {clipboard_preview}",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invalid path format",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 93
+        }
+      }
+    ]
+  },
+  "version": 1
+}

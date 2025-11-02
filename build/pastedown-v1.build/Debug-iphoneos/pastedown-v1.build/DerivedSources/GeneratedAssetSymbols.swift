@@ -27,12 +27,40 @@ extension DeveloperToolsSupport.ColorResource {
     /// The "backgroundColour" asset catalog color resource.
     static let backgroundColour = DeveloperToolsSupport.ColorResource(name: "backgroundColour", bundle: resourceBundle)
 
+    /// The "errorColor" asset catalog color resource.
+    static let error = DeveloperToolsSupport.ColorResource(name: "errorColor", bundle: resourceBundle)
+
+    /// The "infoColor" asset catalog color resource.
+    static let info = DeveloperToolsSupport.ColorResource(name: "infoColor", bundle: resourceBundle)
+
     /// The "primaryColour" asset catalog color resource.
     static let primaryColour = DeveloperToolsSupport.ColorResource(name: "primaryColour", bundle: resourceBundle)
 
     /// The "secondaryColour" asset catalog color resource.
     static let secondaryColour = DeveloperToolsSupport.ColorResource(name: "secondaryColour", bundle: resourceBundle)
 
+    /// The "successColor" asset catalog color resource.
+    static let success = DeveloperToolsSupport.ColorResource(name: "successColor", bundle: resourceBundle)
+
+    /// The "surfaceBorder" asset catalog color resource.
+    static let surfaceBorder = DeveloperToolsSupport.ColorResource(name: "surfaceBorder", bundle: resourceBundle)
+
+    /// The "surfaceCard" asset catalog color resource.
+    static let surfaceCard = DeveloperToolsSupport.ColorResource(name: "surfaceCard", bundle: resourceBundle)
+
+    /// The "textPrimary" asset catalog color resource.
+    static let textPrimary = DeveloperToolsSupport.ColorResource(name: "textPrimary", bundle: resourceBundle)
+
+    /// The "textSecondary" asset catalog color resource.
+    static let textSecondary = DeveloperToolsSupport.ColorResource(name: "textSecondary", bundle: resourceBundle)
+
+    /// The "textTertiary" asset catalog color resource.
+    static let textTertiary = DeveloperToolsSupport.ColorResource(name: "textTertiary", bundle: resourceBundle)
+
+    /// The "warningColor" asset catalog color resource.
+    static let warning = DeveloperToolsSupport.ColorResource(name: "warningColor", bundle: resourceBundle)
+
+    
 }
 
 // MARK: - Image Symbols -
@@ -61,6 +89,24 @@ extension AppKit.NSColor {
 #endif
     }
 
+    /// The "errorColor" asset catalog color.
+    static var error: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .error)
+#else
+        .init()
+#endif
+    }
+
+    /// The "infoColor" asset catalog color.
+    static var info: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .info)
+#else
+        .init()
+#endif
+    }
+
     /// The "primaryColour" asset catalog color.
     static var primaryColour: AppKit.NSColor {
 #if !targetEnvironment(macCatalyst)
@@ -79,6 +125,69 @@ extension AppKit.NSColor {
 #endif
     }
 
+    /// The "successColor" asset catalog color.
+    static var success: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .success)
+#else
+        .init()
+#endif
+    }
+
+    /// The "surfaceBorder" asset catalog color.
+    static var surfaceBorder: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .surfaceBorder)
+#else
+        .init()
+#endif
+    }
+
+    /// The "surfaceCard" asset catalog color.
+    static var surfaceCard: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .surfaceCard)
+#else
+        .init()
+#endif
+    }
+
+    /// The "textPrimary" asset catalog color.
+    static var textPrimary: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .textPrimary)
+#else
+        .init()
+#endif
+    }
+
+    /// The "textSecondary" asset catalog color.
+    static var textSecondary: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .textSecondary)
+#else
+        .init()
+#endif
+    }
+
+    /// The "textTertiary" asset catalog color.
+    static var textTertiary: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .textTertiary)
+#else
+        .init()
+#endif
+    }
+
+    /// The "warningColor" asset catalog color.
+    static var warning: AppKit.NSColor {
+#if !targetEnvironment(macCatalyst)
+        .init(resource: .warning)
+#else
+        .init()
+#endif
+    }
+
 }
 #endif
 
@@ -91,6 +200,24 @@ extension UIKit.UIColor {
     static var backgroundColour: UIKit.UIColor {
 #if !os(watchOS)
         .init(resource: .backgroundColour)
+#else
+        .init()
+#endif
+    }
+
+    /// The "errorColor" asset catalog color.
+    static var error: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .error)
+#else
+        .init()
+#endif
+    }
+
+    /// The "infoColor" asset catalog color.
+    static var info: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .info)
 #else
         .init()
 #endif
@@ -114,6 +241,69 @@ extension UIKit.UIColor {
 #endif
     }
 
+    /// The "successColor" asset catalog color.
+    static var success: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .success)
+#else
+        .init()
+#endif
+    }
+
+    /// The "surfaceBorder" asset catalog color.
+    static var surfaceBorder: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .surfaceBorder)
+#else
+        .init()
+#endif
+    }
+
+    /// The "surfaceCard" asset catalog color.
+    static var surfaceCard: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .surfaceCard)
+#else
+        .init()
+#endif
+    }
+
+    /// The "textPrimary" asset catalog color.
+    static var textPrimary: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .textPrimary)
+#else
+        .init()
+#endif
+    }
+
+    /// The "textSecondary" asset catalog color.
+    static var textSecondary: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .textSecondary)
+#else
+        .init()
+#endif
+    }
+
+    /// The "textTertiary" asset catalog color.
+    static var textTertiary: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .textTertiary)
+#else
+        .init()
+#endif
+    }
+
+    /// The "warningColor" asset catalog color.
+    static var warning: UIKit.UIColor {
+#if !os(watchOS)
+        .init(resource: .warning)
+#else
+        .init()
+#endif
+    }
+
 }
 #endif
 
@@ -124,11 +314,38 @@ extension SwiftUI.Color {
     /// The "backgroundColour" asset catalog color.
     static var backgroundColour: SwiftUI.Color { .init(.backgroundColour) }
 
+    /// The "errorColor" asset catalog color.
+    static var error: SwiftUI.Color { .init(.error) }
+
+    /// The "infoColor" asset catalog color.
+    static var info: SwiftUI.Color { .init(.info) }
+
     /// The "primaryColour" asset catalog color.
     static var primaryColour: SwiftUI.Color { .init(.primaryColour) }
 
     /// The "secondaryColour" asset catalog color.
     static var secondaryColour: SwiftUI.Color { .init(.secondaryColour) }
+
+    /// The "successColor" asset catalog color.
+    static var success: SwiftUI.Color { .init(.success) }
+
+    /// The "surfaceBorder" asset catalog color.
+    static var surfaceBorder: SwiftUI.Color { .init(.surfaceBorder) }
+
+    /// The "surfaceCard" asset catalog color.
+    static var surfaceCard: SwiftUI.Color { .init(.surfaceCard) }
+
+    /// The "textPrimary" asset catalog color.
+    static var textPrimary: SwiftUI.Color { .init(.textPrimary) }
+
+    /// The "textSecondary" asset catalog color.
+    static var textSecondary: SwiftUI.Color { .init(.textSecondary) }
+
+    /// The "textTertiary" asset catalog color.
+    static var textTertiary: SwiftUI.Color { .init(.textTertiary) }
+
+    /// The "warningColor" asset catalog color.
+    static var warning: SwiftUI.Color { .init(.warning) }
 
 }
 
@@ -138,11 +355,38 @@ extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
     /// The "backgroundColour" asset catalog color.
     static var backgroundColour: SwiftUI.Color { .init(.backgroundColour) }
 
+    /// The "errorColor" asset catalog color.
+    static var error: SwiftUI.Color { .init(.error) }
+
+    /// The "infoColor" asset catalog color.
+    static var info: SwiftUI.Color { .init(.info) }
+
     /// The "primaryColour" asset catalog color.
     static var primaryColour: SwiftUI.Color { .init(.primaryColour) }
 
     /// The "secondaryColour" asset catalog color.
     static var secondaryColour: SwiftUI.Color { .init(.secondaryColour) }
+
+    /// The "successColor" asset catalog color.
+    static var success: SwiftUI.Color { .init(.success) }
+
+    /// The "surfaceBorder" asset catalog color.
+    static var surfaceBorder: SwiftUI.Color { .init(.surfaceBorder) }
+
+    /// The "surfaceCard" asset catalog color.
+    static var surfaceCard: SwiftUI.Color { .init(.surfaceCard) }
+
+    /// The "textPrimary" asset catalog color.
+    static var textPrimary: SwiftUI.Color { .init(.textPrimary) }
+
+    /// The "textSecondary" asset catalog color.
+    static var textSecondary: SwiftUI.Color { .init(.textSecondary) }
+
+    /// The "textTertiary" asset catalog color.
+    static var textTertiary: SwiftUI.Color { .init(.textTertiary) }
+
+    /// The "warningColor" asset catalog color.
+    static var warning: SwiftUI.Color { .init(.warning) }
 
 }
 #endif

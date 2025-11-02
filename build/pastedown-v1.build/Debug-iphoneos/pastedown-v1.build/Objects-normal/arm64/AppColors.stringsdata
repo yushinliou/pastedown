@@ -1,0 +1,104 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppColors.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Color System",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "Brand Colors",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 134
+        }
+      },
+      {
+        "comment": "",
+        "key": "Semantic Colors",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Text Colors",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 147
+        }
+      },
+      {
+        "comment": "",
+        "key": "Surface Colors",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "Neutral Colors",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 158
+        }
+      },
+      {
+        "comment": "",
+        "key": "Color System - Dark",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 203
+        }
+      },
+      {
+        "comment": "",
+        "key": "Brand Colors (Dark Mode)",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 173
+        }
+      },
+      {
+        "comment": "",
+        "key": "Semantic Colors (Dark Mode)",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 179
+        }
+      },
+      {
+        "comment": "",
+        "key": "Text Colors (Dark Mode)",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 186
+        }
+      },
+      {
+        "comment": "",
+        "key": "Surface Colors (Dark Mode)",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 192
+        }
+      },
+      {
+        "comment": "",
+        "key": "Neutral Colors (Dark Mode)",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 197
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -18,6 +18,26 @@
 			<key>catalogPath</key>
 			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
 			<key>objcSymbol</key>
+			<string>ACColorNameErrorColor</string>
+			<key>relativePath</key>
+			<string>./errorColor.colorset</string>
+			<key>swiftSymbol</key>
+			<string>error</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameInfoColor</string>
+			<key>relativePath</key>
+			<string>./infoColor.colorset</string>
+			<key>swiftSymbol</key>
+			<string>info</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
 			<string>ACColorNamePrimaryColour</string>
 			<key>relativePath</key>
 			<string>./primaryColour.colorset</string>
@@ -33,6 +53,76 @@
 			<string>./secondaryColour.colorset</string>
 			<key>swiftSymbol</key>
 			<string>secondaryColour</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameSuccessColor</string>
+			<key>relativePath</key>
+			<string>./successColor.colorset</string>
+			<key>swiftSymbol</key>
+			<string>success</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameSurfaceBorder</string>
+			<key>relativePath</key>
+			<string>./surfaceBorder.colorset</string>
+			<key>swiftSymbol</key>
+			<string>surfaceBorder</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameSurfaceCard</string>
+			<key>relativePath</key>
+			<string>./surfaceCard.colorset</string>
+			<key>swiftSymbol</key>
+			<string>surfaceCard</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameTextPrimary</string>
+			<key>relativePath</key>
+			<string>./textPrimary.colorset</string>
+			<key>swiftSymbol</key>
+			<string>textPrimary</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameTextSecondary</string>
+			<key>relativePath</key>
+			<string>./textSecondary.colorset</string>
+			<key>swiftSymbol</key>
+			<string>textSecondary</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameTextTertiary</string>
+			<key>relativePath</key>
+			<string>./textTertiary.colorset</string>
+			<key>swiftSymbol</key>
+			<string>textTertiary</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACColorNameWarningColor</string>
+			<key>relativePath</key>
+			<string>./warningColor.colorset</string>
+			<key>swiftSymbol</key>
+			<string>warning</string>
 		</dict>
 	</array>
 	<key>images</key>

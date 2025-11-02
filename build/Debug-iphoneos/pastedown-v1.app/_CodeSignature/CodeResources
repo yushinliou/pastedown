@@ -14,7 +14,7 @@
 		</data>
 		<key>Assets.car</key>
 		<data>
-		Il0kzNOVjucwMmzYdbsAClgAWFY=
+		Gjk6XljD4hhpGmuq/5aU/WBVIXY=
 		</data>
 		<key>Base.lproj/MainInterface.storyboardc/Info.plist</key>
 		<data>
@@ -69,19 +69,23 @@
 		</data>
 		<key>PlugIns/PastedownShareExtension.appex/PastedownShareExtension</key>
 		<data>
-		3WbhayfvmFLIfbMWaJ0O8f2h0O8=
+		kf0pCv/Bws/FzqFUF1IJO2F/CG4=
 		</data>
 		<key>PlugIns/PastedownShareExtension.appex/_CodeSignature/CodeResources</key>
 		<data>
-		5eNq0PxmIvAMCf7FgElLzxSSNE4=
+		P6bxJb+Jaxc7sZ145BLnXcSDYi8=
 		</data>
 		<key>PlugIns/PastedownShareExtension.appex/embedded.mobileprovision</key>
 		<data>
-		tIKBBUnH+W6YMsFy3LWQDFzNxmE=
+		C+HCfY9WAmVZBq+H8Ap7dzlRsQ8=
+		</data>
+		<key>README.md</key>
+		<data>
+		Wp0Gzk01GSuF0O+sosyxKpu/ERg=
 		</data>
 		<key>embedded.mobileprovision</key>
 		<data>
-		YKfu/HQkYcWhf0QBJ6revvvoCOs=
+		6DbtXW9ulVJX4HmmBbXsV220RSg=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -104,7 +108,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			07CV1OyRSMNpwd0f/w0Jq8cTKcTmFhEzDpxPd9UlwqQ=
+			zUfA5AxJmCUYrKorNCLHu2EIg98CMuhqm76ghM+ZNQw=
 			</data>
 		</dict>
 		<key>Base.lproj/MainInterface.storyboardc/Info.plist</key>
@@ -166,28 +170,35 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			IC0LGw7v+VxPkmfXSrIDN0ZVUd1h8tBgLu46X7nePIo=
+			295HdMbc3HfSszZyCeQM3RL4NFHjJmqtCLE0KFFoC7o=
 			</data>
 		</dict>
 		<key>PlugIns/PastedownShareExtension.appex/_CodeSignature/CodeResources</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			t4JfJUrFFvIWDuvXg2iNUAlEJCZhWnYVJjl5xGvZs3Q=
+			snEQ/K6k2YdbmWUE4o7qnmhalm2QogURY80Jw2W4VEQ=
 			</data>
 		</dict>
 		<key>PlugIns/PastedownShareExtension.appex/embedded.mobileprovision</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			xeiNfRMr3RQg6wsCTL1QrnM0s6DTIQWb5biqfCqAhlM=
+			tdqL70+1qsWzZ4Z29oXO7/gdNZ1WXTgzJko03Amvp4w=
+			</data>
+		</dict>
+		<key>README.md</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			rKsNFNPvdruXnaBhku2ncs4uPG3rtB8Uncd8qo6Fljg=
 			</data>
 		</dict>
 		<key>embedded.mobileprovision</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			028EP2aV/8+noUWvxcGrt8TpV0WmFMqsPyfYEpfDSPo=
+			T3BoIV0yYGujtYrl5obGAR4QTrZ3/fp4sW33hUg8/E8=
 			</data>
 		</dict>
 	</dict>

@@ -1,0 +1,18 @@
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettingsView+preview.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView+preview.d"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView+preview.dia"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView+preview.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView+preview.swiftdeps"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView+preview.o"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettings/AltTextSettingsView.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AltTextSettingsView.d"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AltTextSettingsView.swiftdeps"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AltTextSettingsView.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AltTextSettingsView.swiftconstvalues"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AltTextSettingsView.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/VariablePickerView.swift":
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.dia"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.d"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.o"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.swiftdeps"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.swiftconstvalues"

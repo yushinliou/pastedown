@@ -1,0 +1,88 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettings/FrontMatterSection.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Tap and drag to reorder fields, or tap the minus button to remove them",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 62
+        }
+      },
+      {
+        "comment": "",
+        "key": "Configure YAML front matter fields that will be added to your Markdown output",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "Front matter is disabled. Toggle on to add YAML metadata to your files",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "Front Matter",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 17
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 24
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit",
+        "location": {
+          "startingColumn": 65,
+          "startingLine": 24
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enable Front Matter",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 34
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 40
+        }
+      },
+      {
+        "comment": "",
+        "key": "No front matter fields configured",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 96
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Front Matter Field",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 108
+        }
+      }
+    ]
+  },
+  "version": 1
+}

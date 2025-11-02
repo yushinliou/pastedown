@@ -46,6 +46,58 @@ struct StandardTextFieldStyle: ViewModifier {
     }
 }
 
+
+
+
+// MARK: - Subtle Text Field Style (for Template Name)
+struct SubtleTextFieldStyle: ViewModifier {
+    @Binding var text: String
+    let isError: Bool
+    @State private var isFocused: Bool = false
+
+    func body(content: Content) -> some View {
+        content
+            .font(.app.body)
+            .foregroundColor(.theme.textPrimary)
+            .padding(AppSpacing.sm)
+            .background(Color.theme.surfaceCard)
+            .cornerRadius(AppRadius.sm)
+            .overlay(
+                RoundedRectangle(cornerRadius: AppRadius.sm)
+                    .stroke(borderColor, lineWidth: borderWidth)
+            )
+            .onTapGesture {
+                isFocused = true
+            }
+            .onChange(of: text) { _ in
+                isFocused = true
+            }
+    }
+
+    private var borderColor: Color {
+        if isError {
+            return .theme.error
+        } else if !text.isEmpty {
+            return Color.gray.opacity(0.3)
+        } else {
+            return .clear
+        }
+    }
+
+    private var borderWidth: CGFloat {
+        if isError {
+            print("Error state border width 2")
+            return 2
+        } else if !text.isEmpty || isFocused {
+            print("Non-empty state border width 1")
+            return 1
+        } else {
+            print("Empty state border width 0")
+            return 0
+        }
+    }
+}
+
 // MARK: - Text Editor Style Modifier
 struct StandardTextEditorStyle: ViewModifier {
     @FocusState private var isFocused: Bool
@@ -92,6 +144,14 @@ extension View {
     /// - Parameter isError: Show error state with red border
     func textFieldStyle(isError: Bool = false) -> some View {
         self.modifier(StandardTextFieldStyle(isError: isError))
+    }
+
+    /// Apply subtle text field style (no border when empty, grey border when typing)
+    /// - Parameters:
+    ///   - text: Binding to the text value
+    ///   - isError: Show error state with red border
+    func subtleTextFieldStyle(text: Binding<String>, isError: Bool = false) -> some View {
+        self.modifier(SubtleTextFieldStyle(text: text, isError: isError))
     }
 
     /// Apply standard text editor style
@@ -161,34 +221,6 @@ struct FormField<Content: View>: View {
     }
 }
 
-// MARK: - Custom Menu Picker Style
-/// Menu picker styled to match secondary button appearance
-//struct SecondaryMenuPickerStyle: ViewModifier {
-//    @Environment(\.colorScheme) var colorScheme
-//
-//    func body(content: Content) -> some View {
-//        content
-//            .tint(Color.theme.neutralBlack)
-//            .font(.app.bodyMedium)
-//            .foregroundColor(Color.theme.neutralWhite)
-//            .background(
-//                RoundedRectangle(cornerRadius: AppRadius.lg)
-//                    .fill( Color.theme.neutralWhite.opacity(colorScheme == .dark ? 0.2 : 0.8))
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: AppRadius.lg)
-//                            .stroke(Color.theme.neutralBlack, lineWidth: 1)
-//                    )
-//            )
-//    }
-//}
-
-            // .shadow(
-            //     color: shadowColor1,
-            //     radius: configuration.isPressed ? 2 : 1,
-            //     x: 0,
-            //     y: configuration.isPressed ? 4 : 1
-            // )
-
 struct SecondaryMenuPickerStyle: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     @State private var isPressed = false
@@ -218,11 +250,88 @@ struct SecondaryMenuPickerStyle: ViewModifier {
     }
 }
 
+// MARK: - Full Width Picker Style
+struct FullWidthPickerStyle: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+
+    func body(content: Content) -> some View {
+        content
+            .tint(Color.theme.textPrimary)
+            .font(.app.body)
+            .foregroundColor(Color.theme.textPrimary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, AppSpacing.xs)
+            .padding(.vertical, AppSpacing.xs)
+            .background(
+                RoundedRectangle(cornerRadius: AppRadius.sm)
+                    .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.gray.opacity(0.15))
+            )
+    }
+}
+
+// MARK: - Custom Menu Button Label
+struct CustomMenuLabel: View {
+    let text: String
+    @Environment(\.colorScheme) var colorScheme
+
+    var body: some View {
+        HStack {
+            Text(text)
+                .font(.app.body)
+                .foregroundColor(.theme.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "chevron.up.chevron.down")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(.theme.textSecondary)
+        }
+        .padding(.horizontal, AppSpacing.sm)
+        .padding(.vertical, AppSpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.sm)
+                .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.gray.opacity(0.15))
+        )
+    }
+}
+
 
 extension View {
     /// Apply secondary menu picker style to match button appearance
     func secondaryPickerStyle() -> some View {
         self.modifier(SecondaryMenuPickerStyle())
+    }
+
+    /// Apply full-width picker style with light/dark mode support
+    func fullWidthPickerStyle() -> some View {
+        self.modifier(FullWidthPickerStyle())
+    }
+}
+
+// MARK: - Preview Text Component
+struct PreviewText: View {
+    let label: String
+    let preview: String
+    @Environment(\.colorScheme) var colorScheme
+
+    init(label: String = "", preview: String) {
+        self.label = label
+        self.preview = preview
+    }
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            // Text(label)
+            //     .font(.app.captionMedium)
+            //     .foregroundColor(.theme.textSecondary)
+            Text(preview)
+                .font(.app.caption)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .padding(.horizontal, AppSpacing.xs) // for text grey bg
+                .padding(.vertical, AppSpacing.xxs) // for text grey bg 
+                .background(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.gray.opacity(0.15))
+                .cornerRadius(AppRadius.lg)
+        }
+        .padding(.bottom, AppSpacing.sm)
     }
 }
 

@@ -1,0 +1,136 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppTypography.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Typography System",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 219
+        }
+      },
+      {
+        "comment": "",
+        "key": "Display Text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 142
+        }
+      },
+      {
+        "comment": "",
+        "key": "Large titles and hero text - 28pt Bold",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 144
+        }
+      },
+      {
+        "comment": "",
+        "key": "Heading Text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "Section headers and important titles - 22pt Semibold",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 155
+        }
+      },
+      {
+        "comment": "",
+        "key": "Title Text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "Card titles and list headers - 18pt Semibold",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 166
+        }
+      },
+      {
+        "comment": "",
+        "key": "Body Text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 175
+        }
+      },
+      {
+        "comment": "",
+        "key": "Regular paragraph text and descriptions - 16pt Regular",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 177
+        }
+      },
+      {
+        "comment": "",
+        "key": "This is body text with medium weight for emphasis",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 180
+        }
+      },
+      {
+        "comment": "",
+        "key": "Callout Text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 188
+        }
+      },
+      {
+        "comment": "",
+        "key": "Labels and emphasized information - 14pt Medium",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 190
+        }
+      },
+      {
+        "comment": "",
+        "key": "Caption Text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 199
+        }
+      },
+      {
+        "comment": "",
+        "key": "Small text, hints, timestamps - 12pt Regular",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 201
+        }
+      },
+      {
+        "comment": "",
+        "key": "Monospace Text",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 210
+        }
+      },
+      {
+        "comment": "",
+        "key": "Code display and technical content - 16pt Monospaced",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 212
+        }
+      }
+    ]
+  },
+  "version": 1
+}

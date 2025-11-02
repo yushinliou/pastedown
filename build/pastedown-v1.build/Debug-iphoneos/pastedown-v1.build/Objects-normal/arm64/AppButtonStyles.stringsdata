@@ -1,0 +1,200 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppButtonStyles.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Button Styles",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 360
+        }
+      },
+      {
+        "comment": "",
+        "key": "Primary Button",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 242
+        }
+      },
+      {
+        "comment": "",
+        "key": "Primary Action",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 246
+        }
+      },
+      {
+        "comment": "",
+        "key": "Full Width Primary",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 249
+        }
+      },
+      {
+        "comment": "",
+        "key": "With Icon",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 255
+        }
+      },
+      {
+        "comment": "",
+        "key": "Secondary Button",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 266
+        }
+      },
+      {
+        "comment": "",
+        "key": "Secondary Action",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 270
+        }
+      },
+      {
+        "comment": "",
+        "key": "Full Width Secondary",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 273
+        }
+      },
+      {
+        "comment": "",
+        "key": "With Icon",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 279
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tertiary Button",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 290
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tertiary Action",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 294
+        }
+      },
+      {
+        "comment": "",
+        "key": "Full Width Tertiary",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 297
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 301
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 303
+        }
+      },
+      {
+        "comment": "",
+        "key": "Destructive Button",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 313
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete Item",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 317
+        }
+      },
+      {
+        "comment": "",
+        "key": "Full Width Delete",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 320
+        }
+      },
+      {
+        "comment": "",
+        "key": "Remove",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 326
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ghost Button",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 337
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ghost Action",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 341
+        }
+      },
+      {
+        "comment": "",
+        "key": "Colored Ghost",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 344
+        }
+      },
+      {
+        "comment": "",
+        "key": "Option 1",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 348
+        }
+      },
+      {
+        "comment": "",
+        "key": "Option 2",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 350
+        }
+      },
+      {
+        "comment": "",
+        "key": "Option 3",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 352
+        }
+      }
+    ]
+  },
+  "version": 1
+}

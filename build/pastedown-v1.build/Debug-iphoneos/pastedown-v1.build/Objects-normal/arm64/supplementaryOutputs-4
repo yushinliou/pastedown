@@ -1,18 +1,24 @@
-"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/Template.swift":
-  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.o"
-  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.swiftdeps"
-  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.d"
-  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.dia"
-  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.swiftconstvalues"
-"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/ImageHandling.swift":
-  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandling.dia"
-  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandling.swiftconstvalues"
-  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandling.swiftdeps"
-  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandling.o"
-  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandling.d"
-"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettingsView.swift":
-  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.swiftconstvalues"
-  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.o"
-  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.d"
-  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.swiftdeps"
-  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppSpacing.swift":
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppSpacing.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppSpacing.swiftdeps"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppSpacing.o"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppSpacing.dia"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppSpacing.d"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/Results.swift":
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Results.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Results.swiftconstvalues"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Results.d"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Results.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Results.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/ClipboardService.swift":
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.swiftdeps"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.d"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.dia"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.swiftconstvalues"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/InitialViewWithSettings.swift":
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/InitialViewWithSettings.o"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/InitialViewWithSettings.d"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/InitialViewWithSettings.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/InitialViewWithSettings.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/InitialViewWithSettings.dia"

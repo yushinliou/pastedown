@@ -13,9 +13,9 @@ enum ImageHandling: String, CaseIterable, Codable {
     
     var displayName: String {
         switch self {
-        case .saveToFolder: return "File"
-        case .ignore: return "Ignore"
-        case .base64: return "Embed"
+        case .saveToFolder: return "Save to File"
+        case .ignore: return "Ignore Images"
+        case .base64: return "Embed as Base64"
         }
     }
 }

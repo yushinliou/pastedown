@@ -6,32 +6,32 @@
         "comment": "",
         "key": "ZIP",
         "location": {
-          "startingColumn": 56,
-          "startingLine": 36
+          "startingColumn": 60,
+          "startingLine": 34
         }
       },
       {
         "comment": "",
         "key": "MD",
         "location": {
-          "startingColumn": 64,
-          "startingLine": 36
+          "startingColumn": 68,
+          "startingLine": 34
         }
       },
       {
         "comment": "",
         "key": "File created: %@",
         "location": {
-          "startingColumn": 34,
-          "startingLine": 26
+          "startingColumn": 38,
+          "startingLine": 24
         }
       },
       {
         "comment": "",
         "key": "Size: %@",
         "location": {
-          "startingColumn": 34,
-          "startingLine": 29
+          "startingColumn": 38,
+          "startingLine": 27
         }
       }
     ]

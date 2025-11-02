@@ -1,0 +1,16 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettingsView+preview.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Template not found",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 82
+        }
+      }
+    ]
+  },
+  "version": 1
+}

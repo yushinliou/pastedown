@@ -1,0 +1,18 @@
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Models/Template.swift":
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.dia"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.swiftconstvalues"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.d"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/Template.swiftdeps"
+"/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/DerivedSources/GeneratedAssetSymbols.swift":
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/GeneratedAssetSymbols.d"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/GeneratedAssetSymbols.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettingsView.swift":
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.dia"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.swiftdeps"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.swiftconstvalues"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.d"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/TemplateSettingsView.o"

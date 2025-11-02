@@ -1,0 +1,32 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettings/TemplateNameSection.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Template Name",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 16
+        }
+      },
+      {
+        "comment": "",
+        "key": "Giving a descriptive name. Eg. blog, meeting note ... etc",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "My Template",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 27
+        }
+      }
+    ]
+  },
+  "version": 1
+}

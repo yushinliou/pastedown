@@ -1,0 +1,160 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppCardStyles.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Card Styles",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 307
+        }
+      },
+      {
+        "comment": "",
+        "key": "Card Variants",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 213
+        }
+      },
+      {
+        "comment": "",
+        "key": "Standard Card",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 217
+        }
+      },
+      {
+        "comment": "",
+        "key": "Basic card with subtle shadow for general use.",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 219
+        }
+      },
+      {
+        "comment": "",
+        "key": "Bordered Card",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 227
+        }
+      },
+      {
+        "comment": "",
+        "key": "Card with border, no shadow. Good for grouped content.",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 229
+        }
+      },
+      {
+        "comment": "",
+        "key": "Elevated Card",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 237
+        }
+      },
+      {
+        "comment": "",
+        "key": "Prominent shadow for important content or modals.",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 239
+        }
+      },
+      {
+        "comment": "",
+        "key": "Flat Card",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 247
+        }
+      },
+      {
+        "comment": "",
+        "key": "No shadow or border. Minimal style.",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 249
+        }
+      },
+      {
+        "comment": "",
+        "key": "Semantic Cards",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 261
+        }
+      },
+      {
+        "comment": "",
+        "key": "Info Card",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 266
+        }
+      },
+      {
+        "comment": "",
+        "key": "Informational message with icon",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 268
+        }
+      },
+      {
+        "comment": "",
+        "key": "Success",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 276
+        }
+      },
+      {
+        "comment": "",
+        "key": "Operation completed successfully",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 278
+        }
+      },
+      {
+        "comment": "",
+        "key": "Warning",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 286
+        }
+      },
+      {
+        "comment": "",
+        "key": "Please review before proceeding",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 288
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 296
+        }
+      },
+      {
+        "comment": "",
+        "key": "Something went wrong",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 298
+        }
+      }
+    ]
+  },
+  "version": 1
+}

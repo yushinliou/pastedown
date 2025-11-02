@@ -1,0 +1,24 @@
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppButtonStyles.swift":
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppButtonStyles.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppButtonStyles.swiftconstvalues"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppButtonStyles.d"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppButtonStyles.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppButtonStyles.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/ListUtilities.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ListUtilities.d"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ListUtilities.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ListUtilities.swiftdeps"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ListUtilities.o"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ListUtilities.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/TemplateSettings/ImageHandlingSection.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandlingSection.d"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandlingSection.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandlingSection.swiftdeps"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandlingSection.o"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageHandlingSection.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Utilities/ImageUtilities.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageUtilities.d"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageUtilities.o"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageUtilities.dia"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageUtilities.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageUtilities.swiftdeps"

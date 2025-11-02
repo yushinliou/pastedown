@@ -1,18 +1,24 @@
-"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/pastedown_v1App.swift":
-  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/pastedown_v1App.o"
-  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/pastedown_v1App.swiftdeps"
-  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/pastedown_v1App.d"
-  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/pastedown_v1App.swiftconstvalues"
-  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/pastedown_v1App.dia"
-"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/ClipboardService.swift":
-  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.o"
-  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.swiftdeps"
-  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.swiftconstvalues"
-  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.d"
-  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ClipboardService.dia"
-"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/VariablePickerView.swift":
-  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.o"
-  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.dia"
-  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.d"
-  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.swiftdeps"
-  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/VariablePickerView.swiftconstvalues"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/Views/ShareSheet.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ShareSheet.d"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ShareSheet.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ShareSheet.dia"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ShareSheet.swiftconstvalues"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ShareSheet.o"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppTypography.swift":
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppTypography.swiftdeps"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppTypography.d"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppTypography.o"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppTypography.dia"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/AppTypography.swiftconstvalues"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/ImageAnalyzer.swift":
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageAnalyzer.o"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageAnalyzer.swiftdeps"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageAnalyzer.swiftconstvalues"
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageAnalyzer.d"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/ImageAnalyzer.dia"
+"/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/ViewModels/RichTextProcessor.swift":
+  dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/RichTextProcessor.d"
+  object: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/RichTextProcessor.o"
+  const-values: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/RichTextProcessor.swiftconstvalues"
+  swift-dependencies: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/RichTextProcessor.swiftdeps"
+  diagnostics: "/Users/liuyuxin/Programming/pastedown-v1/build/pastedown-v1.build/Debug-iphoneos/pastedown-v1.build/Objects-normal/arm64/RichTextProcessor.dia"

@@ -1,0 +1,136 @@
+{
+  "source": "/Users/liuyuxin/Programming/pastedown-v1/pastedown-v1/DesignSystem/AppInputStyles.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "*",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 186
+        }
+      },
+      {
+        "comment": "",
+        "key": "Input Styles",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 478
+        }
+      },
+      {
+        "comment": "",
+        "key": "Text Fields",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 391
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter username",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 395
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter email",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 400
+        }
+      },
+      {
+        "comment": "",
+        "key": "Optional input",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 405
+        }
+      },
+      {
+        "comment": "",
+        "key": "Text Editor",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 414
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search Field",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 439
+        }
+      },
+      {
+        "comment": "",
+        "key": "Input States",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 449
+        }
+      },
+      {
+        "comment": "",
+        "key": "Normal",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 453
+        }
+      },
+      {
+        "comment": "",
+        "key": "Normal state",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 455
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 460
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error state",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 462
+        }
+      },
+      {
+        "comment": "",
+        "key": "Disabled",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 467
+        }
+      },
+      {
+        "comment": "",
+        "key": "Disabled state",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 469
+        }
+      },
+      {
+        "comment": "",
+        "key": "Searching for: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 492
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -78,6 +78,10 @@ struct AppThemeColors {
     /// Optional mid-gray for disabled states or dividers
     let neutralGray = Color.gray.opacity(0.6)
 
+
+    // MARK: - Input Field Focus Colors
+    let inputFieldBorderFocus = Color("inputFieldBorderFocus")
+    let inputFieldSurfaceFocus = Color("inputFieldSurfaceFocus")
     // MARK: - Semantic Background Colors with Opacity
     /// Success background (for alerts, badges, etc.)
     var successBackground: Color {
@@ -121,7 +125,9 @@ extension AppThemeColors {
             ("Surface Border", theme.surfaceBorder),
             ("Neutral Black", theme.neutralBlack),
             ("Neutral White", theme.neutralWhite),
-            ("Neutral Gray", theme.neutralGray)
+            ("Neutral Gray", theme.neutralGray),
+            ("Input Field Border Focus", theme.inputFieldBorderFocus),
+            ("Input Field Surface Focus", theme.inputFieldSurfaceFocus)
         ]
     }
 }
