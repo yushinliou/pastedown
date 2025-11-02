@@ -25,52 +25,36 @@ struct SmartFrontMatterFieldView: View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
             // Comment toggle and indentation indicator
             HStack {
-                Toggle(isOn: $field.isCommented) {
-                    HStack(spacing: AppSpacing.xxs) {
-                        Image(systemName: field.isCommented ? "number" : "number.slash")
-                            .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
-                        Text(field.isCommented ? "Commented" : "Active")
-                            .font(.app.caption)
-                            .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
-                    }
-                }
-                .toggleStyle(SwitchToggleStyle(tint: .theme.warning))
 
-                Spacer()
-
-                // Indentation indicator
-                HStack(spacing: AppSpacing.xxs) {
-                    Text("Indent: \(field.indentLevel)")
-                        .font(.app.caption)
-                        .foregroundColor(.theme.textSecondary)
-                    ForEach(0..<3, id: \.self) { level in
-                        Circle()
-                            .fill(level < field.indentLevel ? Color.theme.info : Color.theme.surfaceBorder)
-                            .frame(width: 8, height: 8)
-                    }
-                }
-                .padding(.horizontal, AppSpacing.xs)
-                .padding(.vertical, AppSpacing.xxs)
-                .background(Color.theme.surfaceCard)
-                .cornerRadius(AppRadius.sm)
-                .overlay(
-                    RoundedRectangle(cornerRadius: AppRadius.sm)
-                        .stroke(Color.theme.surfaceBorder, lineWidth: 1)
-                )
-            }
-
-            HStack {
+                // Field name
                 TextField("Field name", text: $field.name)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .opacity(field.isCommented ? 0.5 : 1.0)
+                
+                // Comment toggle
+                Toggle(isOn: $field.isCommented) {
+                    HStack(spacing: AppSpacing.xxs) {
+                        Image(systemName: field.isCommented ? "number" : "number.slash")
+                            .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
+                        // Text(field.isCommented ? "Commented" : "Active")
+                        //     .font(.app.caption)
+                        //     .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
+                    }
+                }
+                .toggleStyle(SwitchToggleStyle(tint: .theme.warning))
 
+            }
+
+            HStack {
+                // Field type picker
                 Picker("Type", selection: $field.type) {
                     ForEach(FrontMatterType.allCases, id: \.self) { type in
                         Text(type.displayName).tag(type)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
+                .tint(.theme.textPrimary)
                 .disabled(field.isCommented)
                 .opacity(field.isCommented ? 0.5 : 1.0)
                 .onChange(of: field.type) { oldValue, newValue in
@@ -112,8 +96,35 @@ struct SmartFrontMatterFieldView: View {
                         }
                     }
                 }
+
             }
             
+                // Indentation indicator
+                HStack(spacing: AppSpacing.xxs) {
+                    Image(systemName: "arrow.right.to.line")
+                        .font(.system(size: 12))
+                        .foregroundColor(.theme.textSecondary)
+
+                    ForEach(0..<3, id: \.self) { level in
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(level < field.indentLevel ? Color.theme.primary : Color.theme.surfaceBorder)
+                            .frame(width: 4, height: 14)
+                    }
+
+                    Text("\(field.indentLevel)")
+                        .font(.app.captionMedium)
+                        .foregroundColor(.theme.textPrimary)
+                        .frame(minWidth: 12)
+                }
+                .padding(.horizontal, AppSpacing.sm)
+                .padding(.vertical, AppSpacing.xs)
+                .background(Color.theme.surfaceCard)
+                .cornerRadius(AppRadius.sm)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppRadius.sm)
+                        .stroke(Color.theme.surfaceBorder, lineWidth: 1)
+                )
+
             // Conditional value input based on type
             if field.type.needsUserInput {
                 Group {
@@ -476,13 +487,14 @@ struct SmartAddNewFieldView: View {
                 TextField("Field name", text: $newFieldName)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                
+
                 Picker("Type", selection: $newFieldType) {
                     ForEach(FrontMatterType.allCases, id: \.self) { type in
                         Text(type.displayName).tag(type)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
+                .tint(.theme.textPrimary)
                 .onChange(of: newFieldType) { oldValue, newValue in
                     // Defer state modification to avoid "modifying state during view update" warning
                     Task { @MainActor in
@@ -619,49 +631,6 @@ struct SmartAddNewFieldView: View {
                                 .font(.app.caption)
                                 .foregroundColor(.theme.textSecondary)
                         }
-
-                        // Text("List Items:")
-                        //     .font(.subheadline)
-                        //     .fontWeight(.medium)
-                        
-                        // // Display existing list items
-                        // if !newListItems.isEmpty {
-                        //     ForEach(newListItems.indices, id: \.self) { index in
-                        //         HStack {
-                        //             Text("•")
-                        //                 .foregroundColor(Color.blue)
-                        //             Text(newListItems[index])
-                        //                 .font(.caption)
-                                    
-                        //             Spacer()
-                                    
-                        //             Button(action: {
-                        //                 newListItems.remove(at: index)
-                        //                 updateNewListValue()
-                        //             }) {
-                        //                 Image(systemName: "trash")
-                        //                     .foregroundColor(Color.red)
-                        //                     .font(.caption2)
-                        //             }
-                        //         }
-                        //         .padding(.vertical, 1)
-                        //     }
-                        // }
-                        
-                        // // Add new list item
-                        // HStack {
-                        //     TextField("Add list item", text: $addListText)
-                        //         .textFieldStyle(RoundedBorderTextFieldStyle())
-                            
-                        //     Button("Add") {
-                        //         if !addListText.isEmpty {
-                        //             newListItems.append(addListText)
-                        //             addListText = ""
-                        //             updateNewListValue()
-                        //         }
-                        //     }
-                        //     .disabled(addListText.isEmpty)
-                        // }
                     }
                     
                 case .multiline:
@@ -706,7 +675,7 @@ struct SmartAddNewFieldView: View {
                     .italic()
             }
             
-            Button("Add Field") {
+            Button("Add") {
                 let newField = FrontMatterField(name: newFieldName, type: newFieldType, value: newFieldValue)
 
                 // Defer state modification to avoid "modifying state during view update" warning
@@ -729,6 +698,7 @@ struct SmartAddNewFieldView: View {
                 }
             }
             .disabled(newFieldType.needsUserInput && !isValidFieldValue())
+            .buttonStyle(.ghost(color: .theme.info))
         }
     }
     

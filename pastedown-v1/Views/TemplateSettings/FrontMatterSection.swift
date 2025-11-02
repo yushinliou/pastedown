@@ -46,8 +46,8 @@ struct FrontMatterSection: View {
                 .fixedSize() // Prevent toggle from stretching
                 // .border(Color.red)
             }
+            .padding(.bottom, AppSpacing.sm)
             
-
 
             if viewModel.enableFrontMatter {
                 if viewModel.isEditingFields {
@@ -60,34 +60,15 @@ struct FrontMatterSection: View {
                 }
                 
             }
-
-
-            // if viewModel.enableFrontMatter {
-            //     if viewModel.frontMatterFields.isEmpty {
-            //         EmptyFrontMatterView(viewModel: viewModel)
-            //     } else {
-            //         if viewModel.isEditingFields {
-            //             EditModeFrontMatterView(viewModel: viewModel)
-            //         } else {
-            //             ViewModeFrontMatterView(viewModel: viewModel)
-            //         }
-            //     }
-
-            //     if !viewModel.isEditingFields {
-            //         AddNewFieldSection(viewModel: viewModel)
-            //     }
-            // }
             
         // Edit button
         if viewModel.enableFrontMatter { //  && !viewModel.frontMatterFields.isEmpty 
                 Button(viewModel.isEditingFields ? "Done" : "Edit") {
                     viewModel.isEditingFields.toggle()
                 }
-                .font(.app.calloutSemibold)
-                .foregroundColor(.theme.primary)
+                .buttonStyle(.ghost(color: .theme.info))
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.horizontal, AppSpacing.xs)
-                // .border(Color.red)
         }
 
         }
@@ -167,9 +148,10 @@ struct EditModeFrontMatterView: View {
 
 struct ViewModeFrontMatterView: View {
     @ObservedObject var viewModel: TemplateSettingsViewModel
+    @FocusState private var focusedFieldID: UUID?
 
     var body: some View {
-        ForEach(Array(viewModel.frontMatterFields.enumerated()), id: \.element.id) { index, _ in
+        ForEach(Array(viewModel.frontMatterFields.enumerated()), id: \.element.id) { index, field in
             VStack(alignment: .leading, spacing: AppSpacing.xs) {
                 SmartFrontMatterFieldView(
                     field: $viewModel.frontMatterFields[index],
@@ -180,6 +162,8 @@ struct ViewModeFrontMatterView: View {
                 )
             }
             .padding(.vertical, AppSpacing.xs)
+            .focusedFieldStyle(isFocused: focusedFieldID == field.id)
+            .focused($focusedFieldID, equals: field.id)
         }
     }
 }
@@ -189,6 +173,7 @@ struct ViewModeFrontMatterView: View {
 struct AddNewFieldSection: View {
     @FocusState private var isAddingField: Bool
     @ObservedObject var viewModel: TemplateSettingsViewModel
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
@@ -199,10 +184,15 @@ struct AddNewFieldSection: View {
             .focused($isAddingField)
         }
         .padding(AppSpacing.sm)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isAddingField ? Color.theme.inputFieldSurfaceFocus : .clear, lineWidth: 2)
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.sm)
+                .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.gray.opacity(0.15))
         )
-        .background(isAddingField ? Color.theme.inputFieldSurfaceFocus : Color.theme.surfaceCard)
+        
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.sm)
+                .stroke(isAddingField ? Color.theme.inputFieldSurfaceFocus : .clear, lineWidth: 1.5)
+        )
+        
     }
 }

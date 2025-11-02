@@ -28,7 +28,7 @@ struct TemplateNameSection: View {
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
                 .disabled(viewModel.isEditing && viewModel.template?.name == "default")
-                .subtleTextFieldStyle(text: $viewModel.templateName, isError: !viewModel.isValidTemplateName())
+                .textFieldStyle(isError: !viewModel.isValidTemplateName())
 
             // Error Message
             if let errorMessage = viewModel.getTemplateNameError() {

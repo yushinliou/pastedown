@@ -74,13 +74,15 @@ struct LLMGeneratedSettings: View {
                     .font(.app.calloutSemibold)
                     .foregroundColor(.theme.textPrimary)
 
-                Picker("LLM Provider", selection: $viewModel.llmProvider) {
-                    ForEach(LLMProvider.allCases, id: \.self) { provider in
-                        Text(provider.displayName).tag(provider)
+                Menu {
+                    Picker("LLM Provider", selection: $viewModel.llmProvider) {
+                        ForEach(LLMProvider.allCases, id: \.self) { provider in
+                            Text(provider.displayName).tag(provider)
+                        }
                     }
+                } label: {
+                    CustomMenuLabel(text: viewModel.llmProvider.displayName)
                 }
-                .pickerStyle(MenuPickerStyle())
-                .fullWidthPickerStyle()
             }
 
             VStack(alignment: .leading, spacing: AppSpacing.xs) {
@@ -147,13 +149,15 @@ struct AppleVisionSettings: View {
                 .font(.app.calloutSemibold)
                 .foregroundColor(.theme.textPrimary)
 
-            Picker("Template", selection: $viewModel.altTextTemplate) {
-                ForEach(AltTextTemplate.allCases.filter { $0 != .objects }, id: \.self) { template in
-                    Text(template.displayName).tag(template)
+            Menu {
+                Picker("Template", selection: $viewModel.altTextTemplate) {
+                    ForEach(AltTextTemplate.allCases.filter { $0 != .objects }, id: \.self) { template in
+                        Text(template.displayName).tag(template)
+                    }
                 }
+            } label: {
+                CustomMenuLabel(text: viewModel.altTextTemplate.displayName)
             }
-            .pickerStyle(MenuPickerStyle())
-            .fullWidthPickerStyle()
 
             Text("Uses Apple Vision to detect objects and text in images")
                 .font(.app.caption)

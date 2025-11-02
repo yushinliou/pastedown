@@ -47,7 +47,8 @@ enum VariableCategory: String, CaseIterable {
         case .frontMatter:
             var baseVariables = [
                 TemplateVariable(name: "{current_date}", displayName: "Current Date", description: "For Front Matter templates", category: .frontMatter),
-                TemplateVariable(name: "{current_time}", displayName: "Current Time", description: "For Front Matter templates", category: .frontMatter)
+                TemplateVariable(name: "{current_time}", displayName: "Current Time", description: "For Front Matter templates", category: .frontMatter),
+                TemplateVariable(name: "{clipboard_preview}", displayName: "Clipboard Preview", description: "First 20 chars of clipboard content", category: .frontMatter)
             ]
             
             // Add dynamic front matter fields for cross-referencing, but exclude the current field
@@ -186,7 +187,7 @@ struct VariablePickerButton: View {
             showingPicker = true
         }) {
             Image(systemName: "tag")
-                .foregroundColor(Color.accentColor)
+                .foregroundColor(Color.theme.textPrimary)
 
         }
         .sheet(isPresented: $showingPicker) {
@@ -212,42 +213,6 @@ struct VariablePickerButton: View {
     }
 }
 
-// MARK: - Simple Variable Picker Button (for TextEditor)
-struct SimpleVariablePickerButton: View {
-    @Binding var text: String
-    let context: VariableCategory
-    let settings: SettingsStore?
-    let excludeFieldName: String?
-    @State private var showingPicker = false
-
-    init(text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
-        self._text = text
-        self.context = context
-        self.settings = settings
-        self.excludeFieldName = excludeFieldName
-    }
-
-    var body: some View {
-        Button(action: {
-            showingPicker = true
-        }) {
-            Image(systemName: "tag")
-                .foregroundColor(Color.accentColor)
-        }
-        .sheet(isPresented: $showingPicker) {
-            VariablePickerView(onVariableSelected: { variable in
-                // Insert variable at the end of current text (fallback for TextEditor)
-                if text.isEmpty {
-                    text = variable
-                } else {
-                    text += variable
-                }
-            }, settings: settings, excludeFieldName: excludeFieldName, context: context)
-        }
-        .buttonStyle(.plain) // prevent button from expanding make the whole area clickable
-    }
-}
-
 
 // MARK: - Enhanced Text Field with Variable Picker
 struct TextFieldWithVariablePicker: View {
@@ -257,6 +222,7 @@ struct TextFieldWithVariablePicker: View {
     let settings: SettingsStore?
     let excludeFieldName: String?
     @State private var isEditing = false
+    @FocusState private var isFocused: Bool
     @State private var cursorPosition: Int = 0
 
     init(title: String, text: Binding<String>, context: VariableCategory, settings: SettingsStore?, excludeFieldName: String? = nil) {
@@ -285,10 +251,10 @@ struct TextFieldWithVariablePicker: View {
                 excludeFieldName: excludeFieldName
             )
         }
-        .padding(8)
+        .padding(AppSpacing.sm)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(isEditing ? Color.blue : Color.gray.opacity(0.3), lineWidth: 1)
+                .stroke(isEditing ? Color.theme.inputFieldBorderFocus : Color.gray.opacity(0.3), lineWidth: isEditing ? 2 : 1)
         )
     }
 }
