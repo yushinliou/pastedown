@@ -350,14 +350,14 @@ struct TextEditorWithVariablePicker: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            CursorTrackingTextEditor(
-                text: $text,
-                cursorPosition: $cursorPosition,
-                minHeight: minHeight
-            )
-            .frame(minHeight: minHeight)
-
+        
+        CursorTrackingTextEditor(
+            text: $text,
+            cursorPosition: $cursorPosition,
+            minHeight: minHeight
+        )
+        .frame(minHeight: minHeight)
+        .overlay(alignment: .topTrailing) {
             VariablePickerButton(
                 text: $text,
                 cursorPosition: $cursorPosition,
@@ -365,8 +365,7 @@ struct TextEditorWithVariablePicker: View {
                 settings: settings,
                 excludeFieldName: excludeFieldName
             )
-            .padding(.top, 4)
-        }
+        }.padding(AppSpacing.sm)
     }
 }
 

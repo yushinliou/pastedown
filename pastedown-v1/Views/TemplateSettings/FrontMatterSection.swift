@@ -12,10 +12,12 @@ struct FrontMatterSection: View {
 
     var body: some View {
 
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
+        VStack(alignment: .leading, spacing: AppSpacing.xxs) {
             // Header with title and edit button
             HStack {
                 VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                
+                // Section title
                 Text("Front Matter")
                     .font(.app.title)
                     .foregroundColor(.theme.textPrimary)  
@@ -47,6 +49,7 @@ struct FrontMatterSection: View {
                 // .border(Color.red)
             }
             .padding(.bottom, AppSpacing.sm)
+            // .border(Color.red)
             
 
             if viewModel.enableFrontMatter {
@@ -54,6 +57,8 @@ struct FrontMatterSection: View {
                     EditModeFrontMatterView(viewModel: viewModel)
                 } else {
                     ViewModeFrontMatterView(viewModel: viewModel)
+                    .padding(.bottom, AppSpacing.lg)
+                    
                 }
                 if !viewModel.isEditingFields {
                     AddNewFieldSection(viewModel: viewModel)
@@ -73,6 +78,8 @@ struct FrontMatterSection: View {
 
         }
         .background(Color.theme.surfaceCard)
+
+
     }
 }
 
@@ -120,16 +127,8 @@ struct EditModeFrontMatterView: View {
                     Text(field.type.displayName)
                         .font(.app.caption)
                         .foregroundColor(.theme.textSecondary)
-
-                    if !field.value.isEmpty {
-                        Text(field.value.prefix(30) + (field.value.count > 30 ? "..." : ""))
-                            .font(.app.caption)
-                            .foregroundColor(.theme.primary)
-                    }
                 }
-
                 Spacer()
-
                 Button {
                     viewModel.frontMatterFields.remove(at: index)
                 } label: {
@@ -137,34 +136,35 @@ struct EditModeFrontMatterView: View {
                         .foregroundColor(.theme.error)
                 }
             }
-            .padding(.vertical, AppSpacing.xxs)
         }
         .onMove(perform: viewModel.moveFields)
         .onDelete(perform: viewModel.deleteFields)
     }
 }
 
-// MARK: - View Mode Front Matter View
 
+// MARK: - View Mode Front Matter View
 struct ViewModeFrontMatterView: View {
     @ObservedObject var viewModel: TemplateSettingsViewModel
     @FocusState private var focusedFieldID: UUID?
 
     var body: some View {
-        ForEach(Array(viewModel.frontMatterFields.enumerated()), id: \.element.id) { index, field in
-            VStack(alignment: .leading, spacing: AppSpacing.xs) {
-                SmartFrontMatterFieldView(
-                    field: $viewModel.frontMatterFields[index],
-                    settings: viewModel.cachedSettings,
-                    onUpdate: {
-                        // Update triggered when field changes
-                    }
-                )
-            }
-            .padding(.vertical, AppSpacing.xs)
-            .focusedFieldStyle(isFocused: focusedFieldID == field.id)
-            .focused($focusedFieldID, equals: field.id)
+        VStack(spacing: AppSpacing.sm) {
+           ForEach(Array(viewModel.frontMatterFields.enumerated()), id: \.element.id) { index, field in
+                VStack(alignment: .leading, spacing: AppSpacing.md) {
+                    SmartFrontMatterFieldView(
+                        field: $viewModel.frontMatterFields[index],
+                        settings: viewModel.cachedSettings,
+                        onUpdate: {
+                            // Update triggered when field changes
+                        }
+                    )
+                    Divider()
+                }
+                .focused($focusedFieldID, equals: field.id)
+            }            
         }
+        
     }
 }
 
@@ -186,7 +186,7 @@ struct AddNewFieldSection: View {
         .padding(AppSpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: AppRadius.sm)
-                .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.gray.opacity(0.15))
+                .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.gray.opacity(0.05))
         )
         
         .overlay(

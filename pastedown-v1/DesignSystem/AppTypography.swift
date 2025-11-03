@@ -47,6 +47,8 @@ struct AppTypography {
     /// Title with medium weight
     let titleMedium = Font.system(size: 18, weight: .medium)
 
+    let title1 = Font.system(size: 18, weight: .regular)
+
     // MARK: - Body
     /// Regular paragraph text
     /// Size: 16pt, Weight: Regular
@@ -111,6 +113,11 @@ extension View {
             .foregroundColor(color)
     }
 
+    func title1Style(color: Color = .theme.textPrimary) -> some View {
+        self.font(.app.title1)
+            .foregroundColor(color)
+    }
+
     /// Apply body text style
     func bodyStyle(color: Color = .theme.textPrimary) -> some View {
         self.font(.app.body)
@@ -169,6 +176,15 @@ struct AppTypography_Previews: PreviewProvider {
                     }
 
                     Divider()
+
+                    // Title1
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Title1 Text")
+                            .font(.app.title1)
+                        Text("Card titles and list headers - 18pt Regular")
+                            .font(.app.caption)
+                            .foregroundColor(.theme.textSecondary)
+                    }
 
                     // Body
                     VStack(alignment: .leading, spacing: 8) {
