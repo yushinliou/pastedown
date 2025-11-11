@@ -25,6 +25,13 @@ struct SmartFrontMatterFieldView: View {
         VStack(alignment: .leading, spacing: AppSpacing.xxs) {
             // Comment toggle and indentation indicator
             HStack {
+                // Grey # indicator when commented
+                if field.isCommented {
+                    Text("#")
+                        .font(.app.body)
+                        .foregroundColor(.theme.textSecondary)
+                }
+
                 // Field name
                 TextField("Field name", text: $field.name)
                     .font(.app.title1)
@@ -94,48 +101,48 @@ struct SmartFrontMatterFieldView: View {
             }
 
             HStack {
-                // Indentation indicator
-                HStack(spacing: AppSpacing.xxs) {
-                    Image(systemName: "arrow.right.to.line")
-                        .font(.system(size: 12))
-                        .foregroundColor(.theme.textSecondary)
+                // Indent level slider
+                VStack(alignment: .leading, spacing: AppSpacing.xxs) {
+                    HStack(spacing: AppSpacing.xs) {
+                        Text("Indent level:")
+                            .font(.app.caption)
+                            .foregroundColor(.theme.textSecondary)
 
-                    ForEach(0..<3, id: \.self) { level in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(level < field.indentLevel ? Color.theme.primary : Color.theme.surfaceBorder)
-                            .frame(width: 4, height: 14)
+                        // Real-time arrow indicators
+                        ForEach(0..<field.indentLevel, id: \.self) { _ in
+                            Image(systemName: "arrow.right.to.line")
+                                .font(.app.caption)
+                                .foregroundColor(.theme.textSecondary)
+                        }
                     }
 
-                    Text("\(field.indentLevel)")
-                        .font(.app.captionMedium)
-                        .foregroundColor(.theme.textPrimary)
-                        .frame(minWidth: 12)
+                    Slider(
+                        value: Binding(
+                            get: { Double(field.indentLevel) },
+                            set: { field.indentLevel = Int($0) }
+                        ),
+                        in: 0...3,
+                        step: 1
+                    )
+                    .tint(.theme.primary)
                 }
-                .padding(.horizontal, AppSpacing.sm)
-                .padding(.vertical, AppSpacing.sm)
-                .background(Color.theme.surfaceCard)
-                .cornerRadius(AppRadius.md)
-                .overlay(
-                    RoundedRectangle(cornerRadius: AppRadius.md)
-                        .stroke(Color.theme.surfaceBorder, lineWidth: 1)
-                )
+                .padding(.vertical, AppSpacing.xs)
 
                 // Comment toggle
                 Toggle(isOn: $field.isCommented) {
-                    HStack(spacing: AppSpacing.xxs) {
-                        Image(systemName: field.isCommented ? "number" : "number.slash")
-                            .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
-                    }
+                    Text(field.isCommented ? "Comment Out" : "")
+                        .font(.app.caption)
+                        .foregroundColor(.theme.textSecondary)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding(.trailing, AppSpacing.xxs)
+                        // Image(systemName: field.isCommented ? "number" : "number.slash")
+                        //     .foregroundColor(field.isCommented ? .theme.warning : .theme.textSecondary)
                 }
+                .padding(.leading, AppSpacing.xxs)
                 .toggleStyle(SwitchToggleStyle(tint: .theme.warning))
-                
-
+              
             }
-            .padding(.top, AppSpacing.xs)
-        
-
-
-
+            
         }
         .onAppear {
             // Initialize state values based on field type and value
@@ -158,30 +165,6 @@ struct SmartFrontMatterFieldView: View {
                 break
             }
         }
-        .gesture(
-            DragGesture(minimumDistance: 50, coordinateSpace: .local)
-                .onEnded { value in
-                    let horizontalDistance = value.translation.width
-                    let verticalDistance = abs(value.translation.height)
-
-                    // Only respond to mostly horizontal swipes
-                    if abs(horizontalDistance) > verticalDistance {
-                        if horizontalDistance > 0 {
-                            // Swipe right: add indent (max 3)
-                            if field.indentLevel < 3 {
-                                field.indentLevel += 1
-                                onUpdate()
-                            }
-                        } else {
-                            // Swipe left: remove indent (min 0)
-                            if field.indentLevel > 0 {
-                                field.indentLevel -= 1
-                                onUpdate()
-                            }
-                        }
-                    }
-                }
-        )
     }
     
     private func isValidNumber(_ text: String) -> Bool {

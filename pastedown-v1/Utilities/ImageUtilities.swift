@@ -2,7 +2,7 @@
 //  ImageUtilities.swift
 //  pastedown-v1
 //
-//  Created by Claude Code on 2025/8/23.
+//  Review by Yu Shin in 2025/11/11
 //
 
 import Foundation

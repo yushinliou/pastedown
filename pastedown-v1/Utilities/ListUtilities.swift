@@ -1,8 +1,7 @@
 //
 //  ListUtilities.swift
 //  pastedown-v1
-//
-//  Created by AI Assistant on 2025/7/16.
+//  Review by Yu Shin in 2025/11/11
 //
 
 import SwiftUI

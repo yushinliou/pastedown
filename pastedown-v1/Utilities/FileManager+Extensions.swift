@@ -2,7 +2,7 @@
 //  FileManager+Extensions.swift
 //  pastedown-v1
 //
-//  Created by Claude Code on 2025/8/26.
+//  Review by Yu Shin in 2025/11/11
 //
 
 import Foundation
