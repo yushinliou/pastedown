@@ -1,8 +1,8 @@
 # Pastedown
 
-<img src="docs/pastedown.png" align="right" alt="Pastedown logo" width=100>
-
 > From your clipboard to markdown
+
+<img src="docs/pastedown.png" alt="Pastedown logo" width=200>
 
 Pastedown is an IOS app that converts rich text content from Apple Notes and other sources into clean, properly formatted Markdown.
 
