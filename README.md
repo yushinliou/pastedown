@@ -4,13 +4,11 @@
 
 <img src="docs/pastedown.png" alt="Pastedown logo" width=200>
 
-Pastedown is an IOS app that converts rich text content from Apple Notes and other sources into clean, properly formatted Markdown.
+Pastedown is an IOS app that converts rich text content into properly formatted Markdown. Tailored for apple notes.
 
 ![Demo](docs/Demo-Pastedown.gif)
 
 [Demo Video](https://www.youtube.com/watch?v=XsYvLjk-zTA&feature=youtu.be)
-
-
 
 ## Why Pastedown?
 
@@ -32,7 +30,9 @@ Create templates for different use cases! Customize the output Markdown filename
 
 Configure how your files and images are named and organized:
 
-![Filename and Image Settings](docs/templateSetting-filename-image.png)
+<!-- ![Filename and Image Settings](docs/templateSetting-filename-image.png) -->
+
+<img src="docs/templateSetting-filename-image.png" alt="Filename and Image Settings" height=500>
 
 **Filename Settings**
 
@@ -60,7 +60,9 @@ For the `Save to Local Folder` and `Embed Image as Base64 String` options, users
 
 Create rich YAML front matter with flexible data types and formatting:
 
-![Front Matter Settings](docs/templateSetting-frontmatter.png)
+<!-- ![Front Matter Settings](docs/templateSetting-frontmatter.png) -->
+
+<img src="docs/templateSetting-frontmatter.png" alt="Front Matter Settings" height=500>
 
 **Data Type Support**
 
@@ -92,7 +94,10 @@ draft: false
 ---
 ```
 
-![Result Preview](docs/templateSetting-result-same-markdown.png)
+<!-- ![Result Preview](docs/templateSetting-result-same-markdown.png) -->
+
+<img src="docs/templateSetting-result-same-markdown.png" alt="Result Preview" height=500>
+
 
 ## Code Architecture
 
